@@ -2,11 +2,24 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Hide scrollbar but keep scroll */
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
 
 :root {
-  --background: #f8faff;
-  --foreground: #0f172a;
+  --background: #050816;
+  --foreground: #e2e8f0;
+  --neon-blue: #00d4ff;
+  --neon-violet: #a855f7;
+  --neon-emerald: #10b981;
 }
 
 html {
@@ -23,62 +36,103 @@ body {
 ::-webkit-scrollbar {
   width: 6px;
 }
+
 ::-webkit-scrollbar-track {
-  background: #f1f5f9;
-}
-::-webkit-scrollbar-thumb {
-  background: #93c5fd;
-  border-radius: 3px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: #60a5fa;
+  background: #0a0f1e;
 }
 
-/* Glassmorphism utilities */
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #00d4ff, #a855f7);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #22d3ee, #c084fc);
+}
+
+/* ─── Glassmorphism Utilities ─── */
 @layer utilities {
   .glass {
-    background: rgba(255, 255, 255, 0.7);
+    background: rgba(255, 255, 255, 0.03);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.08);
   }
 
   .glass-strong {
-    background: rgba(255, 255, 255, 0.85);
+    background: rgba(255, 255, 255, 0.06);
     backdrop-filter: blur(30px);
     -webkit-backdrop-filter: blur(30px);
-    border: 1px solid rgba(255, 255, 255, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+  }
+
+  .glass-card {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
   }
 
   .glass-dark {
-    background: rgba(15, 23, 42, 0.8);
+    background: rgba(5, 8, 22, 0.85);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.06);
   }
 
   .gradient-text {
-    background: linear-gradient(135deg, #1d4ed8, #3b82f6, #8b5cf6);
+    background: linear-gradient(135deg, #00d4ff, #a855f7, #10b981);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
   }
 
-  .gradient-border {
-    position: relative;
-    border: none;
+  .gradient-text-blue {
+    background: linear-gradient(135deg, #00d4ff, #3b82f6);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
   }
 
-  .gradient-border::before {
+  .gradient-text-violet {
+    background: linear-gradient(135deg, #a855f7, #ec4899);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .glow-btn {
+    position: relative;
+    background: linear-gradient(135deg, #00d4ff, #a855f7);
+    box-shadow: 0 0 20px rgba(0, 212, 255, 0.3), 0 0 40px rgba(168, 85, 247, 0.2);
+    transition: all 0.3s ease;
+  }
+
+  .glow-btn:hover {
+    box-shadow: 0 0 30px rgba(0, 212, 255, 0.5), 0 0 60px rgba(168, 85, 247, 0.35);
+    transform: translateY(-2px);
+  }
+
+  .glow-border {
+    position: relative;
+  }
+
+  .glow-border::before {
     content: '';
     position: absolute;
-    inset: 0;
+    inset: -1px;
     border-radius: inherit;
     padding: 1px;
-    background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+    background: linear-gradient(135deg, #00d4ff, #a855f7, #10b981);
     -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
     -webkit-mask-composite: xor;
     mask-composite: exclude;
+    opacity: 0.6;
+    transition: opacity 0.3s ease;
+  }
+
+  .glow-border:hover::before {
+    opacity: 1;
   }
 
   .text-balance {
@@ -86,68 +140,126 @@ body {
   }
 }
 
-/* Hero gradient background */
+/* ─── Hero Section ─── */
 .hero-bg {
-  background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 25%, #bfdbfe 50%, #dbeafe 75%, #eff6ff 100%);
-  background-size: 400% 400%;
-  animation: gradient-shift 15s ease infinite;
+  background: radial-gradient(ellipse 80% 50% at 50% -20%, rgba(0, 212, 255, 0.15) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 40% at 80% 0%, rgba(168, 85, 247, 0.12) 0%, transparent 50%),
+    radial-gradient(ellipse 60% 40% at 20% 0%, rgba(16, 185, 129, 0.08) 0%, transparent 50%),
+    #050816;
 }
 
-@keyframes gradient-shift {
-  0%, 100% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-}
-
-/* Floating orbs for background decoration */
+/* ─── Floating Orbs ─── */
 .orb {
   position: absolute;
   border-radius: 50%;
-  filter: blur(80px);
-  opacity: 0.3;
+  filter: blur(100px);
+  opacity: 0.25;
   pointer-events: none;
 }
 
-/* 3D Laptop styles */
+/* ─── 3D Laptop ─── */
 .laptop-container {
   perspective: 1200px;
 }
 
 .laptop-screen {
-  transform: rotateX(-5deg) rotateY(8deg);
+  transform: rotateX(-2deg) rotateY(5deg);
   transform-style: preserve-3d;
 }
 
-.laptop-base {
-  transform: rotateX(70deg) rotateY(8deg) translateZ(-2px);
-  transform-style: preserve-3d;
-}
-
-/* Typing cursor */
+/* ─── Typing Cursor ─── */
 .typing-cursor {
   display: inline-block;
   width: 2px;
   height: 1.1em;
-  background-color: #3b82f6;
+  background-color: #00d4ff;
   animation: blink 1s step-end infinite;
   vertical-align: text-bottom;
 }
 
 @keyframes blink {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0; }
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0;
+  }
 }
 
-/* Section backgrounds */
-.section-gradient {
-  background: linear-gradient(180deg, transparent 0%, rgba(219, 234, 254, 0.3) 50%, transparent 100%);
-}
-
-/* Card hover effect */
+/* ─── Card Hover ─── */
 .card-hover {
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .card-hover:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 20px 40px -12px rgba(59, 130, 246, 0.15);
+  transform: translateY(-6px);
+  box-shadow: 0 25px 60px -12px rgba(0, 212, 255, 0.15), 0 10px 30px -8px rgba(168, 85, 247, 0.1);
+}
+
+/* ─── Scrolling Trust Ticker ─── */
+@keyframes scroll-left {
+  0% {
+    transform: translateX(0);
+  }
+
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-scroll-left {
+  animation: scroll-left 30s linear infinite;
+}
+
+@keyframes scroll-right {
+  0% {
+    transform: translateX(-50%);
+  }
+
+  100% {
+    transform: translateX(0);
+  }
+}
+
+.animate-scroll-right {
+  animation: scroll-right 35s linear infinite;
+}
+
+/* ─── Particle / Star background ─── */
+.stars-bg {
+  background-image:
+    radial-gradient(2px 2px at 20px 30px, rgba(0, 212, 255, 0.3), transparent),
+    radial-gradient(2px 2px at 40px 70px, rgba(168, 85, 247, 0.25), transparent),
+    radial-gradient(1px 1px at 90px 40px, rgba(255, 255, 255, 0.2), transparent),
+    radial-gradient(1px 1px at 160px 120px, rgba(0, 212, 255, 0.2), transparent),
+    radial-gradient(2px 2px at 200px 60px, rgba(168, 85, 247, 0.2), transparent),
+    radial-gradient(1px 1px at 60px 160px, rgba(16, 185, 129, 0.2), transparent);
+  background-size: 280px 200px;
+}
+
+/* ─── Counter animation ─── */
+@keyframes count-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ─── Section divider ─── */
+.section-divider {
+  background: linear-gradient(90deg, transparent, rgba(0, 212, 255, 0.3), rgba(168, 85, 247, 0.3), transparent);
+  height: 1px;
+}
+
+/* ─── Pricing popular glow ─── */
+.pricing-glow {
+  box-shadow: 0 0 40px rgba(0, 212, 255, 0.15), 0 0 80px rgba(168, 85, 247, 0.1);
 }

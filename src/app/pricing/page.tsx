@@ -16,7 +16,7 @@ export default function PricingPage() {
                         Pricing
                     </span>
                     <h1 className="text-4xl sm:text-5xl font-bold text-slate-900 mb-4">
-                        Simple, Transparent <span className="gradient-text">Pricing</span>
+                        Simple,  <span className="gradient-text">Pricing</span>
                     </h1>
                     <p className="text-lg text-slate-600 max-w-2xl mx-auto">
                         One plan. Everything included. No hidden fees. Start with a 7-day

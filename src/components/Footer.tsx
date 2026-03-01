@@ -2,53 +2,57 @@ import Link from "next/link";
 import Image from "next/image";
 
 const quickLinks = [
-    { href: "/#how-it-works", label: "How It Works" },
     { href: "/#features", label: "Features" },
-    { href: "/pricing", label: "Pricing" },
-    { href: "/about", label: "About" },
-    { href: "/contact", label: "Contact" },
+    { href: "/#pricing", label: "Pricing" },
+    { href: "/#reviews", label: "Reviews" },
+    { href: "/#business", label: "For Business" },
 ];
 
 const legalLinks = [
     { href: "/privacy-policy", label: "Privacy Policy" },
     { href: "/terms-of-use", label: "Terms of Use" },
     { href: "/refund-policy", label: "Refund Policy" },
-    { href: "/cookie-policy", label: "Cookie Policy" },
     { href: "/disclaimer", label: "Disclaimer" },
 ];
 
 export default function Footer() {
     return (
-        <footer className="relative bg-slate-950 text-white overflow-hidden">
-            {/* Top gradient */}
-            <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-primary-500 to-transparent" />
+        <footer className="relative bg-dark-900 text-white overflow-hidden">
+            {/* Top gradient line */}
+            <div className="section-divider" />
 
             {/* Decorative orbs */}
-            <div className="absolute top-20 left-10 w-72 h-72 bg-primary-600 rounded-full filter blur-[120px] opacity-10" />
-            <div className="absolute bottom-20 right-10 w-72 h-72 bg-accent-500 rounded-full filter blur-[120px] opacity-10" />
+            <div className="absolute top-20 left-10 w-72 h-72 bg-neon-blue rounded-full filter blur-[150px] opacity-[0.07]" />
+            <div className="absolute bottom-20 right-10 w-72 h-72 bg-neon-violet rounded-full filter blur-[150px] opacity-[0.07]" />
 
             <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-8">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
                     {/* Brand */}
                     <div className="lg:col-span-1">
                         <Link href="/" className="flex items-center gap-2 mb-4">
-                            <div className="relative w-10 h-10">
+                            <div className="relative w-12 h-12 rounded-xl bg-white p-1.5 flex items-center justify-center shadow-lg shadow-white/10">
                                 <Image
                                     src="/logo.png"
                                     alt="ApplyPilot"
-                                    fill
-                                    className="object-contain brightness-0 invert"
+                                    width={40}
+                                    height={40}
+                                    className="object-contain"
                                 />
                             </div>
-                            <span className="text-xl font-bold">ApplyPilot</span>
+                            <span className="text-xl font-bold">
+                                Apply<span className="gradient-text">Pilot</span>
+                            </span>
                         </Link>
-                        <p className="text-slate-400 text-sm leading-relaxed mb-4">
+                        <p className="text-slate-400 text-sm leading-relaxed mb-2">
+                            Never Miss Your Dream Job Again.
+                        </p>
+                        <p className="text-slate-500 text-xs leading-relaxed mb-4">
                             AI-powered job application automation. Find, tailor, and submit
-                            applications automatically.
+                            applications while you sleep.
                         </p>
                         <a
                             href="mailto:contact@applypilot.us"
-                            className="text-sm text-primary-400 hover:text-primary-300 transition-colors"
+                            className="text-sm text-neon-blue hover:text-neon-blue/80 transition-colors"
                         >
                             contact@applypilot.us
                         </a>
@@ -98,21 +102,23 @@ export default function Footer() {
                             Connect
                         </h3>
                         <div className="flex gap-3 mb-6">
-                            {["twitter", "linkedin", "github"].map((social) => (
+                            {[
+                                { name: "Twitter", icon: "𝕏" },
+                                { name: "LinkedIn", icon: "in" },
+                                { name: "Instagram", icon: "📷" },
+                            ].map((social) => (
                                 <a
-                                    key={social}
+                                    key={social.name}
                                     href="#"
-                                    aria-label={social}
-                                    className="w-10 h-10 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center hover:bg-primary-600/20 hover:border-primary-500/30 transition-all"
+                                    aria-label={social.name}
+                                    className="w-10 h-10 rounded-lg glass flex items-center justify-center hover:bg-neon-blue/10 hover:border-neon-blue/30 transition-all text-sm"
                                 >
-                                    <span className="text-xs uppercase text-slate-400">
-                                        {social[0].toUpperCase()}
-                                    </span>
+                                    {social.icon}
                                 </a>
                             ))}
                         </div>
                         <p className="text-xs text-slate-500">
-                            Follow us for updates on new features and job market insights.
+                            Follow us for job search tips and product updates.
                         </p>
                     </div>
                 </div>
@@ -122,10 +128,10 @@ export default function Footer() {
                     <p className="text-sm text-slate-500">
                         © {new Date().getFullYear()} ApplyPilot. All rights reserved.
                     </p>
-                    <p className="text-sm text-slate-600 flex items-center gap-1">
-                        Built with
-                        <span className="text-primary-400">AI</span>
-                        <span className="inline-block w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
+                    <p className="text-sm text-slate-600 flex items-center gap-1.5">
+                        Powered by
+                        <span className="gradient-text font-semibold">AI</span>
+                        <span className="inline-block w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
                     </p>
                 </div>
             </div>

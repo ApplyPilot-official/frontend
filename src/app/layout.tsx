@@ -7,19 +7,21 @@ import SessionProvider from "@/components/SessionProvider";
 export const metadata: Metadata = {
   metadataBase: new URL("https://applypilot.us"),
   title: {
-    default: "AI Job Application Automation | ApplyPilot",
+    default: "ApplyPilot — Never Miss Your Dream Job Again",
     template: "%s | ApplyPilot",
   },
   description:
-    "AI-powered job application assistant that automatically finds and applies to relevant jobs for you. Save time. Get more interviews.",
+    "AI-powered job application automation. While you sleep, AI applies to hundreds of jobs for you. Get more interviews in days, not weeks.",
   keywords: [
     "AI job application",
     "automated job applications",
     "job search automation",
-    "AI resume",
+    "AI resume builder",
     "cover letter generator",
-    "job matching",
+    "ATS resume optimizer",
+    "job matching AI",
     "career automation",
+    "auto apply jobs",
   ],
   authors: [{ name: "ApplyPilot" }],
   creator: "ApplyPilot",
@@ -29,23 +31,23 @@ export const metadata: Metadata = {
     locale: "en_US",
     url: "https://applypilot.us",
     siteName: "ApplyPilot",
-    title: "AI Job Application Automation | ApplyPilot",
+    title: "ApplyPilot — Never Miss Your Dream Job Again",
     description:
-      "AI-powered job application assistant that automatically finds and applies to relevant jobs for you. Save time. Get more interviews.",
+      "AI-powered job application automation. While you sleep, AI applies to hundreds of jobs for you.",
     images: [
       {
         url: "/logo.png",
-        width: 500,
-        height: 500,
+        width: 1000,
+        height: 1000,
         alt: "ApplyPilot Logo",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "AI Job Application Automation | ApplyPilot",
+    title: "ApplyPilot — Never Miss Your Dream Job Again",
     description:
-      "AI-powered job application assistant that automatically finds and applies to relevant jobs for you.",
+      "AI-powered job application automation. While you sleep, AI applies to hundreds of jobs for you.",
     images: ["/logo.png"],
   },
   robots: {
@@ -71,7 +73,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="scroll-smooth">
+    <html lang="en" className="scroll-smooth dark">
       <head>
         <link rel="canonical" href="https://applypilot.us" />
         <script
@@ -84,24 +86,38 @@ export default function RootLayout({
               applicationCategory: "BusinessApplication",
               operatingSystem: "Web",
               description:
-                "AI-powered job application assistant that automatically finds and applies to relevant jobs for you.",
+                "AI-powered job application automation — applies to hundreds of jobs while you sleep.",
               url: "https://applypilot.us",
-              offers: {
-                "@type": "Offer",
-                price: "35.00",
-                priceCurrency: "USD",
-                priceValidUntil: "2027-12-31",
-              },
+              offers: [
+                {
+                  "@type": "Offer",
+                  name: "Starter",
+                  price: "35.00",
+                  priceCurrency: "USD",
+                },
+                {
+                  "@type": "Offer",
+                  name: "Pro",
+                  price: "79.00",
+                  priceCurrency: "USD",
+                },
+                {
+                  "@type": "Offer",
+                  name: "Elite",
+                  price: "149.00",
+                  priceCurrency: "USD",
+                },
+              ],
               aggregateRating: {
                 "@type": "AggregateRating",
-                ratingValue: "4.8",
-                ratingCount: "150",
+                ratingValue: "4.9",
+                ratingCount: "10000",
               },
             }),
           }}
         />
       </head>
-      <body className="antialiased">
+      <body className="antialiased bg-dark-700 text-slate-200">
         <SessionProvider>
           <Navbar />
           <main>{children}</main>
