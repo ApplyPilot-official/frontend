@@ -83,7 +83,23 @@ export default function AdminPage() {
         fetchData();
     }, [fetchData]);
 
-    if (status === "loading") {
+    // Hooks must be called before any conditional returns (React rules of hooks)
+    const [roleChecked, setRoleChecked] = useState(false);
+
+    useEffect(() => {
+        if (status === "loading" || !session?.user?.email) return;
+        fetch(`/api/user/status?email=${encodeURIComponent(session.user.email)}`)
+            .then(r => r.json())
+            .then(data => {
+                if (data.role !== 'admin') {
+                    redirect('/dashboard');
+                }
+                setRoleChecked(true);
+            })
+            .catch(() => redirect('/dashboard'));
+    }, [session?.user?.email, status]);
+
+    if (status === "loading" || !roleChecked) {
         return (
             <div className="min-h-screen flex items-center justify-center bg-dark-700">
                 <div className="w-8 h-8 border-2 border-primary-500 border-t-transparent rounded-full animate-spin" />
@@ -92,33 +108,6 @@ export default function AdminPage() {
     }
 
     if (!session) redirect("/login");
-
-    // Check if user is admin — fetch role from status API
-    const [isAdmin, setIsAdmin] = useState(false);
-    const [roleChecked, setRoleChecked] = useState(false);
-
-    useEffect(() => {
-        if (session?.user?.email) {
-            fetch(`/api/user/status?email=${encodeURIComponent(session.user.email)}`)
-                .then(r => r.json())
-                .then(data => {
-                    if (data.role !== 'admin') {
-                        redirect('/dashboard');
-                    }
-                    setIsAdmin(true);
-                    setRoleChecked(true);
-                })
-                .catch(() => redirect('/dashboard'));
-        }
-    }, [session?.user?.email]);
-
-    if (!roleChecked) {
-        return (
-            <div className="min-h-screen flex items-center justify-center bg-dark-700">
-                <div className="w-8 h-8 border-2 border-primary-500 border-t-transparent rounded-full animate-spin" />
-            </div>
-        );
-    }
 
     const handleChangeSubscription = async (userId: string, plan: string) => {
         try {
