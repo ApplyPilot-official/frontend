@@ -13,7 +13,6 @@ const features = [
     "Smart job matching",
     "Application tracking dashboard",
     "Resume optimization",
-    "Interview prep assistance",
     "Priority email support",
     "Weekly job market reports",
 ];
@@ -25,8 +24,8 @@ export default function PricingCard({ featured = true }: PricingCardProps) {
                 whileHover={{ y: -8, scale: 1.02 }}
                 transition={{ duration: 0.3 }}
                 className={`relative rounded-3xl p-[1px] ${featured
-                        ? "bg-gradient-to-br from-primary-500 via-primary-400 to-accent-500"
-                        : "bg-slate-200"
+                    ? "bg-gradient-to-br from-primary-500 via-primary-400 to-accent-500"
+                    : "bg-slate-200"
                     }`}
             >
                 {/* Popular badge */}
@@ -79,14 +78,14 @@ export default function PricingCard({ featured = true }: PricingCardProps) {
                         onClick={() => {
                             // TODO: Integrate Razorpay here
                             // razorpayHandler.open({ amount: 3500, currency: 'USD', ... })
-                            alert("Payment integration coming soon!");
+                            window.location.href = "/pricing";
                         }}
                     >
-                        Start Free Trial
+                        Get Started
                     </button>
 
                     <p className="text-center text-xs text-slate-400 mt-3">
-                        7-day free trial · Cancel anytime
+                        Cancel anytime · Secure payment
                     </p>
                 </div>
             </motion.div>

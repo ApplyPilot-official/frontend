@@ -110,24 +110,8 @@ const features = [
         borderColor: "hover:border-fuchsia-500/30",
         tag: "🧠 AI Powered",
     },
-    {
-        icon: "🎤",
-        title: "AI Mock Interview",
-        desc: "Walk into every interview prepared",
-        detail: "Practice with AI interviewers that simulate real behavioral and technical interviews. Get instant feedback on every answer.",
-        size: "sm",
-        color: "from-rose-500/20 to-pink-600/20",
-        borderColor: "hover:border-rose-500/30",
-    },
-    {
-        icon: "🔍",
-        title: "Hiring Contact Finder",
-        desc: "Reach the person who makes the call",
-        detail: "Our AI finds hiring managers, recruiters, and decision-makers for each role so you can reach out directly.",
-        size: "sm",
-        color: "from-indigo-500/20 to-violet-600/20",
-        borderColor: "hover:border-indigo-500/30",
-    },
+
+
     {
         icon: "🎛️",
         title: "Smart Job Filters",

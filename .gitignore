@@ -38,3 +38,11 @@ next-env.d.ts
 
 # Local Netlify folder
 .netlify
+
+# Sensitive files
+credentials
+*.pem
+project-c9e12e33-*.json
+resume*.pdf
+applypilot.pem
+.env.example

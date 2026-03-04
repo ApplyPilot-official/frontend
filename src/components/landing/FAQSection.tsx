@@ -26,8 +26,8 @@ const faqs = [
         answer: "Yes, cancel anytime from your dashboard. No contracts, no cancellation fees. Your subscription stays active until the end of your billing period.",
     },
     {
-        question: "Do you offer a free trial?",
-        answer: "Yes! 7-day free trial with full access to all features. No credit card required.",
+        question: "How does billing work?",
+        answer: "You choose a monthly plan and pay via secure Razorpay checkout. Cancel anytime from your dashboard — no contracts or hidden fees.",
     },
 ];
 

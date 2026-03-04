@@ -104,7 +104,7 @@ export default function HeroSection() {
                                     </div>
                                 ))}
                                 <div className="w-8 h-8 rounded-full bg-gradient-to-br from-neon-blue to-neon-violet border-2 border-dark-700 flex items-center justify-center text-[10px] text-white font-bold">
-                                    +10k
+                                    +1k
                                 </div>
                             </div>
                             <div>
@@ -116,7 +116,7 @@ export default function HeroSection() {
                                     ))}
                                 </div>
                                 <p className="text-xs text-slate-500">
-                                    Loved by <span className="text-slate-300">10,000+</span> job seekers · avg. <span className="text-neon-blue">7 days</span> to first interview
+                                    Loved by <span className="text-slate-300">1,050+</span> job seekers
                                 </p>
                             </div>
                         </div>

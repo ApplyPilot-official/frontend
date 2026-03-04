@@ -28,7 +28,6 @@ const scrollingLines = [
     "$1/day investment 💰",
     "80% higher callback rate 📈",
     "AI cover letters ✉️",
-    "Mock interview prep 🎤",
     "50+ job boards connected 🌐",
 ];
 
@@ -284,7 +283,7 @@ function ImpactGrid() {
    ────────────────────────────────────────── */
 const whyLines = [
     { prefix: "Manual applying:", value: "3 hours/day", result: "= burnout 😩", bad: true },
-    { prefix: "With ApplyPilot:", value: "3 minutes/day", result: "= interviews 🎉", bad: false },
+    { prefix: "With ApplyPilot:", value: "0 minutes/day", result: "= interviews 🎉", bad: false },
 ];
 
 function WhyItWorks() {
@@ -380,7 +379,7 @@ export default function PunchlinesSection() {
                         </svg>
                     </Link>
                     <p className="mt-4 text-xs text-slate-500">
-                        7-day free trial · No credit card required · Cancel anytime
+                        Cancel anytime · Secure payment
                     </p>
                 </motion.div>
             </div>

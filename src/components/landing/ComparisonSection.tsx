@@ -41,26 +41,14 @@ const comparisonRows = [
         without: "LinkedIn profile collecting dust",
         withText: "AI LinkedIn Profile Makeover — attract recruiters 24/7",
     },
-    {
-        icon: "🎤",
-        without: "Walk into interviews unprepared & nervous",
-        withText: "AI Mock Interview Coach preps you for every question",
-    },
+
     {
         icon: "📊",
         without: "Zero visibility — did anyone even read it?",
         withText: "ATS Score Generator shows your score before you apply",
     },
-    {
-        icon: "🔎",
-        without: "Applying blind — no idea who's hiring",
-        withText: "Hiring Manager & Contact Finder — reach decision makers",
-    },
-    {
-        icon: "📱",
-        without: "Applying is a full-time job itself",
-        withText: "One-click browser extension applies everywhere instantly",
-    },
+
+
     {
         icon: "😴",
         without: "You stop, the job search stops",

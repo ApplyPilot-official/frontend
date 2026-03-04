@@ -1,15 +1,105 @@
 "use client";
 
-import { signIn } from "next-auth/react";
-import { motion } from "framer-motion";
+import { useState, useEffect, Suspense } from "react";
+import { signIn, useSession } from "next-auth/react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 
 export default function LoginPage() {
     return (
-        <div className="min-h-screen hero-bg flex items-center justify-center px-4 pt-20">
+        <Suspense
+            fallback={
+                <div className="min-h-screen bg-dark-700 flex items-center justify-center">
+                    <div className="w-8 h-8 border-2 border-primary-500 border-t-transparent rounded-full animate-spin" />
+                </div>
+            }
+        >
+            <LoginContent />
+        </Suspense>
+    );
+}
+
+function LoginContent() {
+    const router = useRouter();
+    const searchParams = useSearchParams();
+    const { data: session } = useSession();
+    const [mode, setMode] = useState<"login" | "signup">("login");
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [name, setName] = useState("");
+    const [error, setError] = useState("");
+    const [success, setSuccess] = useState("");
+    const [isLoading, setIsLoading] = useState(false);
+
+    // If already logged in, redirect
+    useEffect(() => {
+        if (session) {
+            router.push("/dashboard");
+        }
+    }, [session, router]);
+
+    useEffect(() => {
+        if (searchParams.get("verified") === "true") {
+            setSuccess("Email verified! You can now log in.");
+        }
+        const errParam = searchParams.get("error");
+        if (errParam === "expired-token") {
+            setError("Verification link has expired. Please sign up again.");
+        } else if (errParam === "invalid-token") {
+            setError("Invalid verification link.");
+        } else if (errParam === "CredentialsSignin") {
+            setError("Invalid email or password.");
+        }
+    }, [searchParams]);
+
+    const handleEmailAuth = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setError("");
+        setSuccess("");
+        setIsLoading(true);
+
+        try {
+            if (mode === "signup") {
+                // For signup, use the direct API
+                const res = await fetch("/api/auth/signup", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ email, password, name }),
+                });
+                const data = await res.json();
+                if (!res.ok) {
+                    setError(data.error || "Something went wrong");
+                    return;
+                }
+                setSuccess(data.message || "Account created! Check your email.");
+                setMode("login");
+            } else {
+                // For login, use NextAuth signIn with credentials
+                const result = await signIn("credentials", {
+                    email,
+                    password,
+                    redirect: false,
+                });
+
+                if (result?.error) {
+                    setError("Invalid email or password");
+                } else if (result?.ok) {
+                    router.push("/dashboard");
+                }
+            }
+        } catch {
+            setError("Network error. Please try again.");
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    return (
+        <div className="min-h-screen bg-dark-700 flex items-center justify-center px-4 pt-20">
             {/* Decorative orbs */}
-            <div className="orb w-80 h-80 bg-primary-400 top-20 -left-40" />
-            <div className="orb w-64 h-64 bg-accent-400 bottom-20 -right-32" />
+            <div className="fixed w-80 h-80 bg-primary-500/10 rounded-full blur-3xl top-20 -left-40 pointer-events-none" />
+            <div className="fixed w-64 h-64 bg-neon-violet/10 rounded-full blur-3xl bottom-20 -right-32 pointer-events-none" />
 
             <motion.div
                 initial={{ opacity: 0, y: 30, scale: 0.95 }}
@@ -17,30 +107,56 @@ export default function LoginPage() {
                 transition={{ duration: 0.6 }}
                 className="relative w-full max-w-md"
             >
-                <div className="glass-strong rounded-3xl p-8 sm:p-10 shadow-xl shadow-primary-900/5">
+                <div className="bg-dark-400 rounded-3xl p-8 sm:p-10 shadow-2xl shadow-black/30 border border-dark-50/30">
                     {/* Logo */}
                     <div className="flex justify-center mb-6">
-                        <div className="relative w-16 h-16">
+                        <div className="relative w-16 h-16 bg-white rounded-2xl p-2 shadow-lg">
                             <Image
                                 src="/logo.png"
                                 alt="ApplyPilot"
                                 fill
-                                className="object-contain"
+                                className="object-contain p-1"
                             />
                         </div>
                     </div>
 
-                    <h1 className="text-2xl font-bold text-slate-900 text-center mb-2">
-                        Welcome to ApplyPilot
+                    <h1 className="text-2xl font-bold text-white text-center mb-2">
+                        {mode === "login" ? "Welcome Back" : "Create Account"}
                     </h1>
-                    <p className="text-slate-500 text-center text-sm mb-8">
-                        Sign in to start automating your job applications
+                    <p className="text-slate-400 text-center text-sm mb-6">
+                        {mode === "login"
+                            ? "Sign in to continue your job search"
+                            : "Start automating your job applications"}
                     </p>
+
+                    {/* Alerts */}
+                    <AnimatePresence mode="wait">
+                        {error && (
+                            <motion.div
+                                initial={{ opacity: 0, y: -10 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                exit={{ opacity: 0 }}
+                                className="mb-4 p-3 bg-red-500/10 border border-red-500/20 rounded-xl text-red-400 text-sm"
+                            >
+                                {error}
+                            </motion.div>
+                        )}
+                        {success && (
+                            <motion.div
+                                initial={{ opacity: 0, y: -10 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                exit={{ opacity: 0 }}
+                                className="mb-4 p-3 bg-neon-emerald/10 border border-neon-emerald/20 rounded-xl text-neon-emerald text-sm"
+                            >
+                                {success}
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
 
                     {/* Google Sign In */}
                     <button
                         onClick={() => signIn("google", { callbackUrl: "/dashboard" })}
-                        className="w-full flex items-center justify-center gap-3 px-6 py-3.5 bg-white border border-slate-200 rounded-2xl hover:bg-slate-50 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 group"
+                        className="w-full flex items-center justify-center gap-3 px-6 py-3.5 bg-white border border-slate-200 rounded-2xl hover:bg-slate-50 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 group mb-6"
                     >
                         <svg className="w-5 h-5" viewBox="0 0 24 24">
                             <path
@@ -65,19 +181,106 @@ export default function LoginPage() {
                         </span>
                     </button>
 
-                    <div className="mt-8 text-center">
-                        <p className="text-xs text-slate-400">
+                    {/* Divider */}
+                    <div className="flex items-center gap-3 mb-6">
+                        <div className="flex-1 h-px bg-dark-50/50" />
+                        <span className="text-xs text-slate-500 uppercase tracking-wider">
+                            or
+                        </span>
+                        <div className="flex-1 h-px bg-dark-50/50" />
+                    </div>
+
+                    {/* Email/Password Form */}
+                    <form onSubmit={handleEmailAuth} className="space-y-4">
+                        {mode === "signup" && (
+                            <div>
+                                <label className="block text-sm font-medium text-slate-300 mb-1.5">
+                                    Full Name
+                                </label>
+                                <input
+                                    type="text"
+                                    value={name}
+                                    onChange={(e) => setName(e.target.value)}
+                                    required
+                                    placeholder="John Doe"
+                                    className="w-full px-4 py-3 bg-dark-600 border border-dark-50/30 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-primary-500/50 text-sm"
+                                />
+                            </div>
+                        )}
+                        <div>
+                            <label className="block text-sm font-medium text-slate-300 mb-1.5">
+                                Email
+                            </label>
+                            <input
+                                type="email"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                                required
+                                placeholder="you@example.com"
+                                className="w-full px-4 py-3 bg-dark-600 border border-dark-50/30 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-primary-500/50 text-sm"
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-sm font-medium text-slate-300 mb-1.5">
+                                Password
+                            </label>
+                            <input
+                                type="password"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                required
+                                minLength={8}
+                                placeholder="Min 8 characters"
+                                className="w-full px-4 py-3 bg-dark-600 border border-dark-50/30 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-primary-500/50 text-sm"
+                            />
+                        </div>
+                        <button
+                            type="submit"
+                            disabled={isLoading}
+                            className="w-full py-3.5 px-6 text-sm font-bold text-white bg-gradient-to-r from-neon-blue to-primary-500 rounded-xl hover:shadow-lg hover:shadow-primary-500/30 hover:-translate-y-0.5 transition-all duration-200 disabled:opacity-60"
+                        >
+                            {isLoading ? (
+                                <span className="flex items-center justify-center gap-2">
+                                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                                    {mode === "login" ? "Signing in..." : "Creating account..."}
+                                </span>
+                            ) : mode === "login" ? (
+                                "Sign In"
+                            ) : (
+                                "Create Account"
+                            )}
+                        </button>
+                    </form>
+
+                    {/* Toggle mode */}
+                    <div className="mt-6 text-center">
+                        <button
+                            onClick={() => {
+                                setMode(mode === "login" ? "signup" : "login");
+                                setError("");
+                                setSuccess("");
+                            }}
+                            className="text-sm text-slate-400 hover:text-primary-400 transition-colors"
+                        >
+                            {mode === "login"
+                                ? "Don't have an account? Sign up"
+                                : "Already have an account? Sign in"}
+                        </button>
+                    </div>
+
+                    <div className="mt-6 text-center">
+                        <p className="text-xs text-slate-500">
                             By signing in, you agree to our{" "}
                             <a
                                 href="/terms-of-use"
-                                className="text-primary-500 hover:underline"
+                                className="text-primary-400 hover:underline"
                             >
                                 Terms of Use
                             </a>{" "}
                             and{" "}
                             <a
                                 href="/privacy-policy"
-                                className="text-primary-500 hover:underline"
+                                className="text-primary-400 hover:underline"
                             >
                                 Privacy Policy
                             </a>

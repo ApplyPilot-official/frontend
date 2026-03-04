@@ -157,7 +157,6 @@ const studentPlans = [
             "AI Resume Builder + ATS Optimizer",
             "AI Cover Letters",
             "AI Mock Interview",
-            "Interview Answer Generator",
             "Hiring Manager/Contact Finder",
             "Advanced analytics dashboard",
             "Priority support + fast turnaround",
@@ -405,7 +404,7 @@ export default function PricingSection() {
                                                 ? `bg-gradient-to-r ${plan.accentGrad} text-black shadow-lg`
                                                 : "glass text-white hover:bg-white/10"
                                                 }`}
-                                            onClick={(e) => { e.stopPropagation(); alert("Payment integration coming soon!"); }}
+                                            onClick={(e) => { e.stopPropagation(); window.location.href = "/pricing"; }}
                                         >
                                             {isActive && (
                                                 <motion.div
@@ -418,13 +417,13 @@ export default function PricingSection() {
                                             <span className="relative z-10">
                                                 {plan.name === "Pro" ? "🔥 Get Pro — Most Popular" :
                                                     plan.name === "Elite" ? "👑 Go Elite" :
-                                                        "🌱 Start Free Trial"}
+                                                        "🌱 Get Started"}
                                             </span>
                                         </motion.button>
 
                                         {/* Sub-CTA text */}
                                         <p className="text-center text-[10px] text-slate-500 mt-2.5">
-                                            7-day free trial • No credit card required
+                                            Cancel anytime · Secure payment
                                         </p>
                                     </div>
                                 </motion.div>
@@ -433,23 +432,7 @@ export default function PricingSection() {
                     </motion.div>
                 )}
 
-                {/* Money-back guarantee */}
-                {tab === "students" && (
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true }}
-                        className="text-center mt-12"
-                    >
-                        <div className="inline-flex items-center gap-3 glass rounded-full px-6 py-3">
-                            <span className="text-2xl">🛡️</span>
-                            <div className="text-left">
-                                <p className="text-sm font-semibold text-white">100% Money-Back Guarantee</p>
-                                <p className="text-xs text-slate-400">Not satisfied? Get a full refund within 14 days. No questions asked.</p>
-                            </div>
-                        </div>
-                    </motion.div>
-                )}
+
 
                 {/* Business Tab */}
                 {tab === "business" && (

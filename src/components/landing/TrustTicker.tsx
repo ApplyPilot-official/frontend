@@ -29,7 +29,7 @@ export default function TrustTicker() {
                     ApplyPilot users got hired at
                 </p>
                 <p className="text-xs text-slate-600">
-                    Trusted by 10,000+ job seekers worldwide
+                    Trusted by 1,050+ job seekers worldwide
                 </p>
             </div>
             <div className="relative">
