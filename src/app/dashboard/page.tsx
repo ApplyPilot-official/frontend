@@ -227,9 +227,9 @@ export default function DashboardPage() {
                                     Set up your profile and preferences to start receiving AI-matched
                                     job applications. It only takes 5 minutes.
                                 </p>
-                                <button className="px-6 py-3 text-sm font-semibold text-white bg-gradient-to-r from-neon-blue to-primary-500 rounded-xl hover:shadow-lg hover:shadow-primary-500/25 transition-all">
+                                <Link href="/onboarding" className="inline-block px-6 py-3 text-sm font-semibold text-white bg-gradient-to-r from-neon-blue to-primary-500 rounded-xl hover:shadow-lg hover:shadow-primary-500/25 transition-all">
                                     Complete Your Profile
-                                </button>
+                                </Link>
                             </motion.div>
                         )}
 

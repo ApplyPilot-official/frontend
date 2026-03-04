@@ -465,11 +465,17 @@ export default function PricingPage() {
                                         <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
                                         Processing...
                                     </span>
-                                ) : (
-                                    hasActivePlan
-                                        ? `⬆️ Upgrade to ${plan.name} — $${plan.price}/mo`
-                                        : `Subscribe to ${plan.name} — $${plan.price}/mo`
-                                )}
+                                ) : (() => {
+                                    const finalPrice = (
+                                        plan.price -
+                                        (couponStatus.valid && couponStatus.discountCents
+                                            ? couponStatus.discountCents / 100
+                                            : 0)
+                                    ).toFixed(2);
+                                    return hasActivePlan
+                                        ? `⬆️ Upgrade to ${plan.name} — $${finalPrice}/mo`
+                                        : `Subscribe to ${plan.name} — $${finalPrice}/mo`;
+                                })()}
                             </button>
 
                             {paymentError && (

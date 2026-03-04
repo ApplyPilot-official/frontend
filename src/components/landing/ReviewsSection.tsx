@@ -7,23 +7,23 @@ import AnimatedSection from "@/components/AnimatedSection";
 const reviews = [
     {
         name: "Priya Sharma",
-        role: "Final Year Student, IIT Delhi",
+        role: "Final Year Student, MIT",
         photo: "/review_priya.jpg",
         company: "Google",
-        text: "ApplyPilot applied to 200+ companies while I focused on my final exams. Got 8 interview calls in the first week — landed my dream role at Google!",
+        text: "ApplyPilot applied to 200+ companies while I focused on my final exams. Got 8 interview calls in the first week — landed my dream role at Amazon!",
         rating: 5,
     },
     {
         name: "Rahul Verma",
-        role: "Software Engineer, NIT Trichy",
+        role: "Software Engineer, Stanford University",
         photo: "/review_rahul.jpg",
         company: "Microsoft",
-        text: "I was spending 4 hours a day filling forms. With ApplyPilot, I set it up once and it did everything. Got placed at Microsoft in 12 days!",
+        text: "I was spending 4 hours a day filling forms. With ApplyPilot, I set it up once and it did everything. Got placed at Wells Fargo in 12 days!",
         rating: 5,
     },
     {
         name: "Sneha Patel",
-        role: "Data Analyst, BITS Pilani",
+        role: "Data Analyst, UC Berkeley",
         photo: "/review_sneha.jpg",
         company: "Amazon",
         text: "The ATS-optimized resumes made all the difference. My callback rate went from 5% to 40%. Absolute game-changer for placement season.",
@@ -31,7 +31,7 @@ const reviews = [
     },
     {
         name: "Arjun Krishnan",
-        role: "Product Designer, VIT Vellore",
+        role: "Product Designer, Carnegie Mellon",
         photo: "/review_arjun.jpg",
         company: "Meta",
         text: "AI mock interviews prepared me better than any coaching. I walked into my Meta interview confident and nailed it. Worth every penny.",

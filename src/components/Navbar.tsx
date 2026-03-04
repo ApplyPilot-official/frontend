@@ -267,8 +267,22 @@ export default function Navbar() {
                                         >
                                             📊 Dashboard
                                         </Link>
+                                        <Link
+                                            href="/onboarding"
+                                            onClick={() => setMobileOpen(false)}
+                                            className="block text-sm text-slate-300 hover:text-white py-2"
+                                        >
+                                            👤 Edit Profile
+                                        </Link>
+                                        <Link
+                                            href="/pricing"
+                                            onClick={() => setMobileOpen(false)}
+                                            className="block text-sm text-slate-300 hover:text-white py-2"
+                                        >
+                                            💎 Subscription
+                                        </Link>
                                         <button
-                                            onClick={() => signOut({ callbackUrl: "/" })}
+                                            onClick={() => { setMobileOpen(false); signOut({ callbackUrl: "/" }); }}
                                             className="block text-sm text-red-400 hover:text-red-300 py-2"
                                         >
                                             🚪 Sign Out
@@ -278,12 +292,14 @@ export default function Navbar() {
                                     <>
                                         <Link
                                             href="/login"
+                                            onClick={() => setMobileOpen(false)}
                                             className="block text-sm text-slate-300 hover:text-white py-2"
                                         >
                                             Log In
                                         </Link>
                                         <Link
                                             href="/login"
+                                            onClick={() => setMobileOpen(false)}
                                             className="glow-btn block text-center text-sm font-semibold text-white px-6 py-3 rounded-full"
                                         >
                                             Start Applying Free

@@ -176,6 +176,13 @@ export default function PricingSection() {
     const [hoveredPlan, setHoveredPlan] = useState<number | null>(null);
     const [selectedPlan, setSelectedPlan] = useState<number>(1); // Pro selected by default
 
+    // Auto-select business tab when navigating via #business hash
+    useEffect(() => {
+        if (window.location.hash === "#business") {
+            setTab("business");
+        }
+    }, []);
+
     return (
         <section id="pricing" className="py-24 sm:py-32 relative overflow-hidden">
             {/* Background Blurs */}
