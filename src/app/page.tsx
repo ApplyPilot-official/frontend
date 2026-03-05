@@ -1,6 +1,7 @@
 import HeroSection from "@/components/landing/HeroSection";
 import TrustTicker from "@/components/landing/TrustTicker";
 import PunchlinesSection from "@/components/landing/PunchlinesSection";
+import ResumeATSSection from "@/components/landing/ResumeATSSection";
 import ComparisonSection from "@/components/landing/ComparisonSection";
 import HowItWorksSection from "@/components/landing/HowItWorksSection";
 import FeaturesSection from "@/components/landing/FeaturesSection";
@@ -20,6 +21,7 @@ export default function HomePage() {
       <HeroSection />
       <TrustTicker />
       <PunchlinesSection />
+      <ResumeATSSection />
       <ComparisonSection />
       <HowItWorksSection />
       <FeaturesSection />
