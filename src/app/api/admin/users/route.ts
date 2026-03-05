@@ -49,6 +49,17 @@ export async function PATCH(req: NextRequest) {
                     return NextResponse.json({ error: 'Invalid subscription plan' }, { status: 400 });
                 }
                 user.subscriptionPlan = value;
+                if (value === 'none') {
+                    user.subscriptionStartDate = undefined;
+                    user.subscriptionEndDate = undefined;
+                    user.subscriptionId = undefined;
+                } else {
+                    const now = new Date();
+                    const endDate = new Date(now);
+                    endDate.setDate(endDate.getDate() + 30);
+                    user.subscriptionStartDate = now;
+                    user.subscriptionEndDate = endDate;
+                }
                 await user.save();
                 break;
 

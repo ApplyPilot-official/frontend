@@ -45,11 +45,14 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ error: 'Coupon code is required' }, { status: 400 });
         }
 
+        const normalizedCode = code.toUpperCase().trim();
+
         const coupon = await CouponCode.findOne({
-            code: code.toUpperCase().trim(),
+            code: { $regex: new RegExp(`^${normalizedCode.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`, 'i') },
         });
 
         if (!coupon) {
+            console.log('Coupon not found:', normalizedCode);
             return NextResponse.json({ error: 'Invalid coupon code' }, { status: 404 });
         }
 

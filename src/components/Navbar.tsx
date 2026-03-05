@@ -148,7 +148,7 @@ export default function Navbar() {
                                                     <span>👤</span> Edit Profile
                                                 </Link>
                                                 <Link
-                                                    href="/pricing"
+                                                    href="/subscription"
                                                     onClick={() => setProfileOpen(false)}
                                                     className="flex items-center gap-3 px-4 py-2.5 text-sm text-slate-300 hover:text-white hover:bg-dark-300 transition-colors"
                                                 >
@@ -275,7 +275,7 @@ export default function Navbar() {
                                             👤 Edit Profile
                                         </Link>
                                         <Link
-                                            href="/pricing"
+                                            href="/subscription"
                                             onClick={() => setMobileOpen(false)}
                                             className="block text-sm text-slate-300 hover:text-white py-2"
                                         >

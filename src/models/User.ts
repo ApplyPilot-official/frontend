@@ -11,6 +11,8 @@ export interface IUser extends Document {
     emailVerificationExpiry?: Date;
     subscriptionPlan: 'none' | 'basic' | 'pro' | 'elite';
     subscriptionId?: string;
+    subscriptionStartDate?: Date;
+    subscriptionEndDate?: Date;
     provider: 'google' | 'email';
     createdAt: Date;
     updatedAt: Date;
@@ -42,6 +44,8 @@ const UserSchema = new Schema<IUser>(
             default: 'none',
         },
         subscriptionId: { type: String },
+        subscriptionStartDate: { type: Date },
+        subscriptionEndDate: { type: Date },
         provider: {
             type: String,
             enum: ['google', 'email'],

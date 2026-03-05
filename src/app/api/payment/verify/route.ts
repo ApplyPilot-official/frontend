@@ -90,8 +90,14 @@ export async function POST(req: NextRequest) {
 
         // Update user subscription
         const planType = payment.plan as PlanType;
+        const now = new Date();
+        const endDate = new Date(now);
+        endDate.setDate(endDate.getDate() + 30);
+
         user.subscriptionPlan = planType;
         user.subscriptionId = razorpay_payment_id;
+        user.subscriptionStartDate = now;
+        user.subscriptionEndDate = endDate;
         await user.save();
 
         // Update coupon usage if a coupon was used
