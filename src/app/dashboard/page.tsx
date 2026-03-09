@@ -1,12 +1,27 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, Suspense } from "react";
 import { useSession } from "next-auth/react";
-import { redirect } from "next/navigation";
+import { redirect, useSearchParams } from "next/navigation";
 import { motion } from "framer-motion";
 import Link from "next/link";
+import dynamic from "next/dynamic";
+import CounselingPanel from "@/components/dashboard/CounselingPanel";
+import HelpDeskPanel from "@/components/dashboard/HelpDeskPanel";
+import PortfolioPanel from "@/components/dashboard/PortfolioPanel";
+import LinkedInPanel from "@/components/dashboard/LinkedInPanel";
+import TargetCompaniesPanel from "@/components/dashboard/TargetCompaniesPanel";
 
-type DashSection = "overview" | "jobs" | "applications" | "companies" | "linkedin" | "analytics";
+const ATSScreenerSection = dynamic(() => import("@/components/ats-screener/ATSScreenerSection"), {
+    ssr: false,
+    loading: () => (
+        <div className="flex items-center justify-center p-12">
+            <div className="w-6 h-6 border-2 border-neon-blue border-t-transparent rounded-full animate-spin" />
+        </div>
+    ),
+});
+
+type DashSection = "overview" | "jobs" | "applications" | "companies" | "linkedin" | "analytics" | "ats-screener" | "counseling" | "helpdesk" | "portfolio";
 
 interface UserStatus {
     subscriptionPlan: string;
@@ -14,22 +29,42 @@ interface UserStatus {
     name: string;
 }
 
-export default function DashboardPage() {
+function getAuthHeaders(): HeadersInit {
+    const headers: HeadersInit = { "Content-Type": "application/json" };
+    if (typeof window !== "undefined") {
+        const token = localStorage.getItem("token");
+        if (token) headers["Authorization"] = `Bearer ${token}`;
+    }
+    return headers;
+}
+
+function DashboardContent() {
     const { data: session, status } = useSession();
-    const [activeSection, setActiveSection] = useState<DashSection>("overview");
+    const searchParams = useSearchParams();
+    const initialTab = (searchParams.get("tab") as DashSection) || "overview";
+    const [activeSection, setActiveSection] = useState<DashSection>(initialTab);
     const [userStatus, setUserStatus] = useState<UserStatus | null>(null);
+    const [profileProcessingStatus, setProfileProcessingStatus] = useState<string | null>(null);
     const [isLoadingStatus, setIsLoadingStatus] = useState(true);
+    const [helpUnread, setHelpUnread] = useState(0);
 
     const fetchStatus = useCallback(async () => {
         if (!session?.user?.email) return;
         try {
-            const res = await fetch(`/api/user/status?email=${encodeURIComponent(session.user.email)}`);
-            if (res.ok) {
-                const data = await res.json();
+            const [userRes, profileRes] = await Promise.all([
+                fetch(`/api/user/status?email=${encodeURIComponent(session.user.email)}`),
+                fetch("/api/profile/status", { headers: getAuthHeaders() }),
+            ]);
+            if (userRes.ok) {
+                const data = await userRes.json();
                 setUserStatus(data);
             }
+            if (profileRes.ok) {
+                const data = await profileRes.json();
+                setProfileProcessingStatus(data.processingStatus || null);
+            }
         } catch (err) {
-            console.error("Failed to fetch user status:", err);
+            console.error("Failed to fetch status:", err);
         } finally {
             setIsLoadingStatus(false);
         }
@@ -38,6 +73,14 @@ export default function DashboardPage() {
     useEffect(() => {
         fetchStatus();
     }, [fetchStatus]);
+
+    // Fetch unread count for help desk badge
+    useEffect(() => {
+        fetch("/api/helpdesk/unread", { headers: getAuthHeaders() })
+            .then(r => r.json())
+            .then(d => setHelpUnread(d.unreadCount || 0))
+            .catch(() => { });
+    }, []);
 
     if (status === "loading" || isLoadingStatus) {
         return (
@@ -55,10 +98,14 @@ export default function DashboardPage() {
     const isAdmin = userStatus?.role === "admin";
     const planLabel = userStatus?.subscriptionPlan?.toUpperCase() || "NONE";
 
-    const sidebarItems: { id: DashSection; label: string; icon: string; requiresPlan?: string }[] = [
+    const sidebarItems: { id: DashSection; label: string; icon: string; requiresPlan?: string; noLock?: boolean }[] = [
         { id: "overview", label: "Overview", icon: "📊" },
+        { id: "ats-screener", label: "ATS Screener", icon: "🎯" },
         { id: "jobs", label: "Job Listings", icon: "💼" },
         { id: "applications", label: "Applications", icon: "📨" },
+        { id: "counseling", label: "Career Counseling", icon: "🎓" },
+        { id: "portfolio", label: "Portfolio Maker", icon: "🌐", requiresPlan: "basic" },
+        { id: "helpdesk", label: "Help Desk", icon: "🎫", noLock: true },
         { id: "companies", label: "Target Companies", icon: "🏢", requiresPlan: "pro" },
         { id: "linkedin", label: "LinkedIn Makeover", icon: "💎", requiresPlan: "pro" },
         { id: "analytics", label: "Analytics", icon: "📈" },
@@ -78,6 +125,132 @@ export default function DashboardPage() {
         const userPlanIndex = planOrder.indexOf(userStatus?.subscriptionPlan || "");
         const requiredPlanIndex = planOrder.indexOf(requiresPlan);
         return userPlanIndex < requiredPlanIndex;
+    };
+
+    const renderOverview = () => {
+        if (profileProcessingStatus === "approved") {
+            return (
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.4 }}
+                    className="bg-dark-400 rounded-2xl p-10 text-center border border-neon-emerald/20"
+                >
+                    <div className="text-5xl mb-4">🚀</div>
+                    <h2 className="text-xl font-bold text-white mb-2">
+                        Profile Approved — AI Agents Active
+                    </h2>
+                    <p className="text-slate-400 max-w-md mx-auto mb-4">
+                        Your profile has been approved! Our AI agents are actively applying to jobs on your behalf.
+                    </p>
+                    <span className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-neon-emerald bg-neon-emerald/10 rounded-xl border border-neon-emerald/20">
+                        ✅ Approved & Active
+                    </span>
+                    <div className="mt-4">
+                        <Link href="/profile" className="text-sm text-primary-400 hover:text-primary-300 transition-colors">
+                            View & Edit Your Profile →
+                        </Link>
+                    </div>
+                </motion.div>
+            );
+        }
+
+        if (profileProcessingStatus === "complete") {
+            return (
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.4 }}
+                    className="bg-dark-400 rounded-2xl p-10 text-center border border-neon-emerald/20"
+                >
+                    <div className="text-5xl mb-4">✅</div>
+                    <h2 className="text-xl font-bold text-white mb-2">
+                        Profile Complete — Pending Admin Approval
+                    </h2>
+                    <p className="text-slate-400 max-w-md mx-auto mb-4">
+                        Your profile has been submitted and is awaiting admin review.
+                        Once approved, our AI agents will begin applying to jobs on your behalf.
+                    </p>
+                    <span className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-yellow-400 bg-yellow-400/10 rounded-xl border border-yellow-400/20">
+                        ⏳ Pending Admin Approval
+                    </span>
+                    <div className="mt-4">
+                        <Link href="/profile" className="text-sm text-primary-400 hover:text-primary-300 transition-colors">
+                            View & Edit Your Profile →
+                        </Link>
+                    </div>
+                </motion.div>
+            );
+        }
+
+        if (profileProcessingStatus === "needs_input") {
+            return (
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.4 }}
+                    className="bg-dark-400 rounded-2xl p-10 text-center border border-yellow-400/20"
+                >
+                    <div className="text-5xl mb-4">📝</div>
+                    <h2 className="text-xl font-bold text-white mb-2">
+                        Almost Done — Fill in Missing Details
+                    </h2>
+                    <p className="text-slate-400 max-w-md mx-auto mb-6">
+                        We&apos;ve extracted most of your profile from your resume. A few fields still need your input.
+                    </p>
+                    <Link href="/onboarding" className="inline-block px-6 py-3 text-sm font-semibold text-white bg-gradient-to-r from-neon-blue to-primary-500 rounded-xl hover:shadow-lg hover:shadow-primary-500/25 transition-all">
+                        Complete Your Profile
+                    </Link>
+                </motion.div>
+            );
+        }
+
+        if (profileProcessingStatus === "processing") {
+            return (
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.4 }}
+                    className="bg-dark-400 rounded-2xl p-10 text-center border border-primary-500/20"
+                >
+                    <div className="relative w-16 h-16 mx-auto mb-4">
+                        <div className="absolute inset-0 rounded-full border-4 border-t-neon-blue border-r-neon-violet border-b-transparent border-l-transparent animate-spin" />
+                        <div className="absolute inset-0 flex items-center justify-center text-2xl">🤖</div>
+                    </div>
+                    <h2 className="text-xl font-bold text-white mb-2">
+                        Processing Your Resume
+                    </h2>
+                    <p className="text-slate-400 max-w-md mx-auto mb-6">
+                        Our AI is analyzing your resume. This usually takes 15–30 seconds.
+                    </p>
+                    <Link href="/onboarding" className="inline-block text-sm text-primary-400 hover:text-primary-300 transition-colors">
+                        View Progress →
+                    </Link>
+                </motion.div>
+            );
+        }
+
+        // Default: no profile or failed
+        return (
+            <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.4 }}
+                className="bg-dark-400 rounded-2xl p-10 text-center border border-dark-50/20"
+            >
+                <div className="text-5xl mb-4">🚀</div>
+                <h2 className="text-xl font-bold text-white mb-2">
+                    Your AI Copilot is Ready
+                </h2>
+                <p className="text-slate-400 max-w-md mx-auto mb-6">
+                    Set up your profile and preferences to start receiving AI-matched
+                    job applications. It only takes 5 minutes.
+                </p>
+                <Link href="/onboarding" className="inline-block px-6 py-3 text-sm font-semibold text-white bg-gradient-to-r from-neon-blue to-primary-500 rounded-xl hover:shadow-lg hover:shadow-primary-500/25 transition-all">
+                    Complete Your Profile
+                </Link>
+            </motion.div>
+        );
     };
 
     return (
@@ -104,7 +277,7 @@ export default function DashboardPage() {
                     {/* Nav */}
                     <nav className="space-y-1">
                         {sidebarItems.map((item) => {
-                            const locked = isFeatureLocked(item.requiresPlan);
+                            const locked = !item.noLock && isFeatureLocked(item.requiresPlan);
                             return (
                                 <button
                                     key={item.id}
@@ -118,9 +291,14 @@ export default function DashboardPage() {
                                 >
                                     <span className="text-lg">{item.icon}</span>
                                     <span className="flex-1 text-left">{item.label}</span>
+                                    {item.id === "helpdesk" && helpUnread > 0 && (
+                                        <span className="w-5 h-5 rounded-full bg-red-500 text-white text-[10px] font-bold flex items-center justify-center">
+                                            {helpUnread}
+                                        </span>
+                                    )}
                                     {locked && (
                                         <span className="text-xs text-yellow-500 bg-yellow-500/10 px-2 py-0.5 rounded-full">
-                                            🔒 Pro
+                                            🔒 {item.requiresPlan === "pro" ? "Pro" : "Paid"}
                                         </span>
                                     )}
                                 </button>
@@ -140,8 +318,6 @@ export default function DashboardPage() {
                             </Link>
                         </div>
                     )}
-
-
                 </motion.aside>
 
                 {/* Main Content */}
@@ -212,26 +388,7 @@ export default function DashboardPage() {
                         </div>
 
                         {/* Content Areas */}
-                        {activeSection === "overview" && (
-                            <motion.div
-                                initial={{ opacity: 0, y: 20 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ delay: 0.4 }}
-                                className="bg-dark-400 rounded-2xl p-10 text-center border border-dark-50/20"
-                            >
-                                <div className="text-5xl mb-4">🚀</div>
-                                <h2 className="text-xl font-bold text-white mb-2">
-                                    Your AI Copilot is Ready
-                                </h2>
-                                <p className="text-slate-400 max-w-md mx-auto mb-6">
-                                    Set up your profile and preferences to start receiving AI-matched
-                                    job applications. It only takes 5 minutes.
-                                </p>
-                                <Link href="/onboarding" className="inline-block px-6 py-3 text-sm font-semibold text-white bg-gradient-to-r from-neon-blue to-primary-500 rounded-xl hover:shadow-lg hover:shadow-primary-500/25 transition-all">
-                                    Complete Your Profile
-                                </Link>
-                            </motion.div>
-                        )}
+                        {activeSection === "overview" && renderOverview()}
 
                         {activeSection === "jobs" && (
                             <motion.div
@@ -277,6 +434,8 @@ export default function DashboardPage() {
                             </motion.div>
                         )}
 
+                        {activeSection === "companies" && <TargetCompaniesPanel />}
+
                         {activeSection === "analytics" && (
                             <motion.div
                                 initial={{ opacity: 0, y: 20 }}
@@ -289,9 +448,39 @@ export default function DashboardPage() {
                                 </p>
                             </motion.div>
                         )}
+
+                        {activeSection === "ats-screener" && (
+                            <ATSScreenerSection />
+                        )}
+
+                        {activeSection === "counseling" && <CounselingPanel />}
+
+                        {activeSection === "helpdesk" && (
+                            <HelpDeskPanel onUnreadChange={(count) => setHelpUnread(count)} />
+                        )}
+
+                        {activeSection === "portfolio" && (
+                            <PortfolioPanel hasSubscription={!!hasSubscription} />
+                        )}
+
+                        {activeSection === "linkedin" && (
+                            <LinkedInPanel hasSubscription={!!hasSubscription} subscriptionPlan={userStatus?.subscriptionPlan || "none"} />
+                        )}
                     </div>
                 </div>
             </div>
         </div>
+    );
+}
+
+export default function DashboardPage() {
+    return (
+        <Suspense fallback={
+            <div className="min-h-screen flex items-center justify-center bg-dark-700">
+                <div className="w-8 h-8 border-2 border-primary-500 border-t-transparent rounded-full animate-spin" />
+            </div>
+        }>
+            <DashboardContent />
+        </Suspense>
     );
 }

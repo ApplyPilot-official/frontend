@@ -8,13 +8,12 @@ export async function GET() {
     try {
         await dbConnect();
 
-        // Update test user to verified + admin
+        // Update test user to verified + admin (DO NOT touch subscriptionPlan!)
         const user = await User.findOneAndUpdate(
             { email: 'rahj45419@gmail.com' },
             {
                 isEmailVerified: true,
                 role: 'admin',
-                subscriptionPlan: 'none',
             },
             { new: true }
         );

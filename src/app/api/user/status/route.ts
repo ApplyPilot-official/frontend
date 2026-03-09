@@ -14,7 +14,7 @@ export async function GET(req: NextRequest) {
         }
 
         const user = await User.findOne({ email: email.toLowerCase() })
-            .select('subscriptionPlan subscriptionStartDate subscriptionEndDate role isEmailVerified name');
+            .select('subscriptionPlan subscriptionStartDate subscriptionEndDate role isEmailVerified name subscriptionId');
 
         if (!user) {
             return NextResponse.json({ error: 'User not found' }, { status: 404 });
@@ -27,18 +27,24 @@ export async function GET(req: NextRequest) {
         ) {
             const now = new Date();
             const endDate = new Date(now);
-            endDate.setDate(endDate.getDate() + 30);
+            // Admin users get a longer default window; regular users get 30 days
+            const daysToAdd = user.role === 'admin' ? 365 : 30;
+            endDate.setDate(endDate.getDate() + daysToAdd);
             user.subscriptionStartDate = now;
             user.subscriptionEndDate = endDate;
             await user.save();
+            console.log(`Auto-backfilled subscription dates for ${user.email}: +${daysToAdd} days`);
         }
 
         // Auto-expire: if subscription end date has passed, reset to 'none'
+        // Skip auto-expire for admin users — they manage their own subscriptions
         if (
+            user.role !== 'admin' &&
             user.subscriptionPlan !== 'none' &&
             user.subscriptionEndDate &&
             new Date(user.subscriptionEndDate) < new Date()
         ) {
+            console.log(`Auto-expiring subscription for ${user.email}: endDate ${user.subscriptionEndDate} has passed`);
             user.subscriptionPlan = 'none';
             user.subscriptionId = undefined;
             user.subscriptionStartDate = undefined;

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
@@ -18,7 +18,26 @@ export default function Navbar() {
     const [scrolled, setScrolled] = useState(false);
     const [mobileOpen, setMobileOpen] = useState(false);
     const [profileOpen, setProfileOpen] = useState(false);
+    const [helpUnread, setHelpUnread] = useState(0);
     const dropdownRef = useRef<HTMLDivElement>(null);
+
+    const fetchUnread = useCallback(async () => {
+        if (!session?.user) return;
+        try {
+            const headers: HeadersInit = { "Content-Type": "application/json" };
+            if (typeof window !== "undefined") {
+                const token = localStorage.getItem("token");
+                if (token) headers["Authorization"] = `Bearer ${token}`;
+            }
+            const res = await fetch("/api/helpdesk/unread", { headers });
+            if (res.ok) {
+                const data = await res.json();
+                setHelpUnread(data.unreadCount || 0);
+            }
+        } catch { /* ignore */ }
+    }, [session?.user]);
+
+    useEffect(() => { fetchUnread(); }, [fetchUnread]);
 
     useEffect(() => {
         const handleScroll = () => setScrolled(window.scrollY > 20);
@@ -154,6 +173,18 @@ export default function Navbar() {
                                                 >
                                                     <span>💎</span> Subscription
                                                 </Link>
+                                                <Link
+                                                    href="/dashboard?tab=helpdesk"
+                                                    onClick={() => setProfileOpen(false)}
+                                                    className="flex items-center gap-3 px-4 py-2.5 text-sm text-slate-300 hover:text-white hover:bg-dark-300 transition-colors"
+                                                >
+                                                    <span>🎫</span> Help Desk
+                                                    {helpUnread > 0 && (
+                                                        <span className="w-5 h-5 rounded-full bg-red-500 text-white text-[10px] font-bold flex items-center justify-center ml-auto">
+                                                            {helpUnread}
+                                                        </span>
+                                                    )}
+                                                </Link>
                                             </div>
 
                                             <div className="border-t border-dark-50/20 py-1.5">
@@ -280,6 +311,18 @@ export default function Navbar() {
                                             className="block text-sm text-slate-300 hover:text-white py-2"
                                         >
                                             💎 Subscription
+                                        </Link>
+                                        <Link
+                                            href="/dashboard?tab=helpdesk"
+                                            onClick={() => setMobileOpen(false)}
+                                            className="flex items-center gap-2 text-sm text-slate-300 hover:text-white py-2"
+                                        >
+                                            🎫 Help Desk
+                                            {helpUnread > 0 && (
+                                                <span className="w-5 h-5 rounded-full bg-red-500 text-white text-[10px] font-bold flex items-center justify-center">
+                                                    {helpUnread}
+                                                </span>
+                                            )}
                                         </Link>
                                         <button
                                             onClick={() => { setMobileOpen(false); signOut({ callbackUrl: "/" }); }}
