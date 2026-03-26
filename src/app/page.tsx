@@ -11,14 +11,14 @@ import ReviewsSection from "@/components/landing/ReviewsSection";
 import FAQSection from "@/components/landing/FAQSection";
 import CTASection from "@/components/landing/CTASection";
 import FloatingPunchlines from "@/components/landing/FloatingPunchlines";
+import SocialProofTagline from "@/components/landing/SocialProofTagline";
 
 export default function HomePage() {
   return (
     <div className="relative">
-      {/* Floating punchline bubbles across entire page */}
       <FloatingPunchlines />
-
       <HeroSection />
+      <SocialProofTagline />
       <TrustTicker />
       <PunchlinesSection />
       <ResumeATSSection />

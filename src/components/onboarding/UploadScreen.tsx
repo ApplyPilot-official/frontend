@@ -83,8 +83,8 @@ export default function UploadScreen({ onUploadComplete, getAuthHeaders }: Uploa
             className="space-y-6"
         >
             <div>
-                <h2 className="text-lg font-bold text-white mb-1">Upload Your Resume</h2>
-                <p className="text-sm text-slate-400">
+                <h2 className="text-lg font-bold text-surface-950 mb-1">Upload Your Resume</h2>
+                <p className="text-sm text-surface-600">
                     We&apos;ll extract your profile details using AI — accuracy guaranteed
                 </p>
             </div>
@@ -93,8 +93,8 @@ export default function UploadScreen({ onUploadComplete, getAuthHeaders }: Uploa
                 className={`border-2 border-dashed rounded-2xl p-10 text-center cursor-pointer transition-all ${isDragging
                         ? "border-primary-500 bg-primary-500/5 scale-[1.01]"
                         : resumeFile
-                            ? "border-neon-emerald/50 bg-neon-emerald/5"
-                            : "border-dark-50/30 hover:border-primary-500/50"
+                            ? "border-accent-green/50 bg-accent-green/5"
+                            : "border-surface-300 hover:border-primary-500/50"
                     }`}
                 onClick={() => fileInputRef.current?.click()}
                 onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }}
@@ -119,24 +119,24 @@ export default function UploadScreen({ onUploadComplete, getAuthHeaders }: Uploa
                 {resumeFile ? (
                     <>
                         <div className="text-5xl mb-3">✅</div>
-                        <p className="text-white font-semibold text-lg">{resumeFile.name}</p>
-                        <p className="text-xs text-slate-500 mt-1">
+                        <p className="text-surface-950 font-semibold text-lg">{resumeFile.name}</p>
+                        <p className="text-xs text-surface-500 mt-1">
                             {(resumeFile.size / 1024 / 1024).toFixed(2)} MB
                         </p>
-                        <p className="text-xs text-neon-emerald mt-3 font-medium">Click or drop to change file</p>
+                        <p className="text-xs text-accent-green mt-3 font-medium">Click or drop to change file</p>
                     </>
                 ) : (
                     <>
                         <div className="text-5xl mb-4">📄</div>
-                        <p className="text-white font-semibold text-lg">Drop your resume here</p>
-                        <p className="text-slate-400 text-sm mt-1">or click to browse files</p>
-                        <p className="text-xs text-slate-500 mt-3">Supports PDF, DOCX · Max 10MB</p>
+                        <p className="text-surface-950 font-semibold text-lg">Drop your resume here</p>
+                        <p className="text-surface-600 text-sm mt-1">or click to browse files</p>
+                        <p className="text-xs text-surface-500 mt-3">Supports PDF, DOCX · Max 10MB</p>
                     </>
                 )}
             </div>
 
             {error && (
-                <p className="text-sm text-red-400 bg-red-500/10 border border-red-500/20 rounded-xl p-3">
+                <p className="text-sm text-red-400 bg-red-50 border border-red-500/20 rounded-xl p-3">
                     {error}
                 </p>
             )}
@@ -144,7 +144,7 @@ export default function UploadScreen({ onUploadComplete, getAuthHeaders }: Uploa
             <button
                 onClick={handleUpload}
                 disabled={!resumeFile || isUploading}
-                className="w-full py-3.5 text-sm font-bold text-white bg-gradient-to-r from-neon-blue to-primary-500 rounded-xl hover:shadow-lg hover:shadow-primary-500/30 transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+                className="w-full py-3.5 text-sm font-bold text-surface-950 bg-gradient-to-r from-primary-500 to-primary-600 rounded-xl hover:shadow-lg hover:shadow-primary-500/30 transition-all disabled:opacity-40 disabled:cursor-not-allowed"
             >
                 {isUploading ? (
                     <span className="flex items-center justify-center gap-2">

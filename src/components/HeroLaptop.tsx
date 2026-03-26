@@ -4,9 +4,9 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import { motion } from "framer-motion";
 
 const applicationSteps = [
-    { text: "Initializing ApplyPilot Agent...", icon: "⚡", color: "text-neon-blue" },
+    { text: "Initializing ApplyPilot Agent...", icon: "⚡", color: "text-blue-400" },
     { text: "Connected to 50+ job boards ✓", icon: "🌐", color: "text-emerald-400" },
-    { text: "Scanning 2,847 new listings...", icon: "🔍", color: "text-neon-blue" },
+    { text: "Scanning 2,847 new listings...", icon: "🔍", color: "text-blue-400" },
     { text: "Found 23 matching positions ✓", icon: "✅", color: "text-emerald-400" },
     { text: "Tailoring resume → Google SWE III", icon: "📄", color: "text-yellow-300" },
     { text: "ATS Score: 94/100 — Optimized ✓", icon: "📊", color: "text-emerald-400" },
@@ -90,8 +90,8 @@ export default function HeroLaptop() {
             style={{ perspective: "1200px" }}
         >
             {/* Ambient glow behind laptop */}
-            <div className="absolute -inset-6 bg-gradient-to-r from-neon-blue/20 via-neon-violet/25 to-neon-emerald/20 rounded-[40px] blur-[80px] opacity-80" />
-            <div className="absolute -inset-3 bg-gradient-to-b from-neon-blue/10 to-transparent rounded-3xl blur-[40px]" />
+            <div className="absolute -inset-6 bg-gradient-to-r from-primary-500/15 via-accent-green/10 to-accent-yellow/10 rounded-[40px] blur-[80px] opacity-80" />
+            <div className="absolute -inset-3 bg-gradient-to-b from-primary-500/8 to-transparent rounded-3xl blur-[40px]" />
 
             {/* === LAPTOP SCREEN (LID) === */}
             <div className="relative">
@@ -117,10 +117,10 @@ export default function HeroLaptop() {
                             </div>
                             <div className="flex-1 flex justify-center">
                                 <div className="flex items-center gap-1.5 px-3 py-0.5 rounded-md bg-white/[0.06] border border-white/[0.06]">
-                                    <svg className="w-2.5 h-2.5 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                                    <svg className="w-2.5 h-2.5 text-surface-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
                                         <path strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                                     </svg>
-                                    <span className="text-[9px] text-slate-400 font-mono">applypilot.com/agent</span>
+                                    <span className="text-[9px] text-surface-600 font-mono">applypilot.com/agent</span>
                                 </div>
                             </div>
                             <div className="flex items-center gap-1">
@@ -134,12 +134,12 @@ export default function HeroLaptop() {
                             <div className="flex items-center gap-3">
                                 <div className="flex items-center gap-1">
                                     <span className="text-[9px]">🤖</span>
-                                    <span className="text-[9px] text-neon-blue font-mono font-semibold">Agent v2.0</span>
+                                    <span className="text-[9px] text-blue-400 font-mono font-semibold">Agent v2.0</span>
                                 </div>
                                 <div className="w-px h-3 bg-white/10" />
                                 <div className="flex items-center gap-1">
                                     <span className="text-[9px]">📊</span>
-                                    <span className="text-[9px] text-slate-400 font-mono">Mode: <span className="text-yellow-300">Aggressive</span></span>
+                                    <span className="text-[9px] text-surface-600 font-mono">Mode: <span className="text-yellow-300">Aggressive</span></span>
                                 </div>
                             </div>
                             <div className="flex items-center gap-1">
@@ -157,11 +157,11 @@ export default function HeroLaptop() {
                             {/* Init line */}
                             <div className="flex items-start gap-2 mb-1">
                                 <span className="text-emerald-400 shrink-0">$</span>
-                                <span className="text-slate-300">applypilot start --auto --mode=aggressive</span>
+                                <span className="text-surface-700">applypilot start --auto --mode=aggressive</span>
                             </div>
                             <div className="flex items-start gap-2 mb-2">
-                                <span className="text-slate-600 shrink-0">~</span>
-                                <span className="text-slate-500 text-[10px]">Starting AI job application pipeline...</span>
+                                <span className="text-surface-600 shrink-0">~</span>
+                                <span className="text-surface-500 text-[10px]">Starting AI job application pipeline...</span>
                             </div>
 
                             {/* Completed lines */}
@@ -182,12 +182,12 @@ export default function HeroLaptop() {
                             {visibleLines < applicationSteps.length && currentTyping && (
                                 <div className="flex items-start gap-2 mb-0.5">
                                     <span className="shrink-0 w-4 text-center text-yellow-400">⟩</span>
-                                    <span className="text-slate-300">
+                                    <span className="text-surface-700">
                                         {currentTyping}
                                         <motion.span
                                             animate={{ opacity: [1, 0] }}
                                             transition={{ duration: 0.6, repeat: Infinity, repeatType: "reverse" }}
-                                            className="inline-block w-[6px] h-[13px] bg-neon-blue ml-0.5 align-middle rounded-sm"
+                                            className="inline-block w-[6px] h-[13px] bg-blue-400 ml-0.5 align-middle rounded-sm"
                                         />
                                     </span>
                                 </div>
@@ -210,20 +210,20 @@ export default function HeroLaptop() {
                         <div className="px-3 py-2 bg-[#0e0e16] border-t border-white/[0.06]">
                             <div className="flex items-center justify-between mb-1.5">
                                 <div className="flex items-center gap-3">
-                                    <span className="text-[9px] text-slate-500 font-mono">Progress</span>
-                                    <span className="text-[9px] font-mono font-bold text-neon-blue">{Math.round(progress)}%</span>
+                                    <span className="text-[9px] text-surface-500 font-mono">Progress</span>
+                                    <span className="text-[9px] font-mono font-bold text-blue-400">{Math.round(progress)}%</span>
                                 </div>
                                 <div className="flex items-center gap-2">
-                                    <span className="text-[9px] text-slate-500 font-mono">Jobs matched: <span className="text-emerald-400">23</span></span>
-                                    <span className="text-[9px] text-slate-500 font-mono">|</span>
-                                    <span className="text-[9px] text-slate-500 font-mono">Sent: <span className="text-neon-blue">{appCount}</span></span>
+                                    <span className="text-[9px] text-surface-500 font-mono">Jobs matched: <span className="text-emerald-400">23</span></span>
+                                    <span className="text-[9px] text-surface-500 font-mono">|</span>
+                                    <span className="text-[9px] text-surface-500 font-mono">Sent: <span className="text-blue-400">{appCount}</span></span>
                                 </div>
                             </div>
                             <div className="h-1.5 bg-white/[0.06] rounded-full overflow-hidden">
                                 <motion.div
                                     className="h-full rounded-full"
                                     style={{
-                                        background: "linear-gradient(90deg, #00d4ff, #a855f7, #34d399)",
+                                        background: "linear-gradient(90deg, #4285F4, #34A853, #FBBC05)",
                                     }}
                                     animate={{ width: `${progress}%` }}
                                     transition={{ duration: 0.5, ease: "easeOut" }}
@@ -262,8 +262,8 @@ export default function HeroLaptop() {
             </div>
 
             {/* Desk reflection */}
-            <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 w-[90%] h-4 bg-neon-blue/10 blur-xl rounded-full" />
-            <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 w-[70%] h-2 bg-neon-violet/10 blur-lg rounded-full" />
+            <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 w-[90%] h-4 bg-primary-500/8 blur-xl rounded-full" />
+            <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 w-[70%] h-2 bg-accent-green/8 blur-lg rounded-full" />
         </motion.div>
     );
 }

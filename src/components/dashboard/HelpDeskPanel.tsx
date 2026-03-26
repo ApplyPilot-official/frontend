@@ -84,29 +84,29 @@ export default function HelpDeskPanel({ onUnreadChange }: HelpDeskPanelProps) {
             className="flex flex-col"
             style={{ height: "calc(100vh - 16rem)" }}
         >
-            <h2 className="text-xl font-bold text-white mb-4">🎫 Help Desk</h2>
-            <div className="flex-1 bg-dark-400 rounded-2xl border border-dark-50/20 flex flex-col overflow-hidden">
+            <h2 className="text-xl font-bold text-surface-950 mb-4">🎫 Help Desk</h2>
+            <div className="flex-1 bg-white rounded-2xl border border-surface-300 flex flex-col overflow-hidden">
                 {/* Messages */}
                 <div className="flex-1 overflow-y-auto p-4 space-y-3">
                     {messages.length === 0 && (
                         <div className="text-center py-12">
                             <div className="text-4xl mb-3">💬</div>
-                            <p className="text-slate-400">No messages yet. Send a message to get started!</p>
+                            <p className="text-surface-600">No messages yet. Send a message to get started!</p>
                         </div>
                     )}
                     {messages.map(msg => (
                         <div key={msg._id} className={`flex ${msg.senderType === "user" ? "justify-end" : "justify-start"}`}>
                             <div className={`max-w-[70%] px-4 py-3 rounded-2xl text-sm ${msg.senderType === "user"
-                                    ? "bg-primary-500/20 text-primary-100 rounded-br-md"
-                                    : "bg-dark-300 text-slate-200 rounded-bl-md"
+                                ? "bg-primary-500/20 text-primary-800 rounded-br-md"
+                                : "bg-surface-100 text-surface-700 rounded-bl-md"
                                 }`}>
                                 <p className="whitespace-pre-wrap">{msg.messageText}</p>
                                 {msg.attachmentUrl && (
-                                    <a href={msg.attachmentUrl} target="_blank" rel="noreferrer" className="text-xs text-neon-blue underline mt-1 block">
+                                    <a href={msg.attachmentUrl} target="_blank" rel="noreferrer" className="text-xs text-primary-500 underline mt-1 block">
                                         📎 Attachment
                                     </a>
                                 )}
-                                <p className="text-[10px] text-slate-500 mt-1.5">
+                                <p className="text-[10px] text-surface-500 mt-1.5">
                                     {new Date(msg.createdAt).toLocaleString()}
                                 </p>
                             </div>
@@ -115,19 +115,19 @@ export default function HelpDeskPanel({ onUnreadChange }: HelpDeskPanelProps) {
                     <div ref={chatEndRef} />
                 </div>
                 {/* Input */}
-                <div className="p-3 border-t border-dark-50/20">
+                <div className="p-3 border-t border-surface-300">
                     <div className="flex gap-2">
                         <input
                             value={input}
                             onChange={e => setInput(e.target.value)}
                             onKeyDown={e => e.key === "Enter" && !e.shiftKey && (e.preventDefault(), sendMessage())}
                             placeholder="Type your message..."
-                            className="flex-1 px-4 py-3 bg-dark-600 border border-dark-50/30 rounded-xl text-white text-sm placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-primary-500/50"
+                            className="flex-1 px-4 py-3 bg-surface-100 border border-surface-300 rounded-xl text-surface-950 text-sm placeholder-surface-500 focus:outline-none focus:ring-2 focus:ring-primary-300"
                         />
                         <button
                             onClick={sendMessage}
                             disabled={sending || !input.trim()}
-                            className="px-5 py-3 bg-gradient-to-r from-neon-blue to-primary-500 rounded-xl text-white text-sm font-medium disabled:opacity-50 hover:shadow-lg hover:shadow-primary-500/30 transition-all"
+                            className="px-5 py-3 bg-gradient-to-r from-primary-500 to-primary-600 rounded-xl text-white text-sm font-medium disabled:opacity-50 hover:shadow-lg hover:shadow-primary-500/15 transition-all"
                         >
                             {sending ? "..." : "Send"}
                         </button>

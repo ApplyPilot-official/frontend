@@ -67,27 +67,6 @@ function FallingEmojis({ active, planIndex }: { active: boolean; planIndex: numb
     );
 }
 
-/* ─── Animated Fire Border ─── */
-function FireBorder({ active, color }: { active: boolean; color: string }) {
-    return (
-        <AnimatePresence>
-            {active && (
-                <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    transition={{ duration: 0.3 }}
-                    className="absolute -inset-[2px] rounded-2xl z-0"
-                    style={{
-                        background: `conic-gradient(from var(--fire-angle, 0deg), ${color}, transparent 40%, ${color} 50%, transparent 90%, ${color})`,
-                        animation: "fireRotate 3s linear infinite",
-                    }}
-                />
-            )}
-        </AnimatePresence>
-    );
-}
-
 /* ─── Plan data ─── */
 const studentPlans = [
     {
@@ -98,7 +77,7 @@ const studentPlans = [
         hook: "You spend $35 on food in a single day — why not invest $1/day in your career?",
         position: "Get started faster",
         badge: "🎁 For First Few Users",
-        badgeColor: "from-emerald-500 to-teal-400",
+        badgeColor: "from-accent-green to-emerald-500",
         urgencyTag: "Limited spots at this price",
         features: [
             "Up to 20 auto-applies/day",
@@ -109,11 +88,11 @@ const studentPlans = [
             "Basic Application Tracker",
             "ATS Score Generator",
             "Saved jobs / review before apply",
-            "Email support",
+            "Chat support",
         ],
         popular: false,
-        fireColor: "rgba(16,185,129,0.7)",
-        accentGrad: "from-emerald-400 to-teal-300",
+        accentColor: "text-accent-green",
+        accentGrad: "from-accent-green to-emerald-500",
         icon: "🌱",
     },
     {
@@ -122,7 +101,7 @@ const studentPlans = [
         tagline: "The plan serious job seekers choose",
         position: "Best value for active seekers",
         badge: "⭐ MOST POPULAR",
-        badgeColor: "from-neon-blue to-neon-violet",
+        badgeColor: "from-primary-500 to-primary-700",
         urgencyTag: "Price increasing soon 🔥",
         features: [
             "Up to 75 auto-applies/day",
@@ -131,15 +110,16 @@ const studentPlans = [
             "ATS Resume Optimizer",
             "AI bullet-point & summary rewrite",
             "AI Cover Letters",
+             "Career Counseling",
             "Full application tracker + pipeline",
-            "Browser extension / one-click apply",
+           
             "LinkedIn Profile Optimizer",
             "ATS Score Generator",
-            "Priority email & chat support",
+            "Priority Call & chat support",
         ],
         popular: true,
-        fireColor: "rgba(0,212,255,0.7)",
-        accentGrad: "from-cyan-400 to-violet-400",
+        accentColor: "text-primary-500",
+        accentGrad: "from-primary-500 to-primary-700",
         icon: "🚀",
     },
     {
@@ -148,7 +128,7 @@ const studentPlans = [
         tagline: "Maximum reach. Premium AI. Zero compromise.",
         position: "Power users & premium results",
         badge: "👑 PREMIUM",
-        badgeColor: "from-amber-500 to-orange-400",
+        badgeColor: "from-accent-yellow to-amber-500",
         urgencyTag: "Only 50 seats/month",
         features: [
             "Up to 150 auto-applies/day",
@@ -157,6 +137,7 @@ const studentPlans = [
             "AI Resume Builder + ATS Optimizer",
             "AI Cover Letters",
             "AI Mock Interview",
+            "Career Counseling",
             "Hiring Manager/Contact Finder",
             "Advanced analytics dashboard",
             "Priority support + fast turnaround",
@@ -164,8 +145,8 @@ const studentPlans = [
             "ATS Score Generator",
         ],
         popular: false,
-        fireColor: "rgba(245,158,11,0.7)",
-        accentGrad: "from-amber-400 to-orange-300",
+        accentColor: "text-accent-yellow",
+        accentGrad: "from-accent-yellow to-amber-500",
         icon: "👑",
     },
 ];
@@ -174,9 +155,8 @@ export default function PricingSection() {
     const [tab, setTab] = useState<"students" | "business">("students");
     const [showModal, setShowModal] = useState(false);
     const [hoveredPlan, setHoveredPlan] = useState<number | null>(null);
-    const [selectedPlan, setSelectedPlan] = useState<number>(1); // Pro selected by default
+    const [selectedPlan, setSelectedPlan] = useState<number>(1);
 
-    // Auto-select business tab when navigating via #business hash
     useEffect(() => {
         if (window.location.hash === "#business") {
             setTab("business");
@@ -184,25 +164,9 @@ export default function PricingSection() {
     }, []);
 
     return (
-        <section id="pricing" className="py-24 sm:py-32 relative overflow-hidden">
-            {/* Background Blurs */}
-            <div className="absolute bottom-20 left-0 w-96 h-96 bg-neon-violet rounded-full filter blur-[150px] opacity-[0.06]" />
-            <div className="absolute top-20 right-0 w-80 h-80 bg-neon-blue rounded-full filter blur-[150px] opacity-[0.04]" />
-
-            {/* CSS for fire rotation */}
+        <section id="pricing" className="py-24 sm:py-32 relative overflow-hidden bg-surface-100">
+            {/* CSS for animations */}
             <style jsx>{`
-                @property --fire-angle {
-                    syntax: '<angle>';
-                    inherits: false;
-                    initial-value: 0deg;
-                }
-                @keyframes fireRotate {
-                    to { --fire-angle: 360deg; }
-                }
-                @keyframes pulseGlow {
-                    0%, 100% { box-shadow: 0 0 20px rgba(0,212,255,0.15), 0 0 40px rgba(168,85,247,0.1); }
-                    50% { box-shadow: 0 0 40px rgba(0,212,255,0.3), 0 0 80px rgba(168,85,247,0.2); }
-                }
                 @keyframes shimmer {
                     0% { background-position: -200% center; }
                     100% { background-position: 200% center; }
@@ -211,37 +175,31 @@ export default function PricingSection() {
                     background-size: 200% auto;
                     animation: shimmer 3s linear infinite;
                 }
-                .pulse-glow {
-                    animation: pulseGlow 2s ease-in-out infinite;
-                }
                 @keyframes float-tag {
                     0%, 100% { transform: translateY(0) rotate(-1deg); }
                     50% { transform: translateY(-3px) rotate(1deg); }
                 }
-                .float-tag {
-                    animation: float-tag 2.5s ease-in-out infinite;
-                }
+                .float-tag { animation: float-tag 2.5s ease-in-out infinite; }
             `}</style>
 
             <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <AnimatedSection className="text-center mb-12">
-                    <span className="inline-block px-4 py-1.5 rounded-full glass text-neon-blue text-sm font-medium mb-4">
+                    <span className="inline-block px-4 py-1.5 rounded-full bg-primary-50 border border-primary-200 text-primary-700 text-sm font-medium mb-4">
                         Pricing
                     </span>
-                    <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-4">
+                    <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-surface-950 mb-4">
                         Simple, Affordable{" "}
                         <span className="gradient-text">Pricing</span>
                     </h2>
-                    <p className="text-lg text-slate-400 max-w-2xl mx-auto">
+                    <p className="text-lg text-surface-600 max-w-2xl mx-auto">
                         Invest in your career. Every plan pays for itself with your first job offer.
                     </p>
 
-                    {/* Trust line */}
                     <motion.div
                         initial={{ opacity: 0 }}
                         whileInView={{ opacity: 1 }}
                         viewport={{ once: true }}
-                        className="flex items-center justify-center gap-4 mt-4 text-xs text-slate-500"
+                        className="flex items-center justify-center gap-4 mt-4 text-xs text-surface-500"
                     >
                         <span>🔒 SSL Secure Payment</span>
                         <span>•</span>
@@ -253,12 +211,12 @@ export default function PricingSection() {
 
                 {/* Tabs */}
                 <div className="flex justify-center mb-12">
-                    <div className="glass rounded-full p-1 flex">
+                    <div className="bg-white rounded-full p-1 flex border border-surface-300 shadow-sm">
                         <button
                             onClick={() => setTab("students")}
                             className={`px-6 py-2.5 rounded-full text-sm font-medium transition-all ${tab === "students"
-                                ? "glow-btn text-white"
-                                : "text-slate-400 hover:text-white"
+                                ? "glow-btn text-surface-950"
+                                : "text-surface-600 hover:text-surface-900"
                                 }`}
                         >
                             For Students
@@ -267,8 +225,8 @@ export default function PricingSection() {
                             id="business"
                             onClick={() => setTab("business")}
                             className={`px-6 py-2.5 rounded-full text-sm font-medium transition-all ${tab === "business"
-                                ? "glow-btn text-white"
-                                : "text-slate-400 hover:text-white"
+                                ? "glow-btn text-surface-950"
+                                : "text-surface-600 hover:text-surface-900"
                                 }`}
                         >
                             For Business
@@ -301,10 +259,6 @@ export default function PricingSection() {
                                     onClick={() => setSelectedPlan(i)}
                                     className="relative cursor-pointer"
                                 >
-                                    {/* Fire border effect */}
-                                    <FireBorder active={isActive} color={plan.fireColor} />
-
-                                    {/* Falling emojis on select */}
                                     <FallingEmojis active={isSelected} planIndex={i} />
 
                                     {/* Badge */}
@@ -312,7 +266,7 @@ export default function PricingSection() {
                                         <motion.div
                                             animate={isActive ? { scale: [1, 1.1, 1], y: [0, -2, 0] } : {}}
                                             transition={{ duration: 0.6, repeat: isActive ? Infinity : 0, repeatDelay: 1.5 }}
-                                            className={`shimmer-badge px-5 py-1.5 rounded-full text-xs font-bold text-white whitespace-nowrap
+                                            className={`shimmer-badge px-5 py-1.5 rounded-full text-xs font-bold text-surface-950 whitespace-nowrap
                                                 bg-gradient-to-r ${plan.badgeColor} shadow-lg`}
                                         >
                                             {plan.badge}
@@ -322,10 +276,10 @@ export default function PricingSection() {
                                     {/* Urgency tag */}
                                     <div className="absolute -right-2 top-16 z-20">
                                         <motion.div
-                                            className={`float-tag px-3 py-1 rounded-l-full text-[10px] font-bold text-white
-                                                bg-gradient-to-r ${plan.name === "Starter" ? "from-emerald-600 to-teal-500" :
-                                                    plan.name === "Pro" ? "from-red-500 to-orange-500" :
-                                                        "from-amber-600 to-yellow-500"
+                                            className={`float-tag px-3 py-1 rounded-l-full text-[10px] font-bold text-surface-950
+                                                bg-gradient-to-r ${plan.name === "Starter" ? "from-accent-green to-emerald-500" :
+                                                    plan.name === "Pro" ? "from-accent-red to-orange-500" :
+                                                        "from-accent-yellow to-amber-500"
                                                 } shadow-lg`}
                                             initial={{ x: 10, opacity: 0 }}
                                             animate={{ x: 0, opacity: 1 }}
@@ -338,11 +292,11 @@ export default function PricingSection() {
                                     {/* Card */}
                                     <div
                                         className={`relative z-10 rounded-2xl p-6 sm:p-8 h-full flex flex-col transition-all duration-500 ${isActive
-                                            ? "bg-[#0d1528]/95 backdrop-blur-xl shadow-2xl"
-                                            : "glass-card"
+                                            ? "bg-white shadow-xl border-2 border-primary-300"
+                                            : "bg-white border border-surface-300 shadow-sm"
                                             }`}
-                                        style={isActive ? {
-                                            boxShadow: `0 0 40px ${plan.fireColor.replace("0.7", "0.15")}, 0 20px 60px rgba(0,0,0,0.5)`,
+                                        style={isActive && plan.popular ? {
+                                            boxShadow: "0 8px 30px rgba(66,133,244,0.15), 0 4px 16px rgba(66,133,244,0.08)",
                                         } : {}}
                                     >
                                         {/* Icon + Plan name */}
@@ -355,11 +309,11 @@ export default function PricingSection() {
                                                 {plan.icon}
                                             </motion.span>
                                             <div>
-                                                <p className="text-xs text-slate-500">{plan.position}</p>
-                                                <h3 className="text-xl font-bold text-white">{plan.name}</h3>
+                                                <p className="text-xs text-surface-500">{plan.position}</p>
+                                                <h3 className="text-xl font-bold text-surface-950">{plan.name}</h3>
                                             </div>
                                         </div>
-                                        <p className="text-xs text-slate-400 mb-5">{plan.tagline}</p>
+                                        <p className="text-xs text-surface-500 mb-5">{plan.tagline}</p>
 
                                         {/* Price */}
                                         <div className="flex items-baseline gap-2 mb-2">
@@ -370,16 +324,15 @@ export default function PricingSection() {
                                             >
                                                 ${plan.price}
                                             </motion.span>
-                                            <span className="text-slate-500 text-sm">/month</span>
+                                            <span className="text-surface-500 text-sm">/month</span>
                                             {plan.originalPrice && (
-                                                <span className="text-slate-600 text-sm line-through ml-1">
+                                                <span className="text-surface-400 text-sm line-through ml-1">
                                                     ${plan.originalPrice}
                                                 </span>
                                             )}
                                         </div>
 
-                                        {/* Per-day cost */}
-                                        <p className="text-[11px] text-slate-500 mb-6">
+                                        <p className="text-[11px] text-surface-500 mb-6">
                                             That&apos;s just <span className={`font-bold bg-gradient-to-r ${plan.accentGrad} bg-clip-text text-transparent`}>
                                                 ${(plan.price / 30).toFixed(2)}/day
                                             </span> — less than a cup of coffee ☕
@@ -395,10 +348,10 @@ export default function PricingSection() {
                                                     animate={{ opacity: 1, x: 0 }}
                                                     transition={{ delay: 0.1 + j * 0.03 }}
                                                 >
-                                                    <svg className={`w-4 h-4 shrink-0 mt-0.5 ${isActive ? "text-emerald-400" : "text-neon-blue"} transition-colors`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3">
+                                                    <svg className={`w-4 h-4 shrink-0 mt-0.5 ${isActive ? "text-accent-green" : "text-primary-500"} transition-colors`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3">
                                                         <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                                                     </svg>
-                                                    <span className={`text-xs ${isActive ? "text-slate-200" : "text-slate-300"} transition-colors`}>{feature}</span>
+                                                    <span className={`text-xs ${isActive ? "text-surface-800" : "text-surface-600"} transition-colors`}>{feature}</span>
                                                 </motion.li>
                                             ))}
                                         </ul>
@@ -408,8 +361,8 @@ export default function PricingSection() {
                                             whileHover={{ scale: 1.03 }}
                                             whileTap={{ scale: 0.97 }}
                                             className={`w-full py-3.5 px-6 text-sm font-bold rounded-xl transition-all duration-300 relative overflow-hidden ${isActive
-                                                ? `bg-gradient-to-r ${plan.accentGrad} text-black shadow-lg`
-                                                : "glass text-white hover:bg-white/10"
+                                                ? `bg-gradient-to-r ${plan.accentGrad} text-surface-950 shadow-lg`
+                                                : "bg-surface-100 text-surface-800 hover:bg-surface-200 border border-surface-300"
                                                 }`}
                                             onClick={(e) => { e.stopPropagation(); window.location.href = "/pricing"; }}
                                         >
@@ -428,8 +381,7 @@ export default function PricingSection() {
                                             </span>
                                         </motion.button>
 
-                                        {/* Sub-CTA text */}
-                                        <p className="text-center text-[10px] text-slate-500 mt-2.5">
+                                        <p className="text-center text-[10px] text-surface-500 mt-2.5">
                                             Cancel anytime · Secure payment
                                         </p>
                                     </div>
@@ -439,8 +391,6 @@ export default function PricingSection() {
                     </motion.div>
                 )}
 
-
-
                 {/* Business Tab */}
                 {tab === "business" && (
                     <motion.div
@@ -449,11 +399,11 @@ export default function PricingSection() {
                         transition={{ duration: 0.4 }}
                         className="max-w-2xl mx-auto"
                     >
-                        <div className="glass-card rounded-2xl p-8 sm:p-12 text-center pricing-glow glow-border">
-                            <h3 className="text-2xl font-bold text-white mb-3">
+                        <div className="bg-white rounded-2xl p-8 sm:p-12 text-center pricing-glow border border-surface-300">
+                            <h3 className="text-2xl font-bold text-surface-950 mb-3">
                                 Scale Your Hiring Pipeline with AI
                             </h3>
-                            <p className="text-slate-400 mb-8">
+                            <p className="text-surface-600 mb-8">
                                 Enterprise-grade automation for recruitment teams. Everything unlimited.
                             </p>
 
@@ -469,17 +419,17 @@ export default function PricingSection() {
                                     "Custom onboarding",
                                 ].map((feature, i) => (
                                     <div key={i} className="flex items-center gap-2">
-                                        <svg className="w-4 h-4 text-neon-emerald shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3">
+                                        <svg className="w-4 h-4 text-accent-green shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3">
                                             <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                                         </svg>
-                                        <span className="text-sm text-slate-300">{feature}</span>
+                                        <span className="text-sm text-surface-700">{feature}</span>
                                     </div>
                                 ))}
                             </div>
 
                             <button
                                 onClick={() => setShowModal(true)}
-                                className="glow-btn px-10 py-4 text-base font-bold text-white rounded-full"
+                                className="glow-btn px-10 py-4 text-base font-bold text-surface-950 rounded-full"
                             >
                                 Contact Us
                             </button>
@@ -491,20 +441,20 @@ export default function PricingSection() {
             {/* Contact Modal */}
             {showModal && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-                    <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={() => setShowModal(false)} />
+                    <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setShowModal(false)} />
                     <motion.div
                         initial={{ opacity: 0, scale: 0.9 }}
                         animate={{ opacity: 1, scale: 1 }}
-                        className="relative glass-strong rounded-2xl p-8 max-w-md w-full"
+                        className="relative bg-white rounded-2xl p-8 max-w-md w-full shadow-2xl border border-surface-300"
                     >
                         <button
                             onClick={() => setShowModal(false)}
-                            className="absolute top-4 right-4 text-slate-400 hover:text-white"
+                            className="absolute top-4 right-4 text-surface-400 hover:text-surface-950"
                         >
                             ✕
                         </button>
-                        <h3 className="text-xl font-bold text-white mb-2">Request a Demo</h3>
-                        <p className="text-sm text-slate-400 mb-6">
+                        <h3 className="text-xl font-bold text-surface-950 mb-2">Request a Demo</h3>
+                        <p className="text-sm text-surface-600 mb-6">
                             Fill in your details and we&apos;ll reach out within 24 hours.
                         </p>
                         <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); alert("Demo request submitted!"); setShowModal(false); }}>
@@ -512,23 +462,23 @@ export default function PricingSection() {
                                 type="text"
                                 placeholder="Full Name"
                                 required
-                                className="w-full px-4 py-3 rounded-xl glass bg-transparent text-white text-sm placeholder:text-slate-500 outline-none focus:ring-1 focus:ring-neon-blue/50"
+                                className="w-full px-4 py-3 rounded-xl bg-surface-100 border border-surface-300 text-surface-900 text-sm placeholder:text-surface-500 outline-none focus:ring-2 focus:ring-primary-300"
                             />
                             <input
                                 type="email"
                                 placeholder="Work Email"
                                 required
-                                className="w-full px-4 py-3 rounded-xl glass bg-transparent text-white text-sm placeholder:text-slate-500 outline-none focus:ring-1 focus:ring-neon-blue/50"
+                                className="w-full px-4 py-3 rounded-xl bg-surface-100 border border-surface-300 text-surface-900 text-sm placeholder:text-surface-500 outline-none focus:ring-2 focus:ring-primary-300"
                             />
                             <input
                                 type="tel"
                                 placeholder="Phone Number"
                                 required
-                                className="w-full px-4 py-3 rounded-xl glass bg-transparent text-white text-sm placeholder:text-slate-500 outline-none focus:ring-1 focus:ring-neon-blue/50"
+                                className="w-full px-4 py-3 rounded-xl bg-surface-100 border border-surface-300 text-surface-900 text-sm placeholder:text-surface-500 outline-none focus:ring-2 focus:ring-primary-300"
                             />
                             <button
                                 type="submit"
-                                className="glow-btn w-full py-3 text-sm font-bold text-white rounded-xl"
+                                className="glow-btn w-full py-3 text-sm font-bold text-surface-950 rounded-xl"
                             >
                                 Request a Demo
                             </button>

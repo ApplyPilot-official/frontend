@@ -109,7 +109,7 @@ function ScoreCircle({ score, size = 120 }: { score: number; size?: number }) {
                 >
                     {animatedScore}
                 </span>
-                <span className="text-slate-500" style={{ fontSize: size * 0.1 }}>
+                <span className="text-surface-500" style={{ fontSize: size * 0.1 }}>
                     / 100
                 </span>
             </div>
@@ -137,8 +137,8 @@ function ScoreBreakdownCard({ breakdown }: { breakdown: ScoreBreakdown }) {
     };
 
     return (
-        <div className="glass-card rounded-2xl p-6">
-            <h2 className="text-lg font-semibold text-white mb-6">Score Breakdown</h2>
+        <div className="bg-white border border-surface-300 shadow-sm rounded-2xl p-6">
+            <h2 className="text-lg font-semibold text-surface-950 mb-6">Score Breakdown</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 {breakdownItems.map((item) => {
                     const score = breakdown[item.key as keyof ScoreBreakdown];
@@ -147,13 +147,13 @@ function ScoreBreakdownCard({ breakdown }: { breakdown: ScoreBreakdown }) {
                             <div className="flex items-center justify-between">
                                 <div className="flex items-center gap-2">
                                     <div className={`w-8 h-8 bg-gradient-to-br ${item.color} rounded-lg flex items-center justify-center`}>
-                                        <item.icon className="w-4 h-4 text-white" />
+                                        <item.icon className="w-4 h-4 text-surface-950" />
                                     </div>
-                                    <span className="text-sm font-medium text-slate-300">
+                                    <span className="text-sm font-medium text-surface-700">
                                         {item.label}
                                     </span>
                                 </div>
-                                <span className="text-sm font-bold text-white">{score}</span>
+                                <span className="text-sm font-bold text-surface-950">{score}</span>
                             </div>
                             <div className="h-2 bg-white/5 rounded-full overflow-hidden">
                                 <div
@@ -180,20 +180,20 @@ function SkillsCard({ skills }: { skills: SkillsData }) {
             case "Moderate":
                 return "bg-amber-500/10 text-amber-400 border-amber-500/20";
             default:
-                return "bg-red-500/10 text-red-400 border-red-500/20";
+                return "bg-red-50 text-red-400 border-red-500/20";
         }
     };
 
     return (
-        <div className="glass-card rounded-2xl p-6 h-full">
+        <div className="bg-white border border-surface-300 shadow-sm rounded-2xl p-6 h-full">
             <div className="flex items-center justify-between mb-6">
                 <div className="flex items-center gap-3">
                     <div className="w-10 h-10 bg-gradient-to-br from-orange-500 to-amber-400 rounded-xl flex items-center justify-center">
-                        <Code2 className="w-5 h-5 text-white" />
+                        <Code2 className="w-5 h-5 text-surface-950" />
                     </div>
                     <div>
-                        <h2 className="text-lg font-semibold text-white">Skills & Tech Stack</h2>
-                        <p className="text-sm text-slate-500">{skills.total_count} skills detected</p>
+                        <h2 className="text-lg font-semibold text-surface-950">Skills & Tech Stack</h2>
+                        <p className="text-sm text-surface-500">{skills.total_count} skills detected</p>
                     </div>
                 </div>
             </div>
@@ -202,7 +202,7 @@ function SkillsCard({ skills }: { skills: SkillsData }) {
                 {skills.skill_categories?.map((category) => (
                     <div key={category.name}>
                         <div className="flex items-center justify-between mb-2">
-                            <h3 className="text-sm font-semibold text-slate-300">{category.name}</h3>
+                            <h3 className="text-sm font-semibold text-surface-700">{category.name}</h3>
                             <span className={`text-xs px-2 py-0.5 rounded-full border ${getStrengthBadge(category.strength)}`}>
                                 {category.strength}
                             </span>
@@ -211,7 +211,7 @@ function SkillsCard({ skills }: { skills: SkillsData }) {
                             {category.skills.map((skill) => (
                                 <span
                                     key={skill}
-                                    className="inline-flex items-center gap-1 px-3 py-1.5 bg-white/5 border border-white/10 text-slate-300 rounded-lg text-sm font-medium"
+                                    className="inline-flex items-center gap-1 px-3 py-1.5 bg-white/5 border border-white/10 text-surface-700 rounded-lg text-sm font-medium"
                                 >
                                     <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
                                     {skill}
@@ -223,7 +223,7 @@ function SkillsCard({ skills }: { skills: SkillsData }) {
 
                 {skills.soft_skills?.length > 0 && (
                     <div>
-                        <h3 className="text-sm font-semibold text-slate-300 mb-2">Soft Skills</h3>
+                        <h3 className="text-sm font-semibold text-surface-700 mb-2">Soft Skills</h3>
                         <div className="flex flex-wrap gap-2">
                             {skills.soft_skills.map((skill) => (
                                 <span
@@ -248,19 +248,19 @@ function ExperienceCard({ experience }: { experience: ExperienceSummary }) {
     const getQualityColor = (quality: number) => {
         if (quality >= 70) return "text-emerald-400 bg-emerald-500/10 border-emerald-500/20";
         if (quality >= 50) return "text-amber-400 bg-amber-500/10 border-amber-500/20";
-        return "text-red-400 bg-red-500/10 border-red-500/20";
+        return "text-red-400 bg-red-50 border-red-500/20";
     };
 
     return (
-        <div className="glass-card rounded-2xl p-6 h-full">
+        <div className="bg-white border border-surface-300 shadow-sm rounded-2xl p-6 h-full">
             <div className="flex items-center justify-between mb-6">
                 <div className="flex items-center gap-3">
                     <div className="w-10 h-10 bg-gradient-to-br from-indigo-500 to-blue-400 rounded-xl flex items-center justify-center">
-                        <Briefcase className="w-5 h-5 text-white" />
+                        <Briefcase className="w-5 h-5 text-surface-950" />
                     </div>
                     <div>
-                        <h2 className="text-lg font-semibold text-white">Work Experience</h2>
-                        <p className="text-sm text-slate-500">
+                        <h2 className="text-lg font-semibold text-surface-950">Work Experience</h2>
+                        <p className="text-sm text-surface-500">
                             {experience.total_years > 0
                                 ? `${experience.total_years} years total`
                                 : "Experience detected"}
@@ -277,29 +277,29 @@ function ExperienceCard({ experience }: { experience: ExperienceSummary }) {
                     {experience.positions.map((position, index) => (
                         <div
                             key={index}
-                            className="p-4 bg-white/[0.03] border border-white/5 rounded-xl"
+                            className="p-4 bg-white/[0.03] border border-surface-200 rounded-xl"
                         >
                             <div className="flex items-start justify-between gap-4 mb-3">
                                 <div>
-                                    <h3 className="font-semibold text-white">
+                                    <h3 className="font-semibold text-surface-950">
                                         {position.role || "Role not detected"}
                                     </h3>
-                                    <p className="text-sm text-slate-400">
+                                    <p className="text-sm text-surface-600">
                                         {position.company || "Company not detected"}
                                     </p>
                                 </div>
                                 {position.duration && (
-                                    <span className="text-xs text-slate-400 bg-white/5 border border-white/10 px-2 py-1 rounded-full whitespace-nowrap">
+                                    <span className="text-xs text-surface-600 bg-white/5 border border-white/10 px-2 py-1 rounded-full whitespace-nowrap">
                                         {position.duration}
                                     </span>
                                 )}
                             </div>
                             <div className="flex flex-wrap gap-3 text-xs">
-                                <div className="flex items-center gap-1.5 text-slate-400">
+                                <div className="flex items-center gap-1.5 text-surface-600">
                                     <TrendingUp className="w-3.5 h-3.5" />
                                     <span>Bullet Quality: {position.bullet_quality}%</span>
                                 </div>
-                                <div className="flex items-center gap-1.5 text-slate-400">
+                                <div className="flex items-center gap-1.5 text-surface-600">
                                     <Zap className="w-3.5 h-3.5" />
                                     <span>Action Verbs: {position.action_verbs_count}</span>
                                 </div>
@@ -314,8 +314,8 @@ function ExperienceCard({ experience }: { experience: ExperienceSummary }) {
                     ))}
                 </div>
             ) : (
-                <div className="text-center py-8 text-slate-500">
-                    <Briefcase className="w-12 h-12 mx-auto mb-3 text-slate-600" />
+                <div className="text-center py-8 text-surface-500">
+                    <Briefcase className="w-12 h-12 mx-auto mb-3 text-surface-600" />
                     <p>No work experience entries detected</p>
                     <p className="text-sm">Make sure your experience section is clearly labeled</p>
                 </div>
@@ -331,19 +331,19 @@ function ProjectsCard({ projects }: { projects: Project[] }) {
     const getScoreColor = (score: number) => {
         if (score >= 70) return "text-emerald-400 bg-emerald-500/10";
         if (score >= 50) return "text-amber-400 bg-amber-500/10";
-        return "text-red-400 bg-red-500/10";
+        return "text-red-400 bg-red-50";
     };
 
     return (
-        <div className="glass-card rounded-2xl p-6 h-full">
+        <div className="bg-white border border-surface-300 shadow-sm rounded-2xl p-6 h-full">
             <div className="flex items-center justify-between mb-6">
                 <div className="flex items-center gap-3">
                     <div className="w-10 h-10 bg-gradient-to-br from-pink-500 to-rose-400 rounded-xl flex items-center justify-center">
-                        <FolderKanban className="w-5 h-5 text-white" />
+                        <FolderKanban className="w-5 h-5 text-surface-950" />
                     </div>
                     <div>
-                        <h2 className="text-lg font-semibold text-white">Projects</h2>
-                        <p className="text-sm text-slate-500">{projects.length} projects detected</p>
+                        <h2 className="text-lg font-semibold text-surface-950">Projects</h2>
+                        <p className="text-sm text-surface-500">{projects.length} projects detected</p>
                     </div>
                 </div>
             </div>
@@ -353,10 +353,10 @@ function ProjectsCard({ projects }: { projects: Project[] }) {
                     {projects.map((project, index) => (
                         <div
                             key={index}
-                            className="p-4 bg-white/[0.03] border border-white/5 rounded-xl"
+                            className="p-4 bg-white/[0.03] border border-surface-200 rounded-xl"
                         >
                             <div className="flex items-start justify-between gap-4 mb-3">
-                                <h3 className="font-semibold text-white line-clamp-2">
+                                <h3 className="font-semibold text-surface-950 line-clamp-2">
                                     {project.title}
                                 </h3>
                                 <div className={`flex items-center gap-1 px-2 py-1 rounded-lg text-xs font-semibold ${getScoreColor(project.score)}`}>
@@ -370,7 +370,7 @@ function ProjectsCard({ projects }: { projects: Project[] }) {
                                     {project.technologies.slice(0, 5).map((tech) => (
                                         <span
                                             key={tech}
-                                            className="inline-flex items-center gap-1 px-2 py-0.5 bg-neon-blue/10 text-neon-blue/80 rounded text-xs border border-neon-blue/15"
+                                            className="inline-flex items-center gap-1 px-2 py-0.5 bg-primary-50 text-primary-500/80 rounded text-xs border border-primary-500/15"
                                         >
                                             <Code className="w-3 h-3" />
                                             {tech}
@@ -380,7 +380,7 @@ function ProjectsCard({ projects }: { projects: Project[] }) {
                             )}
 
                             {project.description && (
-                                <p className="text-sm text-slate-400 line-clamp-2">
+                                <p className="text-sm text-surface-600 line-clamp-2">
                                     {project.description}
                                 </p>
                             )}
@@ -388,8 +388,8 @@ function ProjectsCard({ projects }: { projects: Project[] }) {
                     ))}
                 </div>
             ) : (
-                <div className="text-center py-8 text-slate-500">
-                    <FolderKanban className="w-12 h-12 mx-auto mb-3 text-slate-600" />
+                <div className="text-center py-8 text-surface-500">
+                    <FolderKanban className="w-12 h-12 mx-auto mb-3 text-surface-600" />
                     <p>No projects detected</p>
                     <p className="text-sm">Add a Projects section to showcase your work</p>
                 </div>
@@ -407,7 +407,7 @@ function IssuesCard({ issues }: { issues: ATSIssue[] }) {
             case "High":
                 return {
                     icon: AlertTriangle,
-                    bg: "bg-red-500/10",
+                    bg: "bg-red-50",
                     border: "border-red-500/20",
                     iconColor: "text-red-400",
                     badge: "bg-red-500/15 text-red-400",
@@ -437,15 +437,15 @@ function IssuesCard({ issues }: { issues: ATSIssue[] }) {
     const sortedIssues = [...highIssues, ...mediumIssues, ...lowIssues];
 
     return (
-        <div className="glass-card rounded-2xl p-6 h-full">
+        <div className="bg-white border border-surface-300 shadow-sm rounded-2xl p-6 h-full">
             <div className="flex items-center justify-between mb-6">
                 <div className="flex items-center gap-3">
                     <div className="w-10 h-10 bg-gradient-to-br from-red-500 to-rose-400 rounded-xl flex items-center justify-center">
-                        <AlertTriangle className="w-5 h-5 text-white" />
+                        <AlertTriangle className="w-5 h-5 text-surface-950" />
                     </div>
                     <div>
-                        <h2 className="text-lg font-semibold text-white">ATS Issues Detected</h2>
-                        <p className="text-sm text-slate-500">{issues.length} issues found</p>
+                        <h2 className="text-lg font-semibold text-surface-950">ATS Issues Detected</h2>
+                        <p className="text-sm text-surface-500">{issues.length} issues found</p>
                     </div>
                 </div>
                 <div className="flex gap-2">
@@ -476,14 +476,14 @@ function IssuesCard({ issues }: { issues: ATSIssue[] }) {
                                     <IconComponent className={`w-5 h-5 flex-shrink-0 mt-0.5 ${styles.iconColor}`} />
                                     <div className="flex-1 min-w-0">
                                         <div className="flex items-center gap-2 mb-1 flex-wrap">
-                                            <span className="font-semibold text-white text-sm">
+                                            <span className="font-semibold text-surface-950 text-sm">
                                                 {issue.description}
                                             </span>
                                             <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${styles.badge}`}>
                                                 {issue.severity}
                                             </span>
                                         </div>
-                                        <p className="text-sm text-slate-400">{issue.suggestion}</p>
+                                        <p className="text-sm text-surface-600">{issue.suggestion}</p>
                                     </div>
                                 </div>
                             </div>
@@ -495,8 +495,8 @@ function IssuesCard({ issues }: { issues: ATSIssue[] }) {
                     <div className="w-16 h-16 mx-auto mb-4 bg-emerald-500/10 border border-emerald-500/20 rounded-full flex items-center justify-center">
                         <CheckCircle2 className="w-8 h-8 text-emerald-400" />
                     </div>
-                    <p className="text-slate-300 font-medium">No major issues detected!</p>
-                    <p className="text-sm text-slate-500">Your resume looks ATS-friendly</p>
+                    <p className="text-surface-700 font-medium">No major issues detected!</p>
+                    <p className="text-sm text-surface-500">Your resume looks ATS-friendly</p>
                 </div>
             )}
         </div>
@@ -510,7 +510,7 @@ function SuggestionsCard({ suggestions }: { suggestions: Suggestion[] }) {
     const getPriorityStyles = (priority: string) => {
         switch (priority) {
             case "High":
-                return "border-l-neon-blue bg-neon-blue/5";
+                return "border-l-primary-500 bg-primary-500/5";
             case "Medium":
                 return "border-l-purple-500 bg-purple-500/5";
             default:
@@ -519,15 +519,15 @@ function SuggestionsCard({ suggestions }: { suggestions: Suggestion[] }) {
     };
 
     return (
-        <div className="glass-card rounded-2xl p-6 h-full">
+        <div className="bg-white border border-surface-300 shadow-sm rounded-2xl p-6 h-full">
             <div className="flex items-center justify-between mb-6">
                 <div className="flex items-center gap-3">
                     <div className="w-10 h-10 bg-gradient-to-br from-yellow-500 to-amber-400 rounded-xl flex items-center justify-center">
-                        <Lightbulb className="w-5 h-5 text-white" />
+                        <Lightbulb className="w-5 h-5 text-surface-950" />
                     </div>
                     <div>
-                        <h2 className="text-lg font-semibold text-white">AI Improvement Suggestions</h2>
-                        <p className="text-sm text-slate-500">{suggestions.length} suggestions</p>
+                        <h2 className="text-lg font-semibold text-surface-950">AI Improvement Suggestions</h2>
+                        <p className="text-sm text-surface-500">{suggestions.length} suggestions</p>
                     </div>
                 </div>
             </div>
@@ -541,18 +541,18 @@ function SuggestionsCard({ suggestions }: { suggestions: Suggestion[] }) {
                         >
                             <div className="flex items-start gap-3">
                                 <div className="w-8 h-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center">
-                                    <Sparkles className="w-4 h-4 text-neon-blue" />
+                                    <Sparkles className="w-4 h-4 text-primary-500" />
                                 </div>
                                 <div className="flex-1 min-w-0">
                                     <div className="flex items-center gap-2 mb-1 flex-wrap">
-                                        <span className="font-semibold text-white text-sm">
+                                        <span className="font-semibold text-surface-950 text-sm">
                                             {suggestion.title}
                                         </span>
-                                        <span className="text-xs px-2 py-0.5 bg-white/5 border border-white/10 rounded-full text-slate-400 font-medium">
+                                        <span className="text-xs px-2 py-0.5 bg-white/5 border border-white/10 rounded-full text-surface-600 font-medium">
                                             {suggestion.category}
                                         </span>
                                     </div>
-                                    <p className="text-sm text-slate-400 mb-3">
+                                    <p className="text-sm text-surface-600 mb-3">
                                         {suggestion.description}
                                     </p>
 
@@ -561,9 +561,9 @@ function SuggestionsCard({ suggestions }: { suggestions: Suggestion[] }) {
                                             {suggestion.examples.slice(0, 3).map((example, i) => (
                                                 <div
                                                     key={i}
-                                                    className="flex items-start gap-2 text-sm text-slate-300 bg-white/[0.03] border border-white/5 rounded-lg px-3 py-2"
+                                                    className="flex items-start gap-2 text-sm text-surface-700 bg-white/[0.03] border border-surface-200 rounded-lg px-3 py-2"
                                                 >
-                                                    <ArrowRight className="w-4 h-4 text-neon-blue flex-shrink-0 mt-0.5" />
+                                                    <ArrowRight className="w-4 h-4 text-primary-500 flex-shrink-0 mt-0.5" />
                                                     <span>{example}</span>
                                                 </div>
                                             ))}
@@ -579,8 +579,8 @@ function SuggestionsCard({ suggestions }: { suggestions: Suggestion[] }) {
                     <div className="w-16 h-16 mx-auto mb-4 bg-emerald-500/10 border border-emerald-500/20 rounded-full flex items-center justify-center">
                         <Lightbulb className="w-8 h-8 text-emerald-400" />
                     </div>
-                    <p className="text-slate-300 font-medium">Your resume is well-optimized!</p>
-                    <p className="text-sm text-slate-500">No major improvements needed</p>
+                    <p className="text-surface-700 font-medium">Your resume is well-optimized!</p>
+                    <p className="text-sm text-surface-500">No major improvements needed</p>
                 </div>
             )}
         </div>
@@ -592,14 +592,14 @@ function SuggestionsCard({ suggestions }: { suggestions: Suggestion[] }) {
    ═══════════════════════════════════════════════════ */
 function KeywordsCard({ keywords }: { keywords: KeywordsAnalysis }) {
     return (
-        <div className="glass-card rounded-2xl p-6 h-full">
+        <div className="bg-white border border-surface-300 shadow-sm rounded-2xl p-6 h-full">
             <div className="flex items-center gap-3 mb-6">
                 <div className="w-10 h-10 bg-gradient-to-br from-cyan-500 to-blue-400 rounded-xl flex items-center justify-center">
-                    <Search className="w-5 h-5 text-white" />
+                    <Search className="w-5 h-5 text-surface-950" />
                 </div>
                 <div>
-                    <h2 className="text-lg font-semibold text-white">Keywords Analysis</h2>
-                    <p className="text-sm text-slate-500">Important keywords for ATS</p>
+                    <h2 className="text-lg font-semibold text-surface-950">Keywords Analysis</h2>
+                    <p className="text-sm text-surface-500">Important keywords for ATS</p>
                 </div>
             </div>
 
@@ -608,7 +608,7 @@ function KeywordsCard({ keywords }: { keywords: KeywordsAnalysis }) {
                 <div>
                     <div className="flex items-center gap-2 mb-3">
                         <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-                        <h3 className="text-sm font-semibold text-slate-300">
+                        <h3 className="text-sm font-semibold text-surface-700">
                             Found Keywords ({keywords.found?.length || 0})
                         </h3>
                     </div>
@@ -623,7 +623,7 @@ function KeywordsCard({ keywords }: { keywords: KeywordsAnalysis }) {
                                 </span>
                             ))
                         ) : (
-                            <span className="text-sm text-slate-500">No matching keywords found</span>
+                            <span className="text-sm text-surface-500">No matching keywords found</span>
                         )}
                     </div>
                 </div>
@@ -632,7 +632,7 @@ function KeywordsCard({ keywords }: { keywords: KeywordsAnalysis }) {
                 <div>
                     <div className="flex items-center gap-2 mb-3">
                         <XCircle className="w-4 h-4 text-red-400" />
-                        <h3 className="text-sm font-semibold text-slate-300">
+                        <h3 className="text-sm font-semibold text-surface-700">
                             Missing Keywords ({keywords.missing?.length || 0})
                         </h3>
                     </div>
@@ -641,13 +641,13 @@ function KeywordsCard({ keywords }: { keywords: KeywordsAnalysis }) {
                             keywords.missing.map((kw) => (
                                 <span
                                     key={kw}
-                                    className="px-3 py-1.5 bg-red-500/10 border border-red-500/20 text-red-300 rounded-lg text-sm font-medium"
+                                    className="px-3 py-1.5 bg-red-50 border border-red-500/20 text-red-300 rounded-lg text-sm font-medium"
                                 >
                                     {kw}
                                 </span>
                             ))
                         ) : (
-                            <span className="text-sm text-slate-500">All important keywords present!</span>
+                            <span className="text-sm text-surface-500">All important keywords present!</span>
                         )}
                     </div>
                 </div>
@@ -656,8 +656,8 @@ function KeywordsCard({ keywords }: { keywords: KeywordsAnalysis }) {
                 {keywords.recommended?.length > 0 && (
                     <div>
                         <div className="flex items-center gap-2 mb-3">
-                            <Sparkles className="w-4 h-4 text-neon-blue" />
-                            <h3 className="text-sm font-semibold text-slate-300">
+                            <Sparkles className="w-4 h-4 text-primary-500" />
+                            <h3 className="text-sm font-semibold text-surface-700">
                                 Recommended to Add
                             </h3>
                         </div>
@@ -665,7 +665,7 @@ function KeywordsCard({ keywords }: { keywords: KeywordsAnalysis }) {
                             {keywords.recommended.map((kw) => (
                                 <span
                                     key={kw}
-                                    className="px-3 py-1.5 bg-neon-blue/10 border border-dashed border-neon-blue/30 text-neon-blue/80 rounded-lg text-sm font-medium"
+                                    className="px-3 py-1.5 bg-primary-50 border border-dashed border-primary-500/30 text-primary-500/80 rounded-lg text-sm font-medium"
                                 >
                                     + {kw}
                                 </span>
@@ -747,7 +747,7 @@ export default function ATSResultsPage() {
     if (loading) {
         return (
             <div className="min-h-screen flex items-center justify-center">
-                <Loader2 className="w-8 h-8 animate-spin text-neon-blue" />
+                <Loader2 className="w-8 h-8 animate-spin text-primary-500" />
             </div>
         );
     }
@@ -766,15 +766,15 @@ export default function ATSResultsPage() {
                     <div className="flex items-center gap-4">
                         <Link
                             href="/#ats-analyzer"
-                            className="p-2 hover:bg-white/5 rounded-xl transition-colors border border-white/5"
+                            className="p-2 hover:bg-white/5 rounded-xl transition-colors border border-surface-200"
                         >
-                            <ArrowLeft className="w-5 h-5 text-slate-400" />
+                            <ArrowLeft className="w-5 h-5 text-surface-600" />
                         </Link>
                         <div>
-                            <h1 className="text-2xl sm:text-3xl font-bold text-white">
+                            <h1 className="text-2xl sm:text-3xl font-bold text-surface-950">
                                 Resume Analysis Results
                             </h1>
-                            <p className="text-slate-400">
+                            <p className="text-surface-600">
                                 {results.candidate.name || "Your Resume"} • Analyzed just now
                             </p>
                         </div>
@@ -782,7 +782,7 @@ export default function ATSResultsPage() {
                     <button
                         onClick={handleDownloadReport}
                         disabled={isDownloading}
-                        className="inline-flex items-center gap-2 px-6 py-3 glass rounded-full text-white font-medium hover:bg-white/5 transition-all border border-white/10 disabled:opacity-50"
+                        className="inline-flex items-center gap-2 px-6 py-3 bg-white border border-surface-300 rounded-full text-surface-950 font-medium hover:bg-white/5 transition-all border border-white/10 disabled:opacity-50"
                     >
                         {isDownloading ? (
                             <Loader2 className="w-4 h-4 animate-spin" />
@@ -801,10 +801,10 @@ export default function ATSResultsPage() {
                     className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8"
                 >
                     {/* Score Card */}
-                    <div className="glass-card rounded-2xl p-8 glow-border">
+                    <div className="bg-white border border-surface-300 shadow-sm rounded-2xl p-8 ">
                         <div className="flex items-center justify-between mb-6">
                             <div>
-                                <h2 className="text-lg font-semibold text-white mb-2">
+                                <h2 className="text-lg font-semibold text-surface-950 mb-2">
                                     ATS Score
                                 </h2>
                                 <span
@@ -817,7 +817,7 @@ export default function ATSResultsPage() {
                             </div>
                             <ScoreCircle score={results.ats_score} size={120} />
                         </div>
-                        <p className="text-sm text-slate-400">
+                        <p className="text-sm text-surface-600">
                             {results.ats_score >= 80
                                 ? "Excellent! Your resume is well-optimized for ATS systems."
                                 : results.ats_score >= 60
@@ -827,49 +827,49 @@ export default function ATSResultsPage() {
                     </div>
 
                     {/* Candidate Profile */}
-                    <div className="glass-card rounded-2xl p-6">
+                    <div className="bg-white border border-surface-300 shadow-sm rounded-2xl p-6">
                         <div className="flex items-center gap-3 mb-4">
-                            <div className="w-10 h-10 bg-gradient-to-br from-neon-blue to-blue-500 rounded-xl flex items-center justify-center">
-                                <User className="w-5 h-5 text-white" />
+                            <div className="w-10 h-10 bg-gradient-to-br from-primary-500 to-blue-500 rounded-xl flex items-center justify-center">
+                                <User className="w-5 h-5 text-surface-950" />
                             </div>
-                            <h2 className="text-lg font-semibold text-white">
+                            <h2 className="text-lg font-semibold text-surface-950">
                                 Candidate Profile
                             </h2>
                         </div>
                         <div className="space-y-3">
                             {results.candidate.name && (
-                                <div className="flex items-center gap-3 text-slate-300">
-                                    <User className="w-4 h-4 text-slate-500" />
+                                <div className="flex items-center gap-3 text-surface-700">
+                                    <User className="w-4 h-4 text-surface-500" />
                                     <span className="font-medium">{results.candidate.name}</span>
                                 </div>
                             )}
                             {results.candidate.email && (
-                                <div className="flex items-center gap-3 text-slate-300">
-                                    <Mail className="w-4 h-4 text-slate-500" />
+                                <div className="flex items-center gap-3 text-surface-700">
+                                    <Mail className="w-4 h-4 text-surface-500" />
                                     <span>{results.candidate.email}</span>
                                 </div>
                             )}
                             {results.candidate.phone && (
-                                <div className="flex items-center gap-3 text-slate-300">
-                                    <Phone className="w-4 h-4 text-slate-500" />
+                                <div className="flex items-center gap-3 text-surface-700">
+                                    <Phone className="w-4 h-4 text-surface-500" />
                                     <span>{results.candidate.phone}</span>
                                 </div>
                             )}
                             {results.candidate.location && (
-                                <div className="flex items-center gap-3 text-slate-300">
-                                    <MapPin className="w-4 h-4 text-slate-500" />
+                                <div className="flex items-center gap-3 text-surface-700">
+                                    <MapPin className="w-4 h-4 text-surface-500" />
                                     <span>{results.candidate.location}</span>
                                 </div>
                             )}
                             {results.candidate.linkedin && (
-                                <div className="flex items-center gap-3 text-slate-300">
-                                    <Linkedin className="w-4 h-4 text-slate-500" />
+                                <div className="flex items-center gap-3 text-surface-700">
+                                    <Linkedin className="w-4 h-4 text-surface-500" />
                                     <span className="text-sm truncate">{results.candidate.linkedin}</span>
                                 </div>
                             )}
                             {results.candidate.github && (
-                                <div className="flex items-center gap-3 text-slate-300">
-                                    <Github className="w-4 h-4 text-slate-500" />
+                                <div className="flex items-center gap-3 text-surface-700">
+                                    <Github className="w-4 h-4 text-surface-500" />
                                     <span className="text-sm truncate">{results.candidate.github}</span>
                                 </div>
                             )}
@@ -877,17 +877,17 @@ export default function ATSResultsPage() {
                     </div>
 
                     {/* Domain Detection */}
-                    <div className="glass-card rounded-2xl p-6">
+                    <div className="bg-white border border-surface-300 shadow-sm rounded-2xl p-6">
                         <div className="flex items-center gap-3 mb-4">
                             <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-violet-400 rounded-xl flex items-center justify-center">
-                                <Compass className="w-5 h-5 text-white" />
+                                <Compass className="w-5 h-5 text-surface-950" />
                             </div>
-                            <h2 className="text-lg font-semibold text-white">
+                            <h2 className="text-lg font-semibold text-surface-950">
                                 Detected Domain
                             </h2>
                         </div>
                         <div className="mb-4">
-                            <div className="text-2xl font-bold text-white mb-2">
+                            <div className="text-2xl font-bold text-surface-950 mb-2">
                                 {results.domain.primary}
                             </div>
                             <div className="flex items-center gap-2">
@@ -897,14 +897,14 @@ export default function ATSResultsPage() {
                                         style={{ width: `${results.domain.confidence * 100}%` }}
                                     />
                                 </div>
-                                <span className="text-sm text-slate-400">
+                                <span className="text-sm text-surface-600">
                                     {Math.round(results.domain.confidence * 100)}%
                                 </span>
                             </div>
                         </div>
                         {results.domain.secondary && (
-                            <div className="text-sm text-slate-400 mb-3">
-                                <span className="font-medium text-slate-300">Secondary:</span>{" "}
+                            <div className="text-sm text-surface-600 mb-3">
+                                <span className="font-medium text-surface-700">Secondary:</span>{" "}
                                 {results.domain.secondary}
                             </div>
                         )}
@@ -997,14 +997,14 @@ export default function ATSResultsPage() {
                     <div className="inline-flex flex-col sm:flex-row items-center gap-4">
                         <Link
                             href="/#ats-analyzer"
-                            className="glow-btn inline-flex items-center justify-center px-8 py-4 text-base font-bold text-white rounded-full"
+                            className="glow-btn inline-flex items-center justify-center px-8 py-4 text-base font-bold text-surface-950 rounded-full"
                         >
                             Analyze Another Resume
                         </Link>
                         <button
                             onClick={handleDownloadReport}
                             disabled={isDownloading}
-                            className="inline-flex items-center gap-2 px-8 py-4 glass rounded-full text-white font-semibold hover:bg-white/5 transition-all border border-white/10 disabled:opacity-50"
+                            className="inline-flex items-center gap-2 px-8 py-4 bg-white border border-surface-300 rounded-full text-surface-950 font-semibold hover:bg-white/5 transition-all border border-white/10 disabled:opacity-50"
                         >
                             {isDownloading ? (
                                 <Loader2 className="w-4 h-4 animate-spin" />

@@ -4,7 +4,7 @@ import dbConnect from '@/lib/db';
 import Payment from '@/models/Payment';
 import CouponCode from '@/models/CouponCode';
 import { getAuthUser } from '@/lib/auth';
-import { PLANS, MAX_COUPON_DISCOUNT_PAISE } from '@/lib/plans';
+import { PLANS, MAX_COUPON_DISCOUNT_CENTS } from '@/lib/plans';
 import type { PlanType } from '@/lib/plans';
 
 const razorpay = new Razorpay({
@@ -30,9 +30,9 @@ export async function POST(req: NextRequest) {
         }
 
         const plan = PLANS[planId as PlanType];
-        let amountPaise = plan.amountPaise;
+        let amountCents = plan.amountCents;
 
-        let couponDiscountPaise = 0;
+        let couponDiscountCents = 0;
 
         // Validate and apply coupon if provided
         if (couponCode) {
@@ -62,24 +62,24 @@ export async function POST(req: NextRequest) {
                 return NextResponse.json({ error: 'You have already used this coupon' }, { status: 400 });
             }
 
-            // Calculate discount — hard cap at MAX_COUPON_DISCOUNT_PAISE (₹400 ≈ $5)
-            couponDiscountPaise = Math.min(
-                coupon.discountAmountCents * 100, // Convert cents concept to paise
-                MAX_COUPON_DISCOUNT_PAISE
+            // Calculate discount — hard cap at MAX_COUPON_DISCOUNT_CENTS ($5.00)
+            couponDiscountCents = Math.min(
+                coupon.discountAmountCents,
+                MAX_COUPON_DISCOUNT_CENTS
             );
 
-            // Ensure discount doesn't exceed order amount (min ₹1 order)
-            if (amountPaise - couponDiscountPaise < 100) {
-                couponDiscountPaise = amountPaise - 100; // Minimum ₹1
+            // Ensure discount doesn't exceed order amount (min $1.00 order)
+            if (amountCents - couponDiscountCents < 100) {
+                couponDiscountCents = amountCents - 100; // Minimum $1.00
             }
 
-            amountPaise -= couponDiscountPaise;
+            amountCents -= couponDiscountCents;
         }
 
         // Create Razorpay order — amount is ALWAYS computed server-side
         const order = await razorpay.orders.create({
-            amount: amountPaise,
-            currency: 'INR',
+            amount: amountCents,
+            currency: 'USD',
             receipt: `rcpt_${user._id.toString().slice(-8)}_${Date.now().toString(36)}`,
             notes: {
                 userId: user._id.toString(),
@@ -95,20 +95,20 @@ export async function POST(req: NextRequest) {
             userEmail: user.email,
             razorpayOrderId: order.id,
             plan: planId,
-            amountCents: amountPaise, // Store in paise
-            currency: 'INR',
+            amountCents: amountCents,
+            currency: 'USD',
             couponCode: couponCode?.toUpperCase() || undefined,
-            couponDiscountCents: couponDiscountPaise,
+            couponDiscountCents: couponDiscountCents,
             status: 'created',
         });
 
         return NextResponse.json({
             orderId: order.id,
-            amount: amountPaise,
-            currency: 'INR',
+            amount: amountCents,
+            currency: 'USD',
             planName: plan.name,
-            originalAmount: plan.amountPaise,
-            discountApplied: couponDiscountPaise,
+            originalAmount: plan.amountCents,
+            discountApplied: couponDiscountCents,
             key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
         });
     } catch (error: unknown) {

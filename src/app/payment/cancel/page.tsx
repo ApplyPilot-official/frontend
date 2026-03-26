@@ -10,7 +10,7 @@ export default function PaymentCancelPage() {
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.5 }}
-                className="glass-strong rounded-3xl p-10 text-center max-w-md w-full"
+                className="bg-white border border-surface-300 rounded-3xl p-10 text-center max-w-md w-full"
             >
                 <div className="w-16 h-16 mx-auto rounded-full bg-yellow-100 flex items-center justify-center mb-6">
                     <svg className="w-8 h-8 text-yellow-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
@@ -20,19 +20,19 @@ export default function PaymentCancelPage() {
                 <h1 className="text-2xl font-bold text-slate-900 mb-2">
                     Payment Cancelled
                 </h1>
-                <p className="text-slate-500 mb-6">
+                <p className="text-surface-500 mb-6">
                     No worries! Your payment was not processed. You can try again anytime.
                 </p>
                 <div className="flex flex-col sm:flex-row gap-3 justify-center">
                     <Link
                         href="/pricing"
-                        className="px-6 py-3 text-sm font-semibold text-white bg-gradient-to-r from-primary-600 to-primary-500 rounded-xl hover:shadow-lg transition-all"
+                        className="px-6 py-3 text-sm font-semibold text-surface-950 bg-gradient-to-r from-primary-600 to-primary-500 rounded-xl hover:shadow-lg transition-all"
                     >
                         Try Again
                     </Link>
                     <Link
                         href="/"
-                        className="px-6 py-3 text-sm font-semibold text-slate-600 glass rounded-xl hover:shadow-lg transition-all"
+                        className="px-6 py-3 text-sm font-semibold text-surface-600 bg-white border border-surface-300 rounded-xl hover:shadow-lg transition-all"
                     >
                         Go Home
                     </Link>

@@ -43,7 +43,7 @@ export default function AboutPage() {
                         Reimagining the{" "}
                         <span className="gradient-text">Job Search</span>
                     </h1>
-                    <p className="text-lg text-slate-600 max-w-3xl mx-auto leading-relaxed">
+                    <p className="text-lg text-surface-600 max-w-3xl mx-auto leading-relaxed">
                         ApplyPilot was born from a simple frustration: job searching is broken.
                         The average job seeker spends 11 hours per week on applications, yet
                         only 2% ever hear back. We&apos;re here to change that.
@@ -52,7 +52,7 @@ export default function AboutPage() {
 
                 {/* Logo section */}
                 <AnimatedSection className="flex justify-center mb-16">
-                    <div className="relative w-32 h-32 glass-strong rounded-3xl p-4 shadow-lg">
+                    <div className="relative w-32 h-32 bg-white border border-surface-300 rounded-3xl p-4 shadow-lg">
                         <Image
                             src="/logo.png"
                             alt="ApplyPilot Logo"
@@ -64,11 +64,11 @@ export default function AboutPage() {
 
                 {/* Story */}
                 <AnimatedSection className="max-w-3xl mx-auto mb-20">
-                    <div className="glass-strong rounded-2xl p-8 sm:p-10">
+                    <div className="bg-white border border-surface-300 rounded-2xl p-8 sm:p-10">
                         <h2 className="text-2xl font-bold text-slate-900 mb-4">
                             Our Story
                         </h2>
-                        <div className="space-y-4 text-slate-600 leading-relaxed">
+                        <div className="space-y-4 text-surface-600 leading-relaxed">
                             <p>
                                 We started ApplyPilot because we experienced the pain of modern
                                 job searching firsthand. Manually tailoring resumes, writing cover
@@ -101,12 +101,12 @@ export default function AboutPage() {
                 <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
                     {values.map((value, i) => (
                         <AnimatedSection key={i} delay={i * 0.1}>
-                            <div className="glass-strong rounded-2xl p-6 text-center card-hover h-full">
+                            <div className="bg-white border border-surface-300 rounded-2xl p-6 text-center card-hover h-full">
                                 <div className="text-3xl mb-4">{value.icon}</div>
                                 <h3 className="text-lg font-semibold text-slate-900 mb-2">
                                     {value.title}
                                 </h3>
-                                <p className="text-sm text-slate-600 leading-relaxed">
+                                <p className="text-sm text-surface-600 leading-relaxed">
                                     {value.description}
                                 </p>
                             </div>

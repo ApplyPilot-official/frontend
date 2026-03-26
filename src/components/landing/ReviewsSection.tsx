@@ -41,18 +41,16 @@ const reviews = [
 
 export default function ReviewsSection() {
     return (
-        <section id="reviews" className="py-24 sm:py-32 relative">
-            <div className="absolute top-0 left-0 w-96 h-96 bg-neon-violet rounded-full filter blur-[150px] opacity-[0.05]" />
-
+        <section id="reviews" className="py-24 sm:py-32 relative bg-surface-100">
             <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <AnimatedSection className="text-center mb-16">
-                    <span className="inline-block px-4 py-1.5 rounded-full glass text-yellow-400 text-sm font-medium mb-4">
+                    <span className="inline-block px-4 py-1.5 rounded-full bg-accent-yellow/10 border border-accent-yellow/30 text-amber-700 text-sm font-medium mb-4">
                         ⭐ Real Stories
                     </span>
-                    <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-4">
+                    <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-surface-950 mb-4">
                         Loved by <span className="gradient-text">Job Seekers</span>
                     </h2>
-                    <p className="text-lg text-slate-400 max-w-2xl mx-auto">
+                    <p className="text-lg text-surface-600 max-w-2xl mx-auto">
                         Real results from real students who transformed their placements.
                     </p>
                 </AnimatedSection>
@@ -62,7 +60,7 @@ export default function ReviewsSection() {
                         <AnimatedSection key={i} delay={i * 0.1}>
                             <motion.div
                                 whileHover={{ y: -6 }}
-                                className="glass-card rounded-2xl overflow-hidden card-hover h-full flex flex-col"
+                                className="bg-white rounded-2xl overflow-hidden card-hover h-full flex flex-col border border-surface-300 shadow-sm"
                             >
                                 {/* Large photo at the top */}
                                 <div className="relative w-full h-52 overflow-hidden">
@@ -73,11 +71,11 @@ export default function ReviewsSection() {
                                         className="object-cover"
                                     />
                                     {/* Gradient overlay at bottom of image */}
-                                    <div className="absolute inset-0 bg-gradient-to-t from-dark-700 via-transparent to-transparent" />
+                                    <div className="absolute inset-0 bg-gradient-to-t from-white via-transparent to-transparent" />
 
                                     {/* Company badge overlaid on image */}
                                     <div className="absolute bottom-3 left-4">
-                                        <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full glass text-[11px] text-neon-blue font-semibold">
+                                        <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-white/90 backdrop-blur-sm border border-surface-300 text-[11px] text-primary-700 font-semibold shadow-sm">
                                             🏢 Hired at {review.company}
                                         </span>
                                     </div>
@@ -88,21 +86,21 @@ export default function ReviewsSection() {
                                     {/* Stars */}
                                     <div className="flex items-center gap-0.5 mb-3">
                                         {Array.from({ length: review.rating }).map((_, j) => (
-                                            <svg key={j} className="w-4 h-4 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
+                                            <svg key={j} className="w-4 h-4 text-accent-yellow" fill="currentColor" viewBox="0 0 20 20">
                                                 <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
                                             </svg>
                                         ))}
                                     </div>
 
                                     {/* Quote */}
-                                    <p className="text-sm text-slate-300 leading-relaxed mb-4 flex-1">
+                                    <p className="text-sm text-surface-700 leading-relaxed mb-4 flex-1">
                                         &ldquo;{review.text}&rdquo;
                                     </p>
 
                                     {/* Name & role */}
-                                    <div className="pt-3 border-t border-white/5">
-                                        <p className="text-sm font-semibold text-white">{review.name}</p>
-                                        <p className="text-[11px] text-slate-500">{review.role}</p>
+                                    <div className="pt-3 border-t border-surface-200">
+                                        <p className="text-sm font-semibold text-surface-900">{review.name}</p>
+                                        <p className="text-[11px] text-surface-500">{review.role}</p>
                                     </div>
                                 </div>
                             </motion.div>

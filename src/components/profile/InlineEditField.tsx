@@ -39,12 +39,12 @@ export default function InlineEditField({ field, value, fieldPath, isCredential,
         setIsEditing(false);
     };
 
-    const inputClass = "w-full px-3 py-2 bg-dark-600 border border-dark-50/30 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/50";
+    const inputClass = "w-full px-3 py-2 bg-surface-100 border border-surface-300 rounded-lg text-surface-950 text-sm focus:outline-none focus:ring-2 focus:ring-primary-300";
 
     // Format display value
     const formatDisplay = () => {
         const v = displayValue;
-        if (v === null || v === undefined || v === "") return <span className="text-slate-600 italic">Not provided</span>;
+        if (v === null || v === undefined || v === "") return <span className="text-surface-600 italic">Not provided</span>;
         if (field.type === "boolean") return v ? "Yes" : "No";
         if (field.type === "tags" && Array.isArray(v)) {
             return (
@@ -77,7 +77,7 @@ export default function InlineEditField({ field, value, fieldPath, isCredential,
                 <div className="flex gap-2">
                     {[{ l: "Yes", v: true }, { l: "No", v: false }].map(({ l, v }) => (
                         <button key={l} type="button" onClick={() => setEditValue(v)}
-                            className={`px-4 py-2 rounded-lg text-xs font-medium ${editValue === v ? "bg-primary-500/20 text-primary-400 border border-primary-500/40" : "bg-dark-600 text-slate-400 border border-dark-50/30"}`}>
+                            className={`px-4 py-2 rounded-lg text-xs font-medium ${editValue === v ? "bg-primary-500/20 text-primary-400 border border-primary-500/40" : "bg-surface-100 text-surface-600 border border-surface-300"}`}>
                             {l}
                         </button>
                     ))}
@@ -96,7 +96,7 @@ export default function InlineEditField({ field, value, fieldPath, isCredential,
                             onClick={() => setEditValue(selected.includes(opt) ? selected.filter((s: string) => s !== opt) : [...selected, opt])}
                             className={`px-3 py-1.5 rounded-full text-xs font-medium ${selected.includes(opt)
                                 ? "bg-primary-500/20 text-primary-400 border border-primary-500/40"
-                                : "bg-dark-600 text-slate-400 border border-dark-50/30"}`}>
+                                : "bg-surface-100 text-surface-600 border border-surface-300"}`}>
                             {opt}
                         </button>
                     ))}
@@ -108,9 +108,9 @@ export default function InlineEditField({ field, value, fieldPath, isCredential,
     };
 
     return (
-        <div className="flex items-start gap-3 py-2.5 border-b border-dark-50/10 last:border-0">
+        <div className="flex items-start gap-3 py-2.5 border-b border-surface-200 last:border-0">
             <div className="flex-1 min-w-0">
-                <p className="text-xs text-slate-500 mb-0.5">{field.label}</p>
+                <p className="text-xs text-surface-500 mb-0.5">{field.label}</p>
                 {isEditing ? (
                     <div className="space-y-2 mt-1">
                         {renderEditInput()}
@@ -118,26 +118,26 @@ export default function InlineEditField({ field, value, fieldPath, isCredential,
                             <button
                                 onClick={handleSave}
                                 disabled={isSaving}
-                                className="px-3 py-1 text-xs font-medium text-white bg-primary-500/20 border border-primary-500/40 rounded-lg hover:bg-primary-500/30 transition-all disabled:opacity-50"
+                                className="px-3 py-1 text-xs font-medium text-surface-950 bg-primary-500/20 border border-primary-500/40 rounded-lg hover:bg-primary-500/30 transition-all disabled:opacity-50"
                             >
                                 {isSaving ? "Saving..." : "Save"}
                             </button>
                             <button
                                 onClick={handleCancel}
-                                className="px-3 py-1 text-xs font-medium text-slate-400 bg-dark-600 border border-dark-50/30 rounded-lg hover:bg-dark-300 transition-all"
+                                className="px-3 py-1 text-xs font-medium text-surface-600 bg-surface-100 border border-surface-300 rounded-lg hover:bg-surface-100 transition-all"
                             >
                                 Cancel
                             </button>
                         </div>
                     </div>
                 ) : (
-                    <div className="text-sm text-white">{formatDisplay()}</div>
+                    <div className="text-sm text-surface-950">{formatDisplay()}</div>
                 )}
             </div>
             {!isEditing && (
                 <button
                     onClick={() => setIsEditing(true)}
-                    className="shrink-0 px-2 py-1 text-[10px] font-medium text-slate-500 hover:text-primary-400 bg-dark-600 hover:bg-primary-500/10 rounded-md border border-dark-50/20 hover:border-primary-500/30 transition-all"
+                    className="shrink-0 px-2 py-1 text-[10px] font-medium text-surface-500 hover:text-primary-400 bg-surface-100 hover:bg-primary-500/10 rounded-md border border-surface-300 hover:border-primary-500/30 transition-all"
                 >
                     Edit
                 </button>

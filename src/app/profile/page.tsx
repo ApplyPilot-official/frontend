@@ -62,7 +62,7 @@ export default function ProfilePage() {
 
     if (sessionStatus === "loading" || isLoading) {
         return (
-            <div className="min-h-screen flex items-center justify-center bg-dark-700">
+            <div className="min-h-screen flex items-center justify-center bg-surface-100">
                 <div className="w-8 h-8 border-2 border-primary-500 border-t-transparent rounded-full animate-spin" />
             </div>
         );
@@ -93,12 +93,12 @@ export default function ProfilePage() {
         return (
             <div className="space-y-3">
                 {entries.length === 0 ? (
-                    <p className="text-sm text-slate-500 italic py-2">No entries yet</p>
+                    <p className="text-sm text-surface-500 italic py-2">No entries yet</p>
                 ) : (
                     entries.map((entry, idx) => (
-                        <div key={idx} className="bg-dark-600/50 rounded-xl p-4 border border-dark-50/10">
+                        <div key={idx} className="bg-surface-100/50 rounded-xl p-4 border border-surface-200">
                             <div className="flex items-center justify-between mb-2">
-                                <span className="text-xs text-slate-500 font-medium">
+                                <span className="text-xs text-surface-500 font-medium">
                                     Entry {idx + 1}
                                 </span>
                             </div>
@@ -132,7 +132,7 @@ export default function ProfilePage() {
                             fetchProfile();
                         } catch { /* ignore */ }
                     }}
-                    className="w-full py-2 text-xs font-medium text-slate-400 bg-dark-600 rounded-xl border border-dashed border-dark-50/30 hover:border-primary-500/30 hover:text-primary-400 transition-all"
+                    className="w-full py-2 text-xs font-medium text-surface-600 bg-surface-100 rounded-xl border border-dashed border-surface-300 hover:border-primary-500/30 hover:text-primary-400 transition-all"
                 >
                     + Add New {section.sectionName.replace(/s$/, "")}
                 </button>
@@ -149,12 +149,12 @@ export default function ProfilePage() {
             if (!hasAnyCredential) {
                 return (
                     <div className="text-center py-4">
-                        <p className="text-sm text-slate-400 mb-3">
+                        <p className="text-sm text-surface-600 mb-3">
                             Add your login details to enable auto-applying
                         </p>
                         <button
                             onClick={() => router.push("/onboarding")}
-                            className="px-4 py-2 text-xs font-medium text-neon-violet bg-neon-violet/10 rounded-xl border border-neon-violet/20 hover:bg-neon-violet/20 transition-all"
+                            className="px-4 py-2 text-xs font-medium text-violet-600 bg-violet-50 rounded-xl border border-violet-500/20 hover:bg-violet-500/20 transition-all"
                         >
                             Add Now →
                         </button>
@@ -180,7 +180,7 @@ export default function ProfilePage() {
     };
 
     return (
-        <div className="min-h-screen bg-dark-700 pt-24 pb-16">
+        <div className="min-h-screen bg-surface-100 pt-24 pb-16">
             <div className="max-w-3xl mx-auto px-4">
                 {/* Header */}
                 <motion.div
@@ -188,8 +188,8 @@ export default function ProfilePage() {
                     animate={{ opacity: 1, y: 0 }}
                     className="mb-8"
                 >
-                    <h1 className="text-2xl font-bold text-white mb-1">Your Profile</h1>
-                    <p className="text-sm text-slate-400">
+                    <h1 className="text-2xl font-bold text-surface-950 mb-1">Your Profile</h1>
+                    <p className="text-sm text-surface-600">
                         Manage your profile information for AI-powered job applications
                     </p>
                 </motion.div>
@@ -199,7 +199,7 @@ export default function ProfilePage() {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.05 }}
-                    className="bg-dark-400 rounded-2xl p-5 border border-dark-50/20 mb-6"
+                    className="bg-white rounded-2xl p-5 border border-surface-300 mb-6"
                 >
                     <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3">
@@ -207,11 +207,11 @@ export default function ProfilePage() {
                                 📄
                             </div>
                             <div>
-                                <p className="text-sm font-medium text-white">
+                                <p className="text-sm font-medium text-surface-950">
                                     {profile.resumeFileName || "Resume"}
                                 </p>
                                 {profile.resumeUploadedAt && (
-                                    <p className="text-xs text-slate-500">
+                                    <p className="text-xs text-surface-500">
                                         Uploaded {new Date(profile.resumeUploadedAt).toLocaleDateString()}
                                     </p>
                                 )}
@@ -219,7 +219,7 @@ export default function ProfilePage() {
                         </div>
                         <button
                             onClick={() => router.push("/onboarding")}
-                            className="px-3 py-1.5 text-xs font-medium text-slate-400 bg-dark-600 rounded-lg border border-dark-50/20 hover:border-primary-500/30 hover:text-primary-400 transition-all"
+                            className="px-3 py-1.5 text-xs font-medium text-surface-600 bg-surface-100 rounded-lg border border-surface-300 hover:border-primary-500/30 hover:text-primary-400 transition-all"
                         >
                             Replace Resume
                         </button>
@@ -241,10 +241,10 @@ export default function ProfilePage() {
                                 initial={{ opacity: 0, y: 20 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ delay: 0.1 + idx * 0.03 }}
-                                className={`bg-dark-400 rounded-2xl p-5 border ${sectionId === "S9" ? "border-neon-violet/20" : "border-dark-50/20"
+                                className={`bg-white rounded-2xl p-5 border ${sectionId === "S9" ? "border-violet-500/20" : "border-surface-300"
                                     }`}
                             >
-                                <h2 className="text-sm font-semibold text-white mb-4 flex items-center gap-2">
+                                <h2 className="text-sm font-semibold text-surface-950 mb-4 flex items-center gap-2">
                                     <span className="text-lg">{SECTION_ICONS[sectionId] || "📋"}</span>
                                     {section.sectionName}
                                 </h2>

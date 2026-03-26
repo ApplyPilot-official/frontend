@@ -33,7 +33,7 @@ export default function ContactPage() {
                     <h1 className="text-4xl sm:text-5xl font-bold text-slate-900 mb-4">
                         Get in <span className="gradient-text">Touch</span>
                     </h1>
-                    <p className="text-lg text-slate-600 max-w-2xl mx-auto">
+                    <p className="text-lg text-surface-600 max-w-2xl mx-auto">
                         Have a question or feedback? We&apos;d love to hear from you.
                     </p>
                 </AnimatedSection>
@@ -41,7 +41,7 @@ export default function ContactPage() {
                 <div className="grid lg:grid-cols-2 gap-12 max-w-5xl mx-auto">
                     {/* Contact Form */}
                     <AnimatedSection>
-                        <div className="glass-strong rounded-2xl p-8">
+                        <div className="bg-white border border-surface-300 rounded-2xl p-8">
                             {submitted ? (
                                 <motion.div
                                     initial={{ opacity: 0, scale: 0.95 }}
@@ -52,7 +52,7 @@ export default function ContactPage() {
                                     <h3 className="text-xl font-bold text-slate-900 mb-2">
                                         Opening your email client...
                                     </h3>
-                                    <p className="text-slate-500 text-sm">
+                                    <p className="text-surface-500 text-sm">
                                         Complete sending the email from your mail application. We&apos;ll
                                         get back to you within 24 hours.
                                     </p>
@@ -115,7 +115,7 @@ export default function ContactPage() {
                                     </div>
                                     <button
                                         type="submit"
-                                        className="w-full py-3.5 px-6 text-sm font-semibold text-white bg-gradient-to-r from-primary-600 to-primary-500 rounded-xl hover:shadow-lg hover:shadow-primary-500/25 hover:-translate-y-0.5 transition-all duration-200"
+                                        className="w-full py-3.5 px-6 text-sm font-semibold text-surface-950 bg-gradient-to-r from-primary-600 to-primary-500 rounded-xl hover:shadow-lg hover:shadow-primary-500/25 hover:-translate-y-0.5 transition-all duration-200"
                                     >
                                         Send Message
                                     </button>
@@ -127,7 +127,7 @@ export default function ContactPage() {
                     {/* Contact Info */}
                     <AnimatedSection delay={0.2}>
                         <div className="space-y-6">
-                            <div className="glass-strong rounded-2xl p-6">
+                            <div className="bg-white border border-surface-300 rounded-2xl p-6">
                                 <h3 className="text-lg font-semibold text-slate-900 mb-2">
                                     📧 Email Us
                                 </h3>
@@ -137,25 +137,25 @@ export default function ContactPage() {
                                 >
                                     contact@applypilot.us
                                 </a>
-                                <p className="text-sm text-slate-500 mt-1">
+                                <p className="text-sm text-surface-500 mt-1">
                                     We typically respond within 24 hours.
                                 </p>
                             </div>
 
-                            <div className="glass-strong rounded-2xl p-6">
+                            <div className="bg-white border border-surface-300 rounded-2xl p-6">
                                 <h3 className="text-lg font-semibold text-slate-900 mb-2">
                                     🌍 Location
                                 </h3>
-                                <p className="text-slate-600 text-sm">
+                                <p className="text-surface-600 text-sm">
                                     Fully remote, USA-based SaaS company.
                                 </p>
                             </div>
 
-                            <div className="glass-strong rounded-2xl p-6">
+                            <div className="bg-white border border-surface-300 rounded-2xl p-6">
                                 <h3 className="text-lg font-semibold text-slate-900 mb-2">
                                     💬 FAQ
                                 </h3>
-                                <p className="text-slate-600 text-sm mb-2">
+                                <p className="text-surface-600 text-sm mb-2">
                                     Most questions are answered in our FAQ section.
                                 </p>
                                 <a

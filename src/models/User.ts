@@ -14,6 +14,12 @@ export interface IUser extends Document {
     subscriptionStartDate?: Date;
     subscriptionEndDate?: Date;
     provider: 'google' | 'email';
+    // Encrypted credentials for auto-apply
+    gmailAddress?: string;
+    gmailAppPassword?: string;
+    linkedInEmail?: string;
+    linkedInPassword?: string;
+    linkedInPhone?: string;
     createdAt: Date;
     updatedAt: Date;
 }
@@ -51,6 +57,12 @@ const UserSchema = new Schema<IUser>(
             enum: ['google', 'email'],
             default: 'email',
         },
+        // Encrypted credentials (AES-256)
+        gmailAddress: { type: String },
+        gmailAppPassword: { type: String },
+        linkedInEmail: { type: String },
+        linkedInPassword: { type: String },
+        linkedInPhone: { type: String },
     },
     { timestamps: true }
 );

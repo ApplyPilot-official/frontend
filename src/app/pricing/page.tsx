@@ -38,44 +38,44 @@ function PlanCard({
             whileHover={canSelect ? { y: -4, scale: 1.01 } : {}}
             onClick={() => canSelect && onSelect()}
             className={`relative rounded-2xl p-[2px] transition-all duration-300 ${isCurrent
-                ? "bg-gradient-to-br from-neon-emerald via-emerald-400 to-teal-500"
+                ? "bg-gradient-to-br from-accent-green via-emerald-400 to-teal-500"
                 : !canSelect
-                    ? "bg-dark-50/30 opacity-60"
+                    ? "bg-surface-200 opacity-60"
                     : plan.highlighted
-                        ? "bg-gradient-to-br from-neon-blue via-primary-400 to-neon-violet"
+                        ? "bg-gradient-to-br from-primary-500 via-primary-400 to-violet-500"
                         : isSelected
                             ? "bg-gradient-to-br from-primary-500 to-primary-400"
-                            : "bg-dark-50/50"
+                            : "bg-surface-300"
                 } ${canSelect ? "cursor-pointer" : "cursor-default"}`}
         >
             {/* Badge */}
             {isCurrent ? (
-                <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 bg-gradient-to-r from-neon-emerald to-teal-400 text-white text-xs font-bold rounded-full shadow-lg z-10">
+                <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 bg-gradient-to-r from-accent-green to-teal-400 text-white text-xs font-bold rounded-full shadow-lg z-10">
                     ✓ Current Plan
                 </div>
             ) : plan.badge && canSelect ? (
-                <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 bg-gradient-to-r from-neon-blue to-neon-violet text-white text-xs font-bold rounded-full shadow-lg z-10">
+                <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 bg-gradient-to-r from-primary-500 to-accent-green text-white text-xs font-bold rounded-full shadow-lg z-10">
                     {plan.badge}
                 </div>
             ) : null}
 
             <div
                 className={`rounded-2xl p-6 h-full ${isCurrent
-                    ? "bg-dark-300 ring-2 ring-neon-emerald/50"
+                    ? "bg-surface-100 ring-2 ring-accent-green/50"
                     : isSelected && canSelect
-                        ? "bg-dark-300 ring-2 ring-primary-500/50"
-                        : "bg-dark-400"
+                        ? "bg-surface-100 ring-2 ring-primary-500/50"
+                        : "bg-white"
                     }`}
             >
-                <h3 className="text-lg font-bold text-white mb-1">{plan.name}</h3>
+                <h3 className="text-lg font-bold text-surface-950 mb-1">{plan.name}</h3>
                 <div className="flex items-baseline gap-1 mb-4">
-                    <span className="text-4xl font-bold text-white">${plan.price}</span>
-                    <span className="text-slate-400 text-sm">/month</span>
+                    <span className="text-4xl font-bold text-surface-950">${plan.price}</span>
+                    <span className="text-surface-600 text-sm">/month</span>
                 </div>
                 <ul className="space-y-2 mb-6">
                     {plan.features.map((f, i) => (
-                        <li key={i} className="flex items-center gap-2 text-sm text-slate-300">
-                            <svg className="w-4 h-4 text-neon-emerald shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3">
+                        <li key={i} className="flex items-center gap-2 text-sm text-surface-700">
+                            <svg className="w-4 h-4 text-accent-green shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3">
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                             </svg>
                             {f}
@@ -84,12 +84,12 @@ function PlanCard({
                 </ul>
                 <div
                     className={`w-full py-2.5 text-center rounded-xl text-sm font-semibold transition-all ${isCurrent
-                        ? "bg-neon-emerald/10 text-neon-emerald border border-neon-emerald/30"
+                        ? "bg-green-50 text-accent-green border border-accent-green/30"
                         : isDowngrade
-                            ? "bg-dark-500 text-slate-600"
+                            ? "bg-white text-surface-600"
                             : isSelected
-                                ? "bg-gradient-to-r from-neon-blue to-primary-500 text-white shadow-lg shadow-primary-500/25"
-                                : "bg-dark-200 text-slate-300 hover:bg-dark-100"
+                                ? "bg-gradient-to-r from-primary-500 to-primary-600 text-white shadow-lg shadow-primary-500/25"
+                                : "bg-surface-200 text-surface-700 hover:bg-surface-300"
                         }`}
                 >
                     {isCurrent
@@ -310,14 +310,14 @@ export default function PricingPage() {
 
     if (isLoadingPlan) {
         return (
-            <div className="min-h-screen flex items-center justify-center bg-dark-700">
+            <div className="min-h-screen flex items-center justify-center bg-surface-100">
                 <div className="w-8 h-8 border-2 border-primary-500 border-t-transparent rounded-full animate-spin" />
             </div>
         );
     }
 
     return (
-        <div className="min-h-screen bg-dark-700 pt-28 pb-20">
+        <div className="min-h-screen bg-surface-100 pt-28 pb-20">
             <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
                 {/* Header */}
                 <motion.div
@@ -328,14 +328,14 @@ export default function PricingPage() {
                     <span className="inline-block px-4 py-1.5 rounded-full bg-primary-500/10 text-primary-400 text-sm font-medium mb-4 border border-primary-500/20">
                         Pricing
                     </span>
-                    <h1 className="text-4xl sm:text-5xl font-bold text-white mb-4">
+                    <h1 className="text-4xl sm:text-5xl font-bold text-surface-950 mb-4">
                         {hasActivePlan ? (
                             <>Upgrade Your <span className="gradient-text">Plan</span></>
                         ) : (
                             <>Choose Your <span className="gradient-text">Plan</span></>
                         )}
                     </h1>
-                    <p className="text-lg text-slate-400 max-w-2xl mx-auto">
+                    <p className="text-lg text-surface-600 max-w-2xl mx-auto">
                         {hasActivePlan
                             ? `You're on the ${PLANS[currentPlan as PlanType]?.name || currentPlan} plan. ${isMaxPlan ? "You're on the top tier! 🎉" : "Upgrade to unlock more features."}`
                             : "Start automating your job applications today. Cancel anytime."
@@ -373,10 +373,10 @@ export default function PricingPage() {
                         transition={{ delay: 0.3 }}
                         className="max-w-lg mx-auto"
                     >
-                        <div className="bg-dark-400 rounded-2xl p-6 border border-dark-50/30">
+                        <div className="bg-white rounded-2xl p-6 border border-surface-300">
                             {/* Coupon Code */}
                             <div className="mb-6">
-                                <label className="block text-sm font-medium text-slate-300 mb-2">
+                                <label className="block text-sm font-medium text-surface-700 mb-2">
                                     Have a coupon or referral code?
                                 </label>
                                 <div className="flex gap-2">
@@ -388,12 +388,12 @@ export default function PricingPage() {
                                             setCouponStatus({});
                                         }}
                                         placeholder="Enter code"
-                                        className="flex-1 px-4 py-2.5 bg-dark-600 border border-dark-50/30 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-primary-500/50 text-sm uppercase tracking-wider"
+                                        className="flex-1 px-4 py-2.5 bg-surface-100 border border-surface-300 rounded-xl text-surface-950 placeholder-surface-500 focus:outline-none focus:ring-2 focus:ring-primary-300 text-sm uppercase tracking-wider"
                                     />
                                     <button
                                         onClick={validateCoupon}
                                         disabled={isValidating || !couponCode.trim()}
-                                        className="px-5 py-2.5 bg-dark-200 text-white rounded-xl text-sm font-medium hover:bg-dark-100 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                                        className="px-5 py-2.5 bg-surface-200 text-surface-950 rounded-xl text-sm font-medium hover:bg-surface-300 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                                     >
                                         {isValidating ? "..." : "Apply"}
                                     </button>
@@ -404,7 +404,7 @@ export default function PricingPage() {
                                             initial={{ opacity: 0, y: -5 }}
                                             animate={{ opacity: 1, y: 0 }}
                                             exit={{ opacity: 0 }}
-                                            className="mt-2 text-sm text-neon-emerald flex items-center gap-1"
+                                            className="mt-2 text-sm text-accent-green flex items-center gap-1"
                                         >
                                             ✓ {couponStatus.message}
                                         </motion.p>
@@ -423,22 +423,22 @@ export default function PricingPage() {
                             </div>
 
                             {/* Order Summary */}
-                            <div className="border-t border-dark-50/30 pt-4 mb-6 space-y-2">
+                            <div className="border-t border-surface-300 pt-4 mb-6 space-y-2">
                                 <div className="flex justify-between text-sm">
-                                    <span className="text-slate-400">
+                                    <span className="text-surface-600">
                                         {hasActivePlan ? `Upgrade to ${plan.name}` : `${plan.name} Plan`}
                                     </span>
-                                    <span className="text-white">${plan.price}/mo</span>
+                                    <span className="text-surface-950">${plan.price}/mo</span>
                                 </div>
                                 {discountDisplay && (
                                     <div className="flex justify-between text-sm">
-                                        <span className="text-neon-emerald">Coupon Discount</span>
-                                        <span className="text-neon-emerald">-{discountDisplay}</span>
+                                        <span className="text-accent-green">Coupon Discount</span>
+                                        <span className="text-accent-green">-{discountDisplay}</span>
                                     </div>
                                 )}
-                                <div className="flex justify-between text-base font-bold pt-2 border-t border-dark-50/20">
-                                    <span className="text-white">Total</span>
-                                    <span className="text-white">
+                                <div className="flex justify-between text-base font-bold pt-2 border-t border-surface-300">
+                                    <span className="text-surface-950">Total</span>
+                                    <span className="text-surface-950">
                                         $
                                         {(
                                             plan.price -
@@ -449,8 +449,8 @@ export default function PricingPage() {
                                         /mo
                                     </span>
                                 </div>
-                                <p className="text-xs text-slate-500">
-                                    Payment processed in INR (₹{(plan.priceINR - (couponStatus.valid && couponStatus.discountCents ? couponStatus.discountCents * 1 : 0)).toLocaleString()}) via Razorpay
+                                <p className="text-xs text-surface-500">
+                                    Payment processed in USD via Razorpay
                                 </p>
                             </div>
 
@@ -458,7 +458,7 @@ export default function PricingPage() {
                             <button
                                 onClick={handlePayment}
                                 disabled={isProcessing}
-                                className="w-full py-3.5 px-6 text-sm font-bold text-white bg-gradient-to-r from-neon-blue to-primary-500 rounded-xl hover:shadow-lg hover:shadow-primary-500/30 hover:-translate-y-0.5 transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:translate-y-0"
+                                className="w-full py-3.5 px-6 text-sm font-bold text-white bg-gradient-to-r from-primary-500 to-primary-600 rounded-xl hover:shadow-lg hover:shadow-primary-500/30 hover:-translate-y-0.5 transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:translate-y-0"
                             >
                                 {isProcessing ? (
                                     <span className="flex items-center justify-center gap-2">
@@ -484,7 +484,7 @@ export default function PricingPage() {
                                 </p>
                             )}
 
-                            <p className="text-center text-xs text-slate-500 mt-4">
+                            <p className="text-center text-xs text-surface-500 mt-4">
                                 🔒 Secured by Razorpay · Cancel anytime
                             </p>
                         </div>
@@ -499,10 +499,10 @@ export default function PricingPage() {
                         transition={{ delay: 0.3 }}
                         className="max-w-lg mx-auto text-center"
                     >
-                        <div className="bg-dark-400 rounded-2xl p-8 border border-neon-emerald/20">
+                        <div className="bg-white rounded-2xl p-8 border border-green-200">
                             <span className="text-4xl mb-3 block">👑</span>
-                            <h3 className="text-xl font-bold text-white mb-2">You&apos;re on Elite!</h3>
-                            <p className="text-sm text-slate-400">
+                            <h3 className="text-xl font-bold text-surface-950 mb-2">You&apos;re on Elite!</h3>
+                            <p className="text-sm text-surface-600">
                                 You have access to every feature ApplyPilot offers. Enjoy the full experience!
                             </p>
                         </div>

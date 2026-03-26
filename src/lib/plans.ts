@@ -5,8 +5,7 @@ export interface PlanConfig {
     id: PlanType;
     name: string;
     price: number; // in USD
-    priceINR: number; // in INR (approximate for Razorpay)
-    amountPaise: number; // Razorpay requires amount in smallest currency unit
+    amountCents: number; // Razorpay requires amount in smallest currency unit (cents for USD)
     features: string[];
     highlighted?: boolean;
     badge?: string;
@@ -17,8 +16,7 @@ export const PLANS: Record<PlanType, PlanConfig> = {
         id: 'basic',
         name: 'Starter',
         price: 35,
-        priceINR: 2900,
-        amountPaise: 290000, // ₹2,900 in paise
+        amountCents: 3500, // $35.00 in cents
         features: [
             'Unlimited job applications',
             'AI-tailored cover letters',
@@ -32,8 +30,7 @@ export const PLANS: Record<PlanType, PlanConfig> = {
         id: 'pro',
         name: 'Pro',
         price: 79,
-        priceINR: 6500,
-        amountPaise: 650000, // ₹6,500 in paise
+        amountCents: 7900, // $79.00 in cents
         highlighted: true,
         badge: 'Most Popular',
         features: [
@@ -49,8 +46,7 @@ export const PLANS: Record<PlanType, PlanConfig> = {
         id: 'elite',
         name: 'Elite',
         price: 149,
-        priceINR: 12300,
-        amountPaise: 1230000, // ₹12,300 in paise
+        amountCents: 14900, // $149.00 in cents
         badge: 'Best Value',
         features: [
             'Everything in Pro',
@@ -63,9 +59,7 @@ export const PLANS: Record<PlanType, PlanConfig> = {
     },
 };
 
-// Max coupon discount in paise (₹400 ≈ $5)
-export const MAX_COUPON_DISCOUNT_PAISE = 40000;
-// Max coupon discount in cents (for display)
+// Max coupon discount in cents ($5.00)
 export const MAX_COUPON_DISCOUNT_CENTS = 500;
 
 export const PLAN_ORDER: PlanType[] = ['basic', 'pro', 'elite'];

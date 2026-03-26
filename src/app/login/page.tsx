@@ -10,7 +10,7 @@ export default function LoginPage() {
     return (
         <Suspense
             fallback={
-                <div className="min-h-screen bg-dark-700 flex items-center justify-center">
+                <div className="min-h-screen bg-surface-100 flex items-center justify-center">
                     <div className="w-8 h-8 border-2 border-primary-500 border-t-transparent rounded-full animate-spin" />
                 </div>
             }
@@ -32,7 +32,6 @@ function LoginContent() {
     const [success, setSuccess] = useState("");
     const [isLoading, setIsLoading] = useState(false);
 
-    // If already logged in, redirect
     useEffect(() => {
         if (session) {
             router.push("/dashboard");
@@ -61,7 +60,6 @@ function LoginContent() {
 
         try {
             if (mode === "signup") {
-                // For signup, use the direct API
                 const res = await fetch("/api/auth/signup", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
@@ -75,7 +73,6 @@ function LoginContent() {
                 setSuccess(data.message || "Account created! Check your email.");
                 setMode("login");
             } else {
-                // For login, use NextAuth signIn with credentials
                 const result = await signIn("credentials", {
                     email,
                     password,
@@ -96,21 +93,17 @@ function LoginContent() {
     };
 
     return (
-        <div className="min-h-screen bg-dark-700 flex items-center justify-center px-4 pt-20">
-            {/* Decorative orbs */}
-            <div className="fixed w-80 h-80 bg-primary-500/10 rounded-full blur-3xl top-20 -left-40 pointer-events-none" />
-            <div className="fixed w-64 h-64 bg-neon-violet/10 rounded-full blur-3xl bottom-20 -right-32 pointer-events-none" />
-
+        <div className="min-h-screen bg-surface-100 flex items-center justify-center px-4 pt-20">
             <motion.div
                 initial={{ opacity: 0, y: 30, scale: 0.95 }}
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 transition={{ duration: 0.6 }}
                 className="relative w-full max-w-md"
             >
-                <div className="bg-dark-400 rounded-3xl p-8 sm:p-10 shadow-2xl shadow-black/30 border border-dark-50/30">
+                <div className="bg-white rounded-3xl p-8 sm:p-10 shadow-lg border border-surface-300">
                     {/* Logo */}
                     <div className="flex justify-center mb-6">
-                        <div className="relative w-16 h-16 bg-white rounded-2xl p-2 shadow-lg">
+                        <div className="relative w-16 h-16 bg-white rounded-2xl p-2 shadow-md border border-surface-200">
                             <Image
                                 src="/logo.png"
                                 alt="ApplyPilot"
@@ -120,10 +113,10 @@ function LoginContent() {
                         </div>
                     </div>
 
-                    <h1 className="text-2xl font-bold text-white text-center mb-2">
+                    <h1 className="text-2xl font-bold text-surface-950 text-center mb-2">
                         {mode === "login" ? "Welcome Back" : "Create Account"}
                     </h1>
-                    <p className="text-slate-400 text-center text-sm mb-6">
+                    <p className="text-surface-500 text-center text-sm mb-6">
                         {mode === "login"
                             ? "Sign in to continue your job search"
                             : "Start automating your job applications"}
@@ -136,7 +129,7 @@ function LoginContent() {
                                 initial={{ opacity: 0, y: -10 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 exit={{ opacity: 0 }}
-                                className="mb-4 p-3 bg-red-500/10 border border-red-500/20 rounded-xl text-red-400 text-sm"
+                                className="mb-4 p-3 bg-red-50 border border-red-200 rounded-xl text-accent-red text-sm"
                             >
                                 {error}
                             </motion.div>
@@ -146,7 +139,7 @@ function LoginContent() {
                                 initial={{ opacity: 0, y: -10 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 exit={{ opacity: 0 }}
-                                className="mb-4 p-3 bg-neon-emerald/10 border border-neon-emerald/20 rounded-xl text-neon-emerald text-sm"
+                                className="mb-4 p-3 bg-green-50 border border-green-200 rounded-xl text-accent-green text-sm"
                             >
                                 {success}
                             </motion.div>
@@ -156,7 +149,7 @@ function LoginContent() {
                     {/* Google Sign In */}
                     <button
                         onClick={() => signIn("google", { callbackUrl: "/dashboard" })}
-                        className="w-full flex items-center justify-center gap-3 px-6 py-3.5 bg-white border border-slate-200 rounded-2xl hover:bg-slate-50 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 group mb-6"
+                        className="w-full flex items-center justify-center gap-3 px-6 py-3.5 bg-white border border-surface-300 rounded-2xl hover:bg-surface-100 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 group mb-6"
                     >
                         <svg className="w-5 h-5" viewBox="0 0 24 24">
                             <path
@@ -176,25 +169,25 @@ function LoginContent() {
                                 fill="#EA4335"
                             />
                         </svg>
-                        <span className="text-sm font-semibold text-slate-700 group-hover:text-slate-900">
+                        <span className="text-sm font-semibold text-surface-700 group-hover:text-surface-900">
                             Continue with Google
                         </span>
                     </button>
 
                     {/* Divider */}
                     <div className="flex items-center gap-3 mb-6">
-                        <div className="flex-1 h-px bg-dark-50/50" />
-                        <span className="text-xs text-slate-500 uppercase tracking-wider">
+                        <div className="flex-1 h-px bg-surface-300" />
+                        <span className="text-xs text-surface-500 uppercase tracking-wider">
                             or
                         </span>
-                        <div className="flex-1 h-px bg-dark-50/50" />
+                        <div className="flex-1 h-px bg-surface-300" />
                     </div>
 
                     {/* Email/Password Form */}
                     <form onSubmit={handleEmailAuth} className="space-y-4">
                         {mode === "signup" && (
                             <div>
-                                <label className="block text-sm font-medium text-slate-300 mb-1.5">
+                                <label className="block text-sm font-medium text-surface-700 mb-1.5">
                                     Full Name
                                 </label>
                                 <input
@@ -203,12 +196,12 @@ function LoginContent() {
                                     onChange={(e) => setName(e.target.value)}
                                     required
                                     placeholder="John Doe"
-                                    className="w-full px-4 py-3 bg-dark-600 border border-dark-50/30 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-primary-500/50 text-sm"
+                                    className="w-full px-4 py-3 bg-surface-100 border border-surface-300 rounded-xl text-surface-900 placeholder-surface-500 focus:outline-none focus:ring-2 focus:ring-primary-300 text-sm"
                                 />
                             </div>
                         )}
                         <div>
-                            <label className="block text-sm font-medium text-slate-300 mb-1.5">
+                            <label className="block text-sm font-medium text-surface-700 mb-1.5">
                                 Email
                             </label>
                             <input
@@ -217,11 +210,11 @@ function LoginContent() {
                                 onChange={(e) => setEmail(e.target.value)}
                                 required
                                 placeholder="you@example.com"
-                                className="w-full px-4 py-3 bg-dark-600 border border-dark-50/30 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-primary-500/50 text-sm"
+                                className="w-full px-4 py-3 bg-surface-100 border border-surface-300 rounded-xl text-surface-900 placeholder-surface-500 focus:outline-none focus:ring-2 focus:ring-primary-300 text-sm"
                             />
                         </div>
                         <div>
-                            <label className="block text-sm font-medium text-slate-300 mb-1.5">
+                            <label className="block text-sm font-medium text-surface-700 mb-1.5">
                                 Password
                             </label>
                             <input
@@ -231,13 +224,13 @@ function LoginContent() {
                                 required
                                 minLength={8}
                                 placeholder="Min 8 characters"
-                                className="w-full px-4 py-3 bg-dark-600 border border-dark-50/30 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-primary-500/50 text-sm"
+                                className="w-full px-4 py-3 bg-surface-100 border border-surface-300 rounded-xl text-surface-900 placeholder-surface-500 focus:outline-none focus:ring-2 focus:ring-primary-300 text-sm"
                             />
                         </div>
                         <button
                             type="submit"
                             disabled={isLoading}
-                            className="w-full py-3.5 px-6 text-sm font-bold text-white bg-gradient-to-r from-neon-blue to-primary-500 rounded-xl hover:shadow-lg hover:shadow-primary-500/30 hover:-translate-y-0.5 transition-all duration-200 disabled:opacity-60"
+                            className="w-full py-3.5 px-6 text-sm font-bold text-surface-950 bg-primary-500 rounded-xl hover:bg-primary-600 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 disabled:opacity-60"
                         >
                             {isLoading ? (
                                 <span className="flex items-center justify-center gap-2">
@@ -260,7 +253,7 @@ function LoginContent() {
                                 setError("");
                                 setSuccess("");
                             }}
-                            className="text-sm text-slate-400 hover:text-primary-400 transition-colors"
+                            className="text-sm text-surface-500 hover:text-primary-600 transition-colors"
                         >
                             {mode === "login"
                                 ? "Don't have an account? Sign up"
@@ -269,18 +262,18 @@ function LoginContent() {
                     </div>
 
                     <div className="mt-6 text-center">
-                        <p className="text-xs text-slate-500">
+                        <p className="text-xs text-surface-500">
                             By signing in, you agree to our{" "}
                             <a
                                 href="/terms-of-use"
-                                className="text-primary-400 hover:underline"
+                                className="text-primary-500 hover:underline"
                             >
                                 Terms of Use
                             </a>{" "}
                             and{" "}
                             <a
                                 href="/privacy-policy"
-                                className="text-primary-400 hover:underline"
+                                className="text-primary-500 hover:underline"
                             >
                                 Privacy Policy
                             </a>

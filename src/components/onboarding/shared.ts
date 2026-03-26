@@ -29,7 +29,7 @@ export interface SchemaSection {
 
 export const schema = masterFormSchema as { sections: SchemaSection[] };
 
-export type OnboardingScreen = "upload" | "loading" | "error" | "gap" | "complete";
+export type OnboardingScreen = "upload" | "loading" | "error" | "gap" | "credentials" | "complete";
 
 export const LOADING_MESSAGES = [
     "Uploading your resume...",
@@ -41,7 +41,6 @@ export const LOADING_MESSAGES = [
 ];
 
 export const ALWAYS_SHOW_SECTIONS = ["S6", "S7"];
-export const CREDENTIALS_SECTION = "S9";
 
 export function getAuthHeaders(): HeadersInit {
     const headers: HeadersInit = { "Content-Type": "application/json" };

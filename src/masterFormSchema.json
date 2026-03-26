@@ -519,11 +519,19 @@
           "options": [
             "US Citizen",
             "US Permanent Resident (Green Card)",
-            "F-1 Student Visa",
-            "H1-B",
+            "E-3 | Australia",
+            "EB-2/EB-3 | Green Card",
+            "F-1 CPT | Students",
+            "F-1 OPT | Students",
+            "H-1B | Global",
+            "H-1B1 | Chile",
+            "H-1B1 | Singapore",
+            "H-2A | Agricultural",
+            "H-2B | Temporary Worker",
+            "J-1 | Exchange",
             "L-1",
             "O-1",
-            "TN Visa",
+            "TN | Canada/Mexico",
             "Other"
           ]
         },
@@ -580,23 +588,148 @@
         },
         {
           "id": "S6_F6",
-          "key": "needSponsorship",
-          "label": "Will you now or in the future require visa sponsorship?",
-          "type": "boolean",
+          "key": "authorizedToWork",
+          "label": "Are you authorized to work in the US?",
+          "type": "select",
           "mandatory": true,
           "aiCanAssume": false,
           "aiExtractFromResume": false,
-          "userMustFillIfNull": true
+          "userMustFillIfNull": true,
+          "options": [
+            "Yes",
+            "No"
+          ]
         },
         {
           "id": "S6_F7",
-          "key": "authorizedToWork",
-          "label": "Authorized to work in the US without restriction?",
-          "type": "boolean",
+          "key": "needSponsorship",
+          "label": "Will you now or in the future require sponsorship for employment visa status?",
+          "type": "select",
           "mandatory": true,
           "aiCanAssume": false,
           "aiExtractFromResume": false,
-          "userMustFillIfNull": true
+          "userMustFillIfNull": true,
+          "options": [
+            "Yes",
+            "No"
+          ]
+        },
+        {
+          "id": "S6_F8",
+          "key": "hasDisability",
+          "label": "Do you have a disability?",
+          "type": "select",
+          "mandatory": false,
+          "aiCanAssume": false,
+          "aiExtractFromResume": false,
+          "userMustFillIfNull": false,
+          "options": [
+            "Yes",
+            "No",
+            "Decline to state"
+          ]
+        },
+        {
+          "id": "S6_F9",
+          "key": "veteranStatus",
+          "label": "Are you a veteran?",
+          "type": "select",
+          "mandatory": false,
+          "aiCanAssume": false,
+          "aiExtractFromResume": false,
+          "userMustFillIfNull": false,
+          "options": [
+            "Yes",
+            "No",
+            "Decline to state"
+          ]
+        },
+        {
+          "id": "S6_F10",
+          "key": "gender",
+          "label": "What is your gender?",
+          "type": "select",
+          "mandatory": false,
+          "aiCanAssume": false,
+          "aiExtractFromResume": false,
+          "userMustFillIfNull": false,
+          "options": [
+            "Male",
+            "Female",
+            "Non-Binary",
+            "Decline to state"
+          ]
+        },
+        {
+          "id": "S6_F11",
+          "key": "lgbtq",
+          "label": "Do you identify as LGBTQ+?",
+          "type": "select",
+          "mandatory": false,
+          "aiCanAssume": false,
+          "aiExtractFromResume": false,
+          "userMustFillIfNull": false,
+          "options": [
+            "Yes",
+            "No",
+            "Decline to state"
+          ]
+        },
+        {
+          "id": "S6_F12",
+          "key": "race",
+          "label": "How would you identify your race?",
+          "type": "select",
+          "mandatory": false,
+          "aiCanAssume": false,
+          "aiExtractFromResume": false,
+          "userMustFillIfNull": false,
+          "options": [
+            "American Indian or Alaskan Native",
+            "Asian",
+            "Black or African American",
+            "Hispanic or Latino",
+            "White",
+            "Native Hawaiian or Other Pacific Islander",
+            "Two or More Races",
+            "Decline to state"
+          ]
+        },
+        {
+          "id": "S6_F13",
+          "key": "hispanicLatino",
+          "label": "Are you Hispanic or Latino?",
+          "type": "select",
+          "mandatory": false,
+          "aiCanAssume": false,
+          "aiExtractFromResume": false,
+          "userMustFillIfNull": false,
+          "options": [
+            "Yes",
+            "No",
+            "Decline to state"
+          ]
+        },
+        {
+          "id": "S6_F14",
+          "key": "sexualOrientation",
+          "label": "How would you describe your sexual orientation? (mark all that apply)",
+          "type": "multiselect",
+          "mandatory": false,
+          "aiCanAssume": false,
+          "aiExtractFromResume": false,
+          "userMustFillIfNull": false,
+          "options": [
+            "Asexual",
+            "Bisexual",
+            "Gay",
+            "Heterosexual",
+            "Lesbian",
+            "Pansexual",
+            "Queer",
+            "I prefer to self-describe",
+            "Decline to state"
+          ]
         }
       ]
     },
@@ -763,81 +896,6 @@
           "userMustFillIfNull": false
         }
       ]
-    },
-    {
-      "sectionId": "S9",
-      "sectionName": "Account Credentials — For Auto-Applying",
-      "apiCall": "SKIP — Always ask user directly. NEVER send to AI. NEVER log.",
-      "isArray": false,
-      "important": "SENSITIVE CREDENTIALS. MUST BE ENCRYPTED AT REST WITH AES-256. NEVER SEND TO ANY AI MODEL. NEVER APPEAR IN LOGS.",
-      "displayNote": "⭐ Recommended — We use these accounts to auto-apply to jobs on your behalf. Without them, we cannot submit applications automatically.",
-      "fields": [
-        {
-          "id": "S9_F1",
-          "key": "linkedInEmail",
-          "label": "LinkedIn Email Address",
-          "type": "email",
-          "mandatory": false,
-          "recommended": true,
-          "aiCanAssume": false,
-          "aiExtractFromResume": false,
-          "userMustFillIfNull": false,
-          "encryption": "AES-256 required",
-          "recommendationMessage": "⭐ Recommended — LinkedIn is used by 80% of employers. Adding your login lets us apply via Easy Apply automatically."
-        },
-        {
-          "id": "S9_F2",
-          "key": "linkedInPassword",
-          "label": "LinkedIn Password",
-          "type": "password",
-          "mandatory": false,
-          "recommended": true,
-          "aiCanAssume": false,
-          "aiExtractFromResume": false,
-          "userMustFillIfNull": false,
-          "encryption": "AES-256 required",
-          "recommendationMessage": "⭐ Recommended — Required to submit LinkedIn Easy Apply applications on your behalf."
-        },
-        {
-          "id": "S9_F3",
-          "key": "linkedInPhone",
-          "label": "LinkedIn Registered Phone Number",
-          "type": "tel",
-          "mandatory": false,
-          "recommended": true,
-          "aiCanAssume": false,
-          "aiExtractFromResume": false,
-          "userMustFillIfNull": false,
-          "encryption": "AES-256 required",
-          "recommendationMessage": "Used for LinkedIn 2FA verification during auto-apply sessions."
-        },
-        {
-          "id": "S9_F4",
-          "key": "gmailAddress",
-          "label": "Gmail Address",
-          "type": "email",
-          "mandatory": false,
-          "recommended": true,
-          "aiCanAssume": false,
-          "aiExtractFromResume": false,
-          "userMustFillIfNull": false,
-          "encryption": "AES-256 required",
-          "recommendationMessage": "⭐ Recommended — We use your Gmail to apply on company portals (Workday, Greenhouse, Lever, etc.) on your behalf."
-        },
-        {
-          "id": "S9_F5",
-          "key": "gmailPassword",
-          "label": "Gmail Password",
-          "type": "password",
-          "mandatory": false,
-          "recommended": true,
-          "aiCanAssume": false,
-          "aiExtractFromResume": false,
-          "userMustFillIfNull": false,
-          "encryption": "AES-256 required",
-          "recommendationMessage": "⭐ Recommended — Required to sign into company portals using Google login."
-        }
-      ]
     }
   ],
   "processingStates": {
@@ -863,8 +921,7 @@
     "alwaysAskUser": [
       "S6 — US Work Authorization",
       "S7 — Job Preferences",
-      "S8 — References",
-      "S9 — Account Credentials"
+      "S8 — References"
     ]
   },
   "multipleEntryRules": {

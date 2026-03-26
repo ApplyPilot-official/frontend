@@ -6,7 +6,12 @@ export interface ILinkedInMakeover extends Document {
     linkedinUrl: string;
     notes?: string;
     status: 'pending' | 'in_progress' | 'completed';
+    serviceType: 'suggestions' | 'done_for_you';
     deliverableUrl?: string;
+    // Encrypted credentials for done-for-you service
+    linkedInLoginEmail?: string;
+    linkedInLoginPassword?: string;
+    linkedInLoginPhone?: string;
     createdAt: Date;
     updatedAt: Date;
 }
@@ -22,7 +27,16 @@ const LinkedInMakeoverSchema = new Schema<ILinkedInMakeover>(
             enum: ['pending', 'in_progress', 'completed'],
             default: 'pending',
         },
+        serviceType: {
+            type: String,
+            enum: ['suggestions', 'done_for_you'],
+            default: 'suggestions',
+        },
         deliverableUrl: { type: String },
+        // Encrypted credentials
+        linkedInLoginEmail: { type: String },
+        linkedInLoginPassword: { type: String },
+        linkedInLoginPhone: { type: String },
     },
     { timestamps: true }
 );

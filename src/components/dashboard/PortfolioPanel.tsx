@@ -64,57 +64,57 @@ export default function PortfolioPanel({ hasSubscription }: PortfolioPanelProps)
 
     return (
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-            <h2 className="text-xl font-bold text-white mb-6">🌐 Portfolio Maker</h2>
+            <h2 className="text-xl font-bold text-surface-950 mb-6">🌐 Portfolio Maker</h2>
             {!hasSubscription ? (
-                <div className="bg-dark-400 rounded-2xl p-10 text-center border border-yellow-500/20">
+                <div className="bg-white rounded-2xl p-10 text-center border border-amber-200">
                     <div className="text-4xl mb-3">🔒</div>
-                    <h3 className="text-lg font-bold text-white mb-2">Paid Feature</h3>
-                    <p className="text-slate-400 mb-4">Upgrade your plan to request a portfolio website.</p>
-                    <Link href="/pricing" className="inline-block px-6 py-3 text-sm font-semibold text-white bg-gradient-to-r from-neon-blue to-primary-500 rounded-xl hover:shadow-lg hover:shadow-primary-500/25 transition-all">
+                    <h3 className="text-lg font-bold text-surface-950 mb-2">Paid Feature</h3>
+                    <p className="text-surface-600 mb-4">Upgrade your plan to request a portfolio website.</p>
+                    <Link href="/pricing" className="inline-block px-6 py-3 text-sm font-semibold text-surface-950 bg-gradient-to-r from-primary-500 to-primary-600 rounded-xl hover:shadow-lg hover:shadow-primary-500/15 transition-all">
                         View Plans
                     </Link>
                 </div>
             ) : request ? (
-                <div className="bg-dark-400 rounded-2xl p-8 border border-neon-emerald/20 text-center">
+                <div className="bg-white rounded-2xl p-8 border border-green-200 text-center">
                     <div className="text-4xl mb-3">{request.status === "completed" ? "🎉" : "⏳"}</div>
-                    <h3 className="text-lg font-bold text-white mb-2">
+                    <h3 className="text-lg font-bold text-surface-950 mb-2">
                         {request.status === "completed" ? "Portfolio Ready!" : "Portfolio Request Submitted"}
                     </h3>
-                    <p className="text-slate-400 mb-4">
+                    <p className="text-surface-600 mb-4">
                         {request.status === "completed"
                             ? "Your portfolio website is live!"
                             : request.status === "in_progress"
                                 ? "Our team is building your portfolio website."
                                 : "Portfolio request submitted — In progress."}
                     </p>
-                    <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-dark-300 border border-dark-50/20 mb-4">
-                        <span className={`w-2 h-2 rounded-full ${request.status === "completed" ? "bg-neon-emerald" : request.status === "in_progress" ? "bg-neon-blue" : "bg-yellow-400"}`} />
-                        <span className="text-sm text-slate-300 capitalize">{request.status.replace("_", " ")}</span>
+                    <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-surface-100 border border-surface-300 mb-4">
+                        <span className={`w-2 h-2 rounded-full ${request.status === "completed" ? "bg-accent-green" : request.status === "in_progress" ? "bg-primary-500" : "bg-yellow-400"}`} />
+                        <span className="text-sm text-surface-600 capitalize">{request.status.replace("_", " ")}</span>
                     </div>
                     {request.portfolioLink && (
                         <div className="mt-4">
-                            <a href={request.portfolioLink} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 px-6 py-3 text-sm font-semibold text-white bg-gradient-to-r from-neon-emerald to-neon-blue rounded-xl hover:shadow-lg transition-all">
+                            <a href={request.portfolioLink} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 px-6 py-3 text-sm font-semibold text-surface-950 bg-gradient-to-r from-accent-green to-primary-500 rounded-xl hover:shadow-lg transition-all">
                                 🔗 Visit Your Portfolio
                             </a>
                         </div>
                     )}
                 </div>
             ) : (
-                <div className="bg-dark-400 rounded-2xl p-8 border border-dark-50/20 text-center">
+                <div className="bg-white rounded-2xl p-8 border border-surface-300 text-center">
                     <div className="text-5xl mb-4">🌐</div>
-                    <h3 className="text-lg font-bold text-white mb-2">Custom Portfolio Website</h3>
-                    <p className="text-slate-400 mb-6 max-w-md mx-auto">
+                    <h3 className="text-lg font-bold text-surface-950 mb-2">Custom Portfolio Website</h3>
+                    <p className="text-surface-600 mb-6 max-w-md mx-auto">
                         Get a professionally designed portfolio website that showcases your skills, projects, and experience.
                     </p>
                     {msg && (
-                        <p className={`text-sm p-3 rounded-xl mb-4 ${msg.includes("success") ? "bg-neon-emerald/10 text-neon-emerald" : "bg-red-500/10 text-red-400"}`}>
+                        <p className={`text-sm p-3 rounded-xl mb-4 ${msg.includes("success") ? "bg-green-50 text-accent-green" : "bg-red-50 text-accent-red"}`}>
                             {msg}
                         </p>
                     )}
                     <button
                         onClick={handleSubmit}
                         disabled={submitting}
-                        className="px-8 py-3.5 text-sm font-bold text-white bg-gradient-to-r from-neon-blue to-primary-500 rounded-xl hover:shadow-lg hover:shadow-primary-500/30 hover:-translate-y-0.5 transition-all disabled:opacity-50"
+                        className="px-8 py-3.5 text-sm font-bold text-surface-950 bg-gradient-to-r from-primary-500 to-primary-600 rounded-xl hover:shadow-lg hover:shadow-primary-500/15 hover:-translate-y-0.5 transition-all disabled:opacity-50"
                     >
                         {submitting ? "Submitting..." : "Request Your Custom Portfolio Website"}
                     </button>

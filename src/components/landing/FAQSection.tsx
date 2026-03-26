@@ -38,10 +38,10 @@ export default function FAQSection() {
         <section className="py-24 sm:py-32 relative">
             <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
                 <AnimatedSection className="text-center mb-16">
-                    <span className="inline-block px-4 py-1.5 rounded-full glass text-neon-blue text-sm font-medium mb-4">
+                    <span className="inline-block px-4 py-1.5 rounded-full bg-primary-50 border border-primary-200 text-primary-700 text-sm font-medium mb-4">
                         FAQ
                     </span>
-                    <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">
+                    <h2 className="text-3xl sm:text-4xl font-bold text-surface-950 mb-4">
                         Frequently Asked{" "}
                         <span className="gradient-text">Questions</span>
                     </h2>
@@ -50,18 +50,18 @@ export default function FAQSection() {
                 <div className="space-y-3">
                     {faqs.map((faq, i) => (
                         <AnimatedSection key={i} delay={i * 0.05}>
-                            <div className="glass-card rounded-2xl overflow-hidden">
+                            <div className="bg-white rounded-2xl overflow-hidden border border-surface-300 shadow-sm">
                                 <button
                                     onClick={() => setOpenIndex(openIndex === i ? null : i)}
                                     className="w-full flex items-center justify-between p-5 text-left"
                                 >
-                                    <span className="text-sm font-semibold text-white pr-4">
+                                    <span className="text-sm font-semibold text-surface-900 pr-4">
                                         {faq.question}
                                     </span>
                                     <motion.svg
                                         animate={{ rotate: openIndex === i ? 180 : 0 }}
                                         transition={{ duration: 0.2 }}
-                                        className="w-5 h-5 text-neon-blue shrink-0"
+                                        className="w-5 h-5 text-primary-500 shrink-0"
                                         fill="none"
                                         viewBox="0 0 24 24"
                                         stroke="currentColor"
@@ -80,7 +80,7 @@ export default function FAQSection() {
                                     className="overflow-hidden"
                                 >
                                     <div className="px-5 pb-5">
-                                        <p className="text-sm text-slate-400 leading-relaxed">
+                                        <p className="text-sm text-surface-600 leading-relaxed">
                                             {faq.answer}
                                         </p>
                                     </div>

@@ -79,7 +79,7 @@ function ComparisonRow({
     return (
         <motion.div
             ref={ref}
-            className={`grid grid-cols-[auto_1fr_1fr] group transition-colors duration-300 hover:bg-white/[0.03] ${index < comparisonRows.length - 1 ? "border-b border-white/5" : ""
+            className={`grid grid-cols-[auto_1fr_1fr] group transition-colors duration-300 hover:bg-primary-50/50 ${index < comparisonRows.length - 1 ? "border-b border-surface-200" : ""
                 }`}
         >
             {/* Icon column */}
@@ -87,7 +87,7 @@ function ComparisonRow({
                 initial={{ opacity: 0, scale: 0 }}
                 animate={revealed ? { opacity: 1, scale: 1 } : {}}
                 transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                className="px-4 py-4 flex items-center justify-center text-xl border-r border-white/5"
+                className="px-4 py-4 flex items-center justify-center text-xl border-r border-surface-200"
             >
                 {row.icon}
             </motion.div>
@@ -97,15 +97,15 @@ function ComparisonRow({
                 initial={{ opacity: 0, x: -30 }}
                 animate={revealed ? { opacity: 1, x: 0 } : {}}
                 transition={{ duration: 0.4 }}
-                className="px-5 py-4 border-r border-white/5 flex items-center gap-2"
+                className="px-5 py-4 border-r border-surface-200 flex items-center gap-2"
             >
-                <span className="text-red-500/70 shrink-0 text-xs">✕</span>
-                <span className="text-sm text-slate-500 line-through decoration-red-500/40 decoration-1 group-hover:text-slate-400 transition-colors">
+                <span className="text-accent-red/70 shrink-0 text-xs">✕</span>
+                <span className="text-sm text-surface-500 line-through decoration-accent-red/40 decoration-1 group-hover:text-surface-600 transition-colors">
                     {row.without}
                 </span>
             </motion.div>
 
-            {/* With column — animated border on hover */}
+            {/* With column */}
             <motion.div
                 initial={{ opacity: 0, x: 30 }}
                 animate={revealed ? { opacity: 1, x: 0 } : {}}
@@ -114,41 +114,15 @@ function ComparisonRow({
                 onMouseEnter={() => setHovered(true)}
                 onMouseLeave={() => setHovered(false)}
             >
-                {/* Animated rotating conic gradient border */}
+                {/* Subtle highlight on hover */}
                 {hovered && (
-                    <>
-                        <motion.div
-                            className="absolute inset-0 rounded-lg -z-0 overflow-hidden"
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            exit={{ opacity: 0 }}
-                            transition={{ duration: 0.3 }}
-                        >
-                            <motion.div
-                                className="absolute -inset-[1px]"
-                                animate={{ rotate: 360 }}
-                                transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
-                                style={{
-                                    background: "conic-gradient(from 0deg, #10b981, #00d4ff, #a855f7, #f43f5e, #f59e0b, #10b981)",
-                                }}
-                            />
-                            {/* Inner cutout */}
-                            <div className="absolute inset-[2px] bg-dark-800/95 rounded-md" />
-                        </motion.div>
-                        {/* Glow pulse behind */}
-                        <motion.div
-                            className="absolute inset-0 rounded-lg pointer-events-none"
-                            animate={{
-                                boxShadow: [
-                                    "0 0 15px rgba(16,185,129,0.15), inset 0 0 15px rgba(16,185,129,0.05)",
-                                    "0 0 25px rgba(0,212,255,0.2), inset 0 0 20px rgba(0,212,255,0.08)",
-                                    "0 0 15px rgba(168,85,247,0.15), inset 0 0 15px rgba(168,85,247,0.05)",
-                                    "0 0 15px rgba(16,185,129,0.15), inset 0 0 15px rgba(16,185,129,0.05)",
-                                ],
-                            }}
-                            transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
-                        />
-                    </>
+                    <motion.div
+                        className="absolute inset-0 bg-accent-green/5 rounded-lg -z-0"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: 0.3 }}
+                    />
                 )}
 
                 <motion.span
@@ -158,7 +132,7 @@ function ComparisonRow({
                 >
                     🔥
                 </motion.span>
-                <span className={`text-sm font-medium relative z-10 transition-colors duration-300 ${hovered ? "text-white" : "text-emerald-300"
+                <span className={`text-sm font-medium relative z-10 transition-colors duration-300 ${hovered ? "text-accent-green" : "text-surface-800"
                     }`}>
                     {row.withText}
                 </span>
@@ -170,46 +144,34 @@ function ComparisonRow({
 export default function ComparisonSection() {
     return (
         <section className="py-24 sm:py-32 relative overflow-hidden">
-            {/* CSS for the rotating border animation */}
-            <style jsx>{`
-                @keyframes borderSweep {
-                    0% { background-position: 0% 50%; }
-                    50% { background-position: 100% 50%; }
-                    100% { background-position: 0% 50%; }
-                }
-            `}</style>
-
-            <div className="absolute top-0 right-0 w-96 h-96 bg-neon-violet rounded-full filter blur-[150px] opacity-[0.07]" />
-            <div className="absolute bottom-20 left-0 w-72 h-72 bg-red-500 rounded-full filter blur-[120px] opacity-[0.04]" />
-
             <div className="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
                 <AnimatedSection className="text-center mb-16">
-                    <span className="inline-block px-4 py-1.5 rounded-full glass text-neon-blue text-sm font-medium mb-4">
+                    <span className="inline-block px-4 py-1.5 rounded-full bg-primary-50 border border-primary-200 text-primary-700 text-sm font-medium mb-4">
                         The Problem
                     </span>
-                    <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-4">
+                    <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-surface-950 mb-4">
                         Why Job Searching is{" "}
                         <span className="gradient-text">Broken</span>
                     </h2>
-                    <p className="text-lg text-slate-400 max-w-2xl mx-auto">
+                    <p className="text-lg text-surface-600 max-w-2xl mx-auto">
                         The old way is painful. The ApplyPilot way is fire. 🔥
                     </p>
                 </AnimatedSection>
 
                 <AnimatedSection>
-                    <div className="glass-card rounded-2xl overflow-hidden">
+                    <div className="bg-white rounded-2xl overflow-hidden border border-surface-300 shadow-sm">
                         {/* Header row */}
-                        <div className="grid grid-cols-[auto_1fr_1fr] border-b border-white/10">
-                            <div className="px-4 py-4 bg-slate-800/50 border-r border-white/10 flex items-center justify-center">
+                        <div className="grid grid-cols-[auto_1fr_1fr] border-b border-surface-300">
+                            <div className="px-4 py-4 bg-surface-100 border-r border-surface-300 flex items-center justify-center">
                                 <span className="text-base">⚙️</span>
                             </div>
-                            <div className="px-5 py-4 bg-red-500/10 border-r border-white/10 flex items-center gap-2">
-                                <span className="text-sm font-bold text-red-400">❌ Without ApplyPilot</span>
-                                <span className="text-[10px] text-red-500/50 hidden sm:inline">(the old painful way)</span>
+                            <div className="px-5 py-4 bg-red-50 border-r border-surface-300 flex items-center gap-2">
+                                <span className="text-sm font-bold text-accent-red">❌ Without ApplyPilot</span>
+                                <span className="text-[10px] text-accent-red/50 hidden sm:inline">(the old painful way)</span>
                             </div>
-                            <div className="px-5 py-4 bg-emerald-500/10 flex items-center gap-2">
-                                <span className="text-sm font-bold text-emerald-400">🔥 With ApplyPilot</span>
-                                <span className="text-[10px] text-emerald-400/50 hidden sm:inline">(AI does it all)</span>
+                            <div className="px-5 py-4 bg-green-50 flex items-center gap-2">
+                                <span className="text-sm font-bold text-accent-green">🔥 With ApplyPilot</span>
+                                <span className="text-[10px] text-accent-green/50 hidden sm:inline">(AI does it all)</span>
                             </div>
                         </div>
 
@@ -223,20 +185,20 @@ export default function ComparisonSection() {
                             initial={{ opacity: 0 }}
                             whileInView={{ opacity: 1 }}
                             viewport={{ once: true }}
-                            className="border-t border-white/10 bg-gradient-to-r from-emerald-500/5 via-transparent to-neon-blue/5 px-6 py-5 flex flex-col sm:flex-row items-center justify-between gap-4"
+                            className="border-t border-surface-300 bg-surface-100 px-6 py-5 flex flex-col sm:flex-row items-center justify-between gap-4"
                         >
                             <div className="flex items-center gap-3">
                                 <span className="text-2xl">🚀</span>
-                                <span className="text-sm text-slate-300 font-medium">
+                                <span className="text-sm text-surface-600 font-medium">
                                     Still doing it the old way?{" "}
-                                    <span className="text-white font-bold">You&apos;re falling behind.</span>
+                                    <span className="text-surface-900 font-bold">You&apos;re falling behind.</span>
                                 </span>
                             </div>
                             <Link
                                 href="/login"
-                                className="glow-btn px-6 py-2.5 text-sm font-bold text-white rounded-full whitespace-nowrap"
+                                className="glow-btn px-6 py-2.5 text-sm font-bold text-surface-950 rounded-full whitespace-nowrap"
                             >
-                                Switch to AI — Free
+                                Switch to AI
                             </Link>
                         </motion.div>
                     </div>

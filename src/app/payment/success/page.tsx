@@ -22,7 +22,7 @@ export default function PaymentSuccessPage() {
     }, []);
 
     return (
-        <div className="min-h-screen bg-dark-700 flex items-center justify-center px-4 overflow-hidden relative">
+        <div className="min-h-screen bg-surface-100 flex items-center justify-center px-4 overflow-hidden relative">
             {/* Confetti */}
             {confetti.map((p, i) => (
                 <motion.div
@@ -54,10 +54,10 @@ export default function PaymentSuccessPage() {
                     initial={{ scale: 0 }}
                     animate={{ scale: 1 }}
                     transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
-                    className="w-24 h-24 mx-auto mb-8 rounded-full bg-gradient-to-br from-neon-emerald to-primary-500 flex items-center justify-center shadow-2xl shadow-neon-emerald/30"
+                    className="w-24 h-24 mx-auto mb-8 rounded-full bg-gradient-to-br from-accent-green to-primary-500 flex items-center justify-center shadow-2xl shadow-accent-green/30"
                 >
                     <svg
-                        className="w-12 h-12 text-white"
+                        className="w-12 h-12 text-surface-950"
                         fill="none"
                         viewBox="0 0 24 24"
                         stroke="currentColor"
@@ -75,7 +75,7 @@ export default function PaymentSuccessPage() {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.3 }}
-                    className="text-3xl sm:text-4xl font-bold text-white mb-4"
+                    className="text-3xl sm:text-4xl font-bold text-surface-950 mb-4"
                 >
                     Payment Successful! 🎉
                 </motion.h1>
@@ -84,7 +84,7 @@ export default function PaymentSuccessPage() {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.4 }}
-                    className="text-lg text-slate-400 mb-2"
+                    className="text-lg text-surface-600 mb-2"
                 >
                     Welcome to ApplyPilot{session?.user?.name ? `, ${session.user.name.split(" ")[0]}` : ""}!
                 </motion.p>
@@ -93,7 +93,7 @@ export default function PaymentSuccessPage() {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.5 }}
-                    className="text-sm text-slate-500 mb-8"
+                    className="text-sm text-surface-500 mb-8"
                 >
                     Your subscription is now active. A confirmation email has been sent to your inbox.
                 </motion.p>
@@ -106,12 +106,12 @@ export default function PaymentSuccessPage() {
                 >
                     <Link
                         href="/onboarding"
-                        className="inline-flex items-center px-8 py-4 text-sm font-bold text-white bg-gradient-to-r from-neon-blue to-primary-500 rounded-xl hover:shadow-lg hover:shadow-primary-500/30 hover:-translate-y-0.5 transition-all"
+                        className="inline-flex items-center px-8 py-4 text-sm font-bold text-surface-950 bg-gradient-to-r from-primary-500 to-primary-600 rounded-xl hover:shadow-lg hover:shadow-primary-500/30 hover:-translate-y-0.5 transition-all"
                     >
                         Complete Your Profile →
                     </Link>
 
-                    <p className="text-xs text-slate-600">
+                    <p className="text-xs text-surface-600">
                         or{" "}
                         <Link href="/dashboard" className="text-primary-400 hover:underline">
                             go to dashboard
@@ -124,7 +124,7 @@ export default function PaymentSuccessPage() {
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ delay: 0.8 }}
-                    className="mt-12 flex items-center justify-center gap-6 text-xs text-slate-600"
+                    className="mt-12 flex items-center justify-center gap-6 text-xs text-surface-600"
                 >
                     <span>🔒 Secure Payment</span>
                     <span>📧 Receipt Sent</span>

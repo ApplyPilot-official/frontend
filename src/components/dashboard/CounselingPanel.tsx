@@ -73,27 +73,27 @@ export default function CounselingPanel() {
 
     return (
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-            <h2 className="text-xl font-bold text-white mb-6">🎓 Career Counseling</h2>
+            <h2 className="text-xl font-bold text-surface-950 mb-6">🎓 Career Counseling</h2>
             {request ? (
-                <div className="bg-dark-400 rounded-2xl p-8 border border-neon-emerald/20 text-center">
+                <div className="bg-white rounded-2xl p-8 border border-green-200 text-center">
                     <div className="text-4xl mb-3">✅</div>
-                    <h3 className="text-lg font-bold text-white mb-2">Request Submitted</h3>
-                    <p className="text-slate-400 mb-4">
+                    <h3 className="text-lg font-bold text-surface-950 mb-2">Request Submitted</h3>
+                    <p className="text-surface-600 mb-4">
                         We are processing your request. Our team will reach out via email or the help desk.
                     </p>
-                    <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-dark-300 border border-dark-50/20">
-                        <span className={`w-2 h-2 rounded-full ${request.status === "scheduled" ? "bg-neon-blue" : request.status === "completed" ? "bg-neon-emerald" : "bg-yellow-400"}`} />
-                        <span className="text-sm text-slate-300 capitalize">{request.status}</span>
+                    <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-surface-100 border border-surface-300">
+                        <span className={`w-2 h-2 rounded-full ${request.status === "scheduled" ? "bg-primary-500" : request.status === "completed" ? "bg-accent-green" : "bg-yellow-400"}`} />
+                        <span className="text-sm text-surface-600 capitalize">{request.status}</span>
                     </div>
                 </div>
             ) : (
-                <form onSubmit={handleSubmit} className="bg-dark-400 rounded-2xl p-6 border border-dark-50/20 space-y-5">
-                    <p className="text-sm text-slate-400">
+                <form onSubmit={handleSubmit} className="bg-white rounded-2xl p-6 border border-surface-300 space-y-5">
+                    <p className="text-sm text-surface-600">
                         Request a one-on-one career counseling session. Provide 3 preferred time slots.
                     </p>
                     {["preferredTime1", "preferredTime2", "preferredTime3"].map((key, i) => (
                         <div key={key}>
-                            <label className="block text-xs text-slate-400 mb-1.5">
+                            <label className="block text-xs text-surface-600 mb-1.5">
                                 Preferred Time Slot {i + 1} *
                             </label>
                             <input
@@ -101,17 +101,17 @@ export default function CounselingPanel() {
                                 required
                                 value={(form as Record<string, string>)[key]}
                                 onChange={e => setForm(prev => ({ ...prev, [key]: e.target.value }))}
-                                className="w-full px-4 py-3 bg-dark-600 border border-dark-50/30 rounded-xl text-white text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/50 [color-scheme:dark]"
+                                className="w-full px-4 py-3 bg-surface-100 border border-surface-300 rounded-xl text-surface-950 text-sm focus:outline-none focus:ring-2 focus:ring-primary-300 "
                             />
                         </div>
                     ))}
                     <div>
-                        <label className="block text-xs text-slate-400 mb-1.5">Time Zone *</label>
+                        <label className="block text-xs text-surface-600 mb-1.5">Time Zone *</label>
                         <select
                             required
                             value={form.timezone}
                             onChange={e => setForm(prev => ({ ...prev, timezone: e.target.value }))}
-                            className="w-full px-4 py-3 bg-dark-600 border border-dark-50/30 rounded-xl text-white text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/50"
+                            className="w-full px-4 py-3 bg-surface-100 border border-surface-300 rounded-xl text-surface-950 text-sm focus:outline-none focus:ring-2 focus:ring-primary-300"
                         >
                             {["America/New_York", "America/Chicago", "America/Denver", "America/Los_Angeles", "America/Anchorage", "Pacific/Honolulu", "Asia/Kolkata", "Europe/London", "UTC"].map(tz =>
                                 <option key={tz} value={tz}>{tz.replace(/_/g, " ")}</option>
@@ -119,14 +119,14 @@ export default function CounselingPanel() {
                         </select>
                     </div>
                     {msg && (
-                        <p className={`text-sm p-3 rounded-xl ${msg.includes("success") ? "bg-neon-emerald/10 text-neon-emerald" : "bg-red-500/10 text-red-400"}`}>
+                        <p className={`text-sm p-3 rounded-xl ${msg.includes("success") ? "bg-green-50 text-accent-green" : "bg-red-50 text-accent-red"}`}>
                             {msg}
                         </p>
                     )}
                     <button
                         type="submit"
                         disabled={submitting}
-                        className="w-full py-3 text-sm font-bold text-white bg-gradient-to-r from-neon-blue to-primary-500 rounded-xl hover:shadow-lg hover:shadow-primary-500/30 transition-all disabled:opacity-50"
+                        className="w-full py-3 text-sm font-bold text-surface-950 bg-gradient-to-r from-primary-500 to-primary-600 rounded-xl hover:shadow-lg hover:shadow-primary-500/15 transition-all disabled:opacity-50"
                     >
                         {submitting ? "Submitting..." : "Request Career Counseling"}
                     </button>

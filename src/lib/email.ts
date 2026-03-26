@@ -1,28 +1,28 @@
 import nodemailer from 'nodemailer';
 
 const transporter = nodemailer.createTransport({
-    host: process.env.SMTP_HOST || 'smtp.gmail.com',
-    port: parseInt(process.env.SMTP_PORT || '587'),
-    secure: false,
-    auth: {
-        user: process.env.SMTP_USER,
-        pass: process.env.SMTP_PASS,
-    },
+  host: process.env.SMTP_HOST || 'smtp.gmail.com',
+  port: parseInt(process.env.SMTP_PORT || '587'),
+  secure: false,
+  auth: {
+    user: process.env.SMTP_USER,
+    pass: process.env.SMTP_PASS,
+  },
 });
 
 export async function sendVerificationEmail(
-    email: string,
-    token: string,
-    name: string
+  email: string,
+  token: string,
+  name: string
 ): Promise<void> {
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
-    const verifyUrl = `${appUrl}/api/auth/verify-email?token=${token}`;
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://applypilot.us';
+  const verifyUrl = `${appUrl}/api/auth/verify-email?token=${token}`;
 
-    await transporter.sendMail({
-        from: `"ApplyPilot" <${process.env.FROM_EMAIL || process.env.SMTP_USER}>`,
-        to: email,
-        subject: 'Verify your ApplyPilot account',
-        html: `
+  await transporter.sendMail({
+    from: `"ApplyPilot" <${process.env.FROM_EMAIL || process.env.SMTP_USER}>`,
+    to: email,
+    subject: 'Verify your ApplyPilot account',
+    html: `
       <div style="font-family: Inter, Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 40px 20px;">
         <div style="text-align: center; margin-bottom: 32px;">
           <h1 style="color: #0f172a; font-size: 24px; margin: 0;">Welcome to ApplyPilot!</h1>
@@ -48,20 +48,20 @@ export async function sendVerificationEmail(
         </p>
       </div>
     `,
-    });
+  });
 }
 
 export async function sendPaymentConfirmationEmail(
-    email: string,
-    name: string,
-    plan: string,
-    amount: string
+  email: string,
+  name: string,
+  plan: string,
+  amount: string
 ): Promise<void> {
-    await transporter.sendMail({
-        from: `"ApplyPilot" <${process.env.FROM_EMAIL || process.env.SMTP_USER}>`,
-        to: email,
-        subject: `Payment Confirmed — ${plan} Plan Activated`,
-        html: `
+  await transporter.sendMail({
+    from: `"ApplyPilot" <${process.env.FROM_EMAIL || process.env.SMTP_USER}>`,
+    to: email,
+    subject: `Payment Confirmed — ${plan} Plan Activated`,
+    html: `
       <div style="font-family: Inter, Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 40px 20px;">
         <div style="text-align: center; margin-bottom: 32px;">
           <h1 style="color: #0f172a; font-size: 24px; margin: 0;">Payment Confirmed! 🎉</h1>
@@ -76,7 +76,7 @@ export async function sendPaymentConfirmationEmail(
           You now have full access to all features in your plan. Head to your dashboard to get started!
         </p>
         <div style="text-align: center; margin: 32px 0;">
-          <a href="${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/dashboard" 
+          <a href="${process.env.NEXT_PUBLIC_APP_URL || 'https://applypilot.us'}/dashboard" 
              style="display: inline-block; background: linear-gradient(135deg, #0891b2, #00d4ff); color: white; text-decoration: none; padding: 14px 32px; border-radius: 12px; font-weight: 600; font-size: 16px;">
             Go to Dashboard
           </a>
@@ -87,5 +87,5 @@ export async function sendPaymentConfirmationEmail(
         </p>
       </div>
     `,
-    });
+  });
 }

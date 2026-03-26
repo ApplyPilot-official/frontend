@@ -29,7 +29,7 @@ const PaymentSchema = new Schema<IPayment>(
             required: true,
         },
         amountCents: { type: Number, required: true },
-        currency: { type: String, default: 'INR' },
+        currency: { type: String, default: 'USD' },
         couponCode: { type: String },
         couponDiscountCents: { type: Number, default: 0 },
         status: {

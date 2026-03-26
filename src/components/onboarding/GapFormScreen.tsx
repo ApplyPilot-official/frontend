@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { schema, CREDENTIALS_SECTION, getAuthHeaders } from "./shared";
+import { schema, getAuthHeaders } from "./shared";
 import FieldInput from "./FieldInput";
 
 interface GapFormScreenProps {
@@ -12,7 +12,7 @@ interface GapFormScreenProps {
 
 const SECTION_ICONS: Record<string, string> = {
     S1: "👤", S2: "🎓", S3: "💼", S4: "🚀", S5: "⚡",
-    S6: "🗽", S7: "🎯", S9: "🔐",
+    S6: "🗽", S7: "🎯",
 };
 
 // Fields to show autofilled from AI for user review/correction in S1
@@ -112,8 +112,8 @@ export default function GapFormScreen({ gapFields, onSubmitComplete }: GapFormSc
         if (gapFieldsList.length === 0 && reviewFields.length === 0) return null;
 
         return (
-            <div className="bg-dark-400 rounded-2xl p-5 border border-dark-50/20">
-                <h3 className="text-sm font-semibold text-white mb-4 flex items-center gap-2">
+            <div className="bg-white rounded-2xl p-5 border border-surface-300">
+                <h3 className="text-sm font-semibold text-surface-950 mb-4 flex items-center gap-2">
                     <span className="text-lg">{SECTION_ICONS.S1}</span>
                     {s1.sectionName}
                 </h3>
@@ -131,7 +131,7 @@ export default function GapFormScreen({ gapFields, onSubmitComplete }: GapFormSc
 
                 {reviewFields.length > 0 && (
                     <div>
-                        <p className="text-xs text-slate-500 mb-3">Review & correct (auto-filled from resume):</p>
+                        <p className="text-xs text-surface-500 mb-3">Review & correct (auto-filled from resume):</p>
                         <div className="grid sm:grid-cols-2 gap-4">
                             {reviewFields.map((field) => (
                                 <FieldInput key={field.id} field={field} sectionId="S1" value={allValues[field.key]} onChange={updateGapAnswer} allValues={allValues} />
@@ -169,8 +169,8 @@ export default function GapFormScreen({ gapFields, onSubmitComplete }: GapFormSc
         if (fieldsToShow.length === 0) return null;
 
         return (
-            <div className="bg-dark-400 rounded-2xl p-5 border border-dark-50/20">
-                <h3 className="text-sm font-semibold text-white mb-4 flex items-center gap-2">
+            <div className="bg-white rounded-2xl p-5 border border-surface-300">
+                <h3 className="text-sm font-semibold text-surface-950 mb-4 flex items-center gap-2">
                     <span className="text-lg">{SECTION_ICONS[sectionId]}</span>
                     {section.sectionName}
                 </h3>
@@ -186,13 +186,13 @@ export default function GapFormScreen({ gapFields, onSubmitComplete }: GapFormSc
 
                     return (
                         <div key={idx} className="mb-4 last:mb-0">
-                            <div className="bg-dark-600/50 rounded-xl p-4 border border-dark-50/10">
+                            <div className="bg-surface-100/50 rounded-xl p-4 border border-surface-200">
                                 <div className="flex items-center gap-2 mb-3">
                                     <span className="text-xs font-bold text-primary-400 bg-primary-500/10 px-2 py-0.5 rounded-full">
                                         {idx + 1}
                                     </span>
-                                    <span className="text-sm font-medium text-white">{entryLabel}</span>
-                                    {subtitle && <span className="text-xs text-slate-500">· {subtitle}</span>}
+                                    <span className="text-sm font-medium text-surface-950">{entryLabel}</span>
+                                    {subtitle && <span className="text-xs text-surface-500">· {subtitle}</span>}
                                 </div>
                                 <div className="grid sm:grid-cols-2 gap-3">
                                     {fieldsToShow.map((field) => {
@@ -226,12 +226,12 @@ export default function GapFormScreen({ gapFields, onSubmitComplete }: GapFormSc
         if (fieldsToShow.length === 0) return null;
 
         return (
-            <div className="bg-dark-400 rounded-2xl p-5 border border-dark-50/20">
-                <h3 className="text-sm font-semibold text-white mb-4 flex items-center gap-2">
+            <div className="bg-white rounded-2xl p-5 border border-surface-300">
+                <h3 className="text-sm font-semibold text-surface-950 mb-4 flex items-center gap-2">
                     <span className="text-lg">{SECTION_ICONS.S5}</span>
                     Skills, Hobbies & Certifications
                 </h3>
-                <p className="text-xs text-slate-500 mb-3">Add or review these optional fields:</p>
+                <p className="text-xs text-surface-500 mb-3">Add or review these optional fields:</p>
                 <div className="grid sm:grid-cols-2 gap-4">
                     {fieldsToShow.map((field) => (
                         <FieldInput key={field.id} field={field} sectionId="S5" value={allValues[field.key]} onChange={updateGapAnswer} allValues={allValues} />
@@ -247,8 +247,8 @@ export default function GapFormScreen({ gapFields, onSubmitComplete }: GapFormSc
         if (!section) return null;
 
         return (
-            <div className="bg-dark-400 rounded-2xl p-5 border border-dark-50/20">
-                <h3 className="text-sm font-semibold text-white mb-4 flex items-center gap-2">
+            <div className="bg-white rounded-2xl p-5 border border-surface-300">
+                <h3 className="text-sm font-semibold text-surface-950 mb-4 flex items-center gap-2">
                     <span className="text-lg">{SECTION_ICONS[sectionId]}</span>
                     {section.sectionName}
                 </h3>
@@ -266,7 +266,7 @@ export default function GapFormScreen({ gapFields, onSubmitComplete }: GapFormSc
         );
     };
 
-    const s9 = schema.sections.find((s) => s.sectionId === CREDENTIALS_SECTION);
+
 
     return (
         <motion.div
@@ -279,8 +279,8 @@ export default function GapFormScreen({ gapFields, onSubmitComplete }: GapFormSc
             {/* Header */}
             <div className="text-center mb-2">
                 <div className="text-4xl mb-3">📝</div>
-                <h2 className="text-xl font-bold text-white mb-2">Almost there — just a few details</h2>
-                <p className="text-sm text-slate-400">
+                <h2 className="text-xl font-bold text-surface-950 mb-2">Almost there — just a few details</h2>
+                <p className="text-sm text-surface-600">
                     We extracted most of your profile from the resume. Review the sections below and fill in anything missing.
                 </p>
             </div>
@@ -303,29 +303,10 @@ export default function GapFormScreen({ gapFields, onSubmitComplete }: GapFormSc
             {/* S7 — Job Preferences */}
             {renderAlwaysShowSection("S7")}
 
-            {/* S9 — Credentials */}
-            {s9 && (
-                <div className="bg-dark-400 rounded-2xl p-5 border border-neon-violet/20">
-                    <div className="bg-neon-violet/5 rounded-xl p-3 mb-4 border border-neon-violet/10">
-                        <p className="text-sm text-neon-violet">
-                            ⭐ <strong>Recommended</strong> — Add your login details so we can apply to jobs on your behalf.
-                            You can skip this now and add it later from your profile settings.
-                        </p>
-                    </div>
-                    <h3 className="text-sm font-semibold text-white mb-4 flex items-center gap-2">
-                        <span className="text-lg">{SECTION_ICONS.S9}</span>
-                        {s9.sectionName}
-                    </h3>
-                    <div className="grid sm:grid-cols-2 gap-4">
-                        {s9.fields.map((field) => (
-                            <FieldInput key={field.id} field={field} sectionId={s9.sectionId} value={allValues[field.key]} onChange={updateGapAnswer} allValues={allValues} />
-                        ))}
-                    </div>
-                </div>
-            )}
+
 
             {error && (
-                <p className="text-sm text-red-400 bg-red-500/10 border border-red-500/20 rounded-xl p-3">
+                <p className="text-sm text-red-400 bg-red-50 border border-red-500/20 rounded-xl p-3">
                     {error}
                 </p>
             )}
@@ -333,7 +314,7 @@ export default function GapFormScreen({ gapFields, onSubmitComplete }: GapFormSc
             <button
                 onClick={handleSubmit}
                 disabled={isSubmitting}
-                className="w-full py-3.5 text-sm font-bold text-white bg-gradient-to-r from-neon-emerald to-primary-500 rounded-xl hover:shadow-lg hover:shadow-neon-emerald/30 transition-all disabled:opacity-60"
+                className="w-full py-3.5 text-sm font-bold text-white bg-gradient-to-r from-accent-green to-primary-500 rounded-xl hover:shadow-lg hover:shadow-accent-green/30 transition-all disabled:opacity-60"
             >
                 {isSubmitting ? (
                     <span className="flex items-center justify-center gap-2">

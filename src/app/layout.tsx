@@ -73,7 +73,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="scroll-smooth dark">
+    <html lang="en" className="scroll-smooth">
       <head>
         <link rel="canonical" href="https://applypilot.us" />
         <script
@@ -117,7 +117,7 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className="antialiased bg-dark-700 text-slate-200">
+      <body className="antialiased bg-white text-surface-950">
         <SessionProvider>
           <Navbar />
           <main>{children}</main>

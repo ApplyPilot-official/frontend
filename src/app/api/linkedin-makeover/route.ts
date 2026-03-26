@@ -33,6 +33,22 @@ export async function GET(req: NextRequest) {
     }
 }
 
+import crypto from 'crypto';
+
+function getEncryptionKey(): Buffer {
+    const secret = process.env.JWT_SECRET || 'applypilot-default-secret-key-32b';
+    return crypto.createHash('sha256').update(secret).digest();
+}
+
+function encrypt(text: string): string {
+    if (!text) return '';
+    const iv = crypto.randomBytes(16);
+    const cipher = crypto.createCipheriv('aes-256-cbc', getEncryptionKey(), iv);
+    let encrypted = cipher.update(text, 'utf8', 'hex');
+    encrypted += cipher.final('hex');
+    return iv.toString('hex') + ':' + encrypted;
+}
+
 // POST: Create LinkedIn makeover request (pro users only)
 export async function POST(req: NextRequest) {
     try {
@@ -60,7 +76,7 @@ export async function POST(req: NextRequest) {
             );
         }
 
-        const { linkedinUrl, notes } = await req.json();
+        const { linkedinUrl, notes, serviceType, linkedInLoginEmail, linkedInLoginPassword, linkedInLoginPhone } = await req.json();
         if (!linkedinUrl?.trim()) {
             return NextResponse.json(
                 { error: 'LinkedIn profile URL is required.' },
@@ -68,13 +84,23 @@ export async function POST(req: NextRequest) {
             );
         }
 
-        const request = await LinkedInMakeover.create({
+        const requestData: Record<string, unknown> = {
             userId: user._id,
             userEmail: user.email,
             linkedinUrl: linkedinUrl.trim(),
             notes: notes?.trim() || undefined,
+            serviceType: serviceType || 'suggestions',
             status: 'pending',
-        });
+        };
+
+        // Encrypt credentials for done-for-you service
+        if (serviceType === 'done_for_you') {
+            if (linkedInLoginEmail) requestData.linkedInLoginEmail = encrypt(linkedInLoginEmail);
+            if (linkedInLoginPassword) requestData.linkedInLoginPassword = encrypt(linkedInLoginPassword);
+            if (linkedInLoginPhone) requestData.linkedInLoginPhone = encrypt(linkedInLoginPhone);
+        }
+
+        const request = await LinkedInMakeover.create(requestData);
 
         return NextResponse.json({
             message: 'Your LinkedIn makeover request has been recorded successfully. Our team will review your profile and reach out once the makeover is ready.',

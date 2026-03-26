@@ -9,6 +9,7 @@ import UploadScreen from "@/components/onboarding/UploadScreen";
 import LoadingScreen from "@/components/onboarding/LoadingScreen";
 import ErrorScreen from "@/components/onboarding/ErrorScreen";
 import GapFormScreen from "@/components/onboarding/GapFormScreen";
+import CredentialsScreen from "@/components/onboarding/CredentialsScreen";
 
 export default function OnboardingPage() {
     const { status: sessionStatus } = useSession();
@@ -144,7 +145,7 @@ export default function OnboardingPage() {
 
     if (sessionStatus === "loading") {
         return (
-            <div className="min-h-screen flex items-center justify-center bg-dark-700">
+            <div className="min-h-screen flex items-center justify-center bg-surface-100">
                 <div className="w-8 h-8 border-2 border-primary-500 border-t-transparent rounded-full animate-spin" />
             </div>
         );
@@ -156,24 +157,26 @@ export default function OnboardingPage() {
     }
 
     return (
-        <div className="min-h-screen bg-dark-700 pt-24 pb-16">
+        <div className="min-h-screen bg-surface-100 pt-24 pb-16">
             <div className="max-w-2xl mx-auto px-4">
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     className="text-center mb-8"
                 >
-                    <h1 className="text-2xl font-bold text-white mb-2">
-                        {screen === "gap" ? "Complete Your Profile" : "Set Up Your Profile"}
+                    <h1 className="text-2xl font-bold text-surface-950 mb-2">
+                        {screen === "gap" ? "Complete Your Profile" : screen === "credentials" ? "Almost Done!" : "Set Up Your Profile"}
                     </h1>
-                    <p className="text-sm text-slate-400">
+                    <p className="text-sm text-surface-600">
                         {screen === "gap"
                             ? "Review and fill in the details below"
-                            : "Upload your resume and let our AI do the work"}
+                            : screen === "credentials"
+                                ? "Add your account credentials for auto-applying"
+                                : "Upload your resume and let our AI do the work"}
                     </p>
                 </motion.div>
 
-                <div className="bg-dark-400 rounded-2xl p-6 sm:p-8 border border-dark-50/20">
+                <div className="bg-white rounded-2xl p-6 sm:p-8 border border-surface-300">
                     <AnimatePresence mode="wait">
                         {screen === "upload" && (
                             <UploadScreen
@@ -195,7 +198,13 @@ export default function OnboardingPage() {
                         {screen === "gap" && (
                             <GapFormScreen
                                 gapFields={gapFields}
-                                onSubmitComplete={() => router.push("/profile")}
+                                onSubmitComplete={() => setScreen("credentials")}
+                            />
+                        )}
+                        {screen === "credentials" && (
+                            <CredentialsScreen
+                                onComplete={() => router.push("/profile")}
+                                getAuthHeaders={getAuthHeaders}
                             />
                         )}
                     </AnimatePresence>

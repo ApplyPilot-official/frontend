@@ -30,7 +30,7 @@ export default function PricingCard({ featured = true }: PricingCardProps) {
             >
                 {/* Popular badge */}
                 {featured && (
-                    <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 bg-gradient-to-r from-primary-600 to-primary-500 text-white text-xs font-semibold rounded-full shadow-lg shadow-primary-500/25">
+                    <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 bg-gradient-to-r from-primary-600 to-primary-500 text-surface-950 text-xs font-semibold rounded-full shadow-lg shadow-primary-500/25">
                         Most Popular
                     </div>
                 )}
@@ -40,12 +40,12 @@ export default function PricingCard({ featured = true }: PricingCardProps) {
                         <h3 className="text-lg font-semibold text-slate-900 mb-2">
                             Pro Plan
                         </h3>
-                        <p className="text-sm text-slate-500 mb-4">
+                        <p className="text-sm text-surface-500 mb-4">
                             Everything you need to land your dream job
                         </p>
                         <div className="flex items-baseline justify-center gap-1">
                             <span className="text-5xl font-bold gradient-text">$35</span>
-                            <span className="text-slate-500 text-sm">/month</span>
+                            <span className="text-surface-500 text-sm">/month</span>
                         </div>
                     </div>
 
@@ -67,14 +67,14 @@ export default function PricingCard({ featured = true }: PricingCardProps) {
                                         />
                                     </svg>
                                 </div>
-                                <span className="text-sm text-slate-600">{feature}</span>
+                                <span className="text-sm text-surface-600">{feature}</span>
                             </li>
                         ))}
                     </ul>
 
                     {/* Payment Button placeholder - ready for Razorpay */}
                     <button
-                        className="w-full py-3.5 px-6 text-sm font-semibold text-white bg-gradient-to-r from-primary-600 to-primary-500 rounded-xl hover:shadow-lg hover:shadow-primary-500/25 hover:-translate-y-0.5 transition-all duration-200"
+                        className="w-full py-3.5 px-6 text-sm font-semibold text-surface-950 bg-gradient-to-r from-primary-600 to-primary-500 rounded-xl hover:shadow-lg hover:shadow-primary-500/25 hover:-translate-y-0.5 transition-all duration-200"
                         onClick={() => {
                             // TODO: Integrate Razorpay here
                             // razorpayHandler.open({ amount: 3500, currency: 'USD', ... })
@@ -84,7 +84,7 @@ export default function PricingCard({ featured = true }: PricingCardProps) {
                         Get Started
                     </button>
 
-                    <p className="text-center text-xs text-slate-400 mt-3">
+                    <p className="text-center text-xs text-surface-600 mt-3">
                         Cancel anytime · Secure payment
                     </p>
                 </div>

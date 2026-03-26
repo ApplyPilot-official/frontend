@@ -64,7 +64,7 @@ export default function Navbar() {
             animate={{ y: 0 }}
             transition={{ duration: 0.6, ease: [0.25, 0.4, 0.25, 1] }}
             className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${scrolled
-                ? "glass-dark shadow-lg shadow-black/20 py-3"
+                ? "bg-white/95 backdrop-blur-md shadow-sm border-b border-surface-300 py-3"
                 : "bg-transparent py-5"
                 }`}
         >
@@ -72,7 +72,7 @@ export default function Navbar() {
                 <div className="flex items-center justify-between">
                     {/* Logo */}
                     <Link href="/" className="flex items-center gap-2.5 group">
-                        <div className="relative w-11 h-11 rounded-xl bg-white p-1.5 flex items-center justify-center shadow-lg shadow-white/10">
+                        <div className="relative w-11 h-11 rounded-xl bg-white p-1.5 flex items-center justify-center shadow-md">
                             <Image
                                 src="/logo.png"
                                 alt="ApplyPilot"
@@ -81,7 +81,7 @@ export default function Navbar() {
                                 className="object-contain"
                             />
                         </div>
-                        <span className="text-xl font-bold text-white tracking-tight">
+                        <span className="text-xl font-bold text-surface-950 tracking-tight">
                             Apply<span className="gradient-text">Pilot</span>
                         </span>
                     </Link>
@@ -93,10 +93,10 @@ export default function Navbar() {
                                 <Link
                                     key={link.href}
                                     href={link.href}
-                                    className="text-sm text-slate-300 hover:text-white transition-colors relative group"
+                                    className="text-sm text-surface-700 hover:text-primary-600 transition-colors relative group"
                                 >
                                     {link.label}
-                                    <span className="absolute -bottom-1 left-0 w-0 h-[2px] bg-gradient-to-r from-neon-blue to-neon-violet group-hover:w-full transition-all duration-300" />
+                                    <span className="absolute -bottom-1 left-0 w-0 h-[2px] bg-primary-500 group-hover:w-full transition-all duration-300" />
                                 </Link>
                             ))}
                         </div>
@@ -109,7 +109,7 @@ export default function Navbar() {
                             <div className="relative" ref={dropdownRef}>
                                 <button
                                     onClick={() => setProfileOpen(!profileOpen)}
-                                    className="flex items-center gap-2.5 px-2 py-1.5 rounded-full hover:bg-white/5 transition-all"
+                                    className="flex items-center gap-2.5 px-2 py-1.5 rounded-full hover:bg-surface-200 transition-all"
                                 >
                                     {session.user?.image ? (
                                         <Image
@@ -117,15 +117,15 @@ export default function Navbar() {
                                             alt=""
                                             width={36}
                                             height={36}
-                                            className="rounded-full ring-2 ring-primary-500/40"
+                                            className="rounded-full ring-2 ring-primary-200"
                                         />
                                     ) : (
-                                        <div className="w-9 h-9 rounded-full bg-gradient-to-br from-primary-500 to-neon-violet flex items-center justify-center text-white font-bold text-sm ring-2 ring-primary-500/30">
+                                        <div className="w-9 h-9 rounded-full bg-gradient-to-br from-primary-500 to-accent-green flex items-center justify-center text-surface-950 font-bold text-sm ring-2 ring-primary-200">
                                             {userInitial}
                                         </div>
                                     )}
                                     <svg
-                                        className={`w-4 h-4 text-slate-400 transition-transform duration-200 ${profileOpen ? "rotate-180" : ""}`}
+                                        className={`w-4 h-4 text-surface-600 transition-transform duration-200 ${profileOpen ? "rotate-180" : ""}`}
                                         fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"
                                     >
                                         <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
@@ -139,14 +139,14 @@ export default function Navbar() {
                                             animate={{ opacity: 1, y: 0, scale: 1 }}
                                             exit={{ opacity: 0, y: 8, scale: 0.95 }}
                                             transition={{ duration: 0.15 }}
-                                            className="absolute right-0 top-full mt-2 w-56 bg-dark-400 border border-dark-50/30 rounded-2xl shadow-2xl shadow-black/40 overflow-hidden"
+                                            className="absolute right-0 top-full mt-2 w-56 bg-white border border-surface-300 rounded-2xl shadow-xl overflow-hidden"
                                         >
                                             {/* User info */}
-                                            <div className="px-4 py-3 border-b border-dark-50/20">
-                                                <p className="text-sm font-semibold text-white truncate">
+                                            <div className="px-4 py-3 border-b border-surface-200">
+                                                <p className="text-sm font-semibold text-surface-950 truncate">
                                                     {session.user?.name || "User"}
                                                 </p>
-                                                <p className="text-xs text-slate-500 truncate">
+                                                <p className="text-xs text-surface-600 truncate">
                                                     {session.user?.email}
                                                 </p>
                                             </div>
@@ -155,42 +155,42 @@ export default function Navbar() {
                                                 <Link
                                                     href="/dashboard"
                                                     onClick={() => setProfileOpen(false)}
-                                                    className="flex items-center gap-3 px-4 py-2.5 text-sm text-slate-300 hover:text-white hover:bg-dark-300 transition-colors"
+                                                    className="flex items-center gap-3 px-4 py-2.5 text-sm text-surface-700 hover:text-surface-950 hover:bg-surface-100 transition-colors"
                                                 >
                                                     <span>📊</span> Dashboard
                                                 </Link>
                                                 <Link
                                                     href="/onboarding"
                                                     onClick={() => setProfileOpen(false)}
-                                                    className="flex items-center gap-3 px-4 py-2.5 text-sm text-slate-300 hover:text-white hover:bg-dark-300 transition-colors"
+                                                    className="flex items-center gap-3 px-4 py-2.5 text-sm text-surface-700 hover:text-surface-950 hover:bg-surface-100 transition-colors"
                                                 >
                                                     <span>👤</span> Edit Profile
                                                 </Link>
                                                 <Link
                                                     href="/subscription"
                                                     onClick={() => setProfileOpen(false)}
-                                                    className="flex items-center gap-3 px-4 py-2.5 text-sm text-slate-300 hover:text-white hover:bg-dark-300 transition-colors"
+                                                    className="flex items-center gap-3 px-4 py-2.5 text-sm text-surface-700 hover:text-surface-950 hover:bg-surface-100 transition-colors"
                                                 >
                                                     <span>💎</span> Subscription
                                                 </Link>
                                                 <Link
                                                     href="/dashboard?tab=helpdesk"
                                                     onClick={() => setProfileOpen(false)}
-                                                    className="flex items-center gap-3 px-4 py-2.5 text-sm text-slate-300 hover:text-white hover:bg-dark-300 transition-colors"
+                                                    className="flex items-center gap-3 px-4 py-2.5 text-sm text-surface-700 hover:text-surface-950 hover:bg-surface-100 transition-colors"
                                                 >
                                                     <span>🎫</span> Help Desk
                                                     {helpUnread > 0 && (
-                                                        <span className="w-5 h-5 rounded-full bg-red-500 text-white text-[10px] font-bold flex items-center justify-center ml-auto">
+                                                        <span className="w-5 h-5 rounded-full bg-accent-red text-surface-950 text-[10px] font-bold flex items-center justify-center ml-auto">
                                                             {helpUnread}
                                                         </span>
                                                     )}
                                                 </Link>
                                             </div>
 
-                                            <div className="border-t border-dark-50/20 py-1.5">
+                                            <div className="border-t border-surface-200 py-1.5">
                                                 <button
                                                     onClick={() => signOut({ callbackUrl: "/" })}
-                                                    className="flex items-center gap-3 w-full px-4 py-2.5 text-sm text-red-400 hover:text-red-300 hover:bg-red-500/5 transition-colors"
+                                                    className="flex items-center gap-3 w-full px-4 py-2.5 text-sm text-accent-red hover:bg-red-50 transition-colors"
                                                 >
                                                     <span>🚪</span> Sign Out
                                                 </button>
@@ -204,13 +204,13 @@ export default function Navbar() {
                             <>
                                 <Link
                                     href="/login"
-                                    className="text-sm text-slate-300 hover:text-white transition-colors px-4 py-2"
+                                    className="text-sm text-surface-700 hover:text-surface-950 transition-colors px-4 py-2"
                                 >
                                     Log In
                                 </Link>
                                 <Link
                                     href="/login"
-                                    className="glow-btn text-sm font-semibold text-white px-6 py-2.5 rounded-full"
+                                    className="glow-btn text-sm font-semibold text-surface-950 px-6 py-2.5 rounded-full"
                                 >
                                     Start Applying Free
                                 </Link>
@@ -230,11 +230,11 @@ export default function Navbar() {
                                     ? { rotate: 45, y: 5 }
                                     : { rotate: 0, y: 0 }
                             }
-                            className="w-6 h-0.5 bg-white rounded-full block"
+                            className="w-6 h-0.5 bg-surface-800 rounded-full block"
                         />
                         <motion.span
                             animate={mobileOpen ? { opacity: 0 } : { opacity: 1 }}
-                            className="w-6 h-0.5 bg-white rounded-full block"
+                            className="w-6 h-0.5 bg-surface-800 rounded-full block"
                         />
                         <motion.span
                             animate={
@@ -242,7 +242,7 @@ export default function Navbar() {
                                     ? { rotate: -45, y: -5 }
                                     : { rotate: 0, y: 0 }
                             }
-                            className="w-6 h-0.5 bg-white rounded-full block"
+                            className="w-6 h-0.5 bg-surface-800 rounded-full block"
                         />
                     </button>
                 </div>
@@ -256,7 +256,7 @@ export default function Navbar() {
                         animate={{ opacity: 1, height: "auto" }}
                         exit={{ opacity: 0, height: 0 }}
                         transition={{ duration: 0.3 }}
-                        className="md:hidden glass-dark mt-2 mx-4 rounded-2xl overflow-hidden"
+                        className="md:hidden bg-white border-t border-surface-300 mt-2 mx-4 rounded-2xl overflow-hidden shadow-lg"
                     >
                         <div className="p-6 space-y-4">
                             {!session && navLinks.map((link) => (
@@ -264,12 +264,12 @@ export default function Navbar() {
                                     key={link.href}
                                     href={link.href}
                                     onClick={() => setMobileOpen(false)}
-                                    className="block text-sm text-slate-300 hover:text-white py-2 transition-colors"
+                                    className="block text-sm text-surface-700 hover:text-primary-600 py-2 transition-colors"
                                 >
                                     {link.label}
                                 </Link>
                             ))}
-                            <div className="pt-4 border-t border-white/10 space-y-3">
+                            <div className="pt-4 border-t border-surface-300 space-y-3">
                                 {session ? (
                                     <>
                                         <div className="flex items-center gap-3 mb-3">
@@ -282,51 +282,51 @@ export default function Navbar() {
                                                     className="rounded-full"
                                                 />
                                             ) : (
-                                                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary-500 to-neon-violet flex items-center justify-center text-white font-bold text-xs">
+                                                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary-500 to-accent-green flex items-center justify-center text-surface-950 font-bold text-xs">
                                                     {userInitial}
                                                 </div>
                                             )}
                                             <div>
-                                                <p className="text-sm font-medium text-white">{session.user?.name}</p>
-                                                <p className="text-xs text-slate-500">{session.user?.email}</p>
+                                                <p className="text-sm font-medium text-surface-950">{session.user?.name}</p>
+                                                <p className="text-xs text-surface-600">{session.user?.email}</p>
                                             </div>
                                         </div>
                                         <Link
                                             href="/dashboard"
                                             onClick={() => setMobileOpen(false)}
-                                            className="block text-sm text-slate-300 hover:text-white py-2"
+                                            className="block text-sm text-surface-700 hover:text-primary-600 py-2"
                                         >
                                             📊 Dashboard
                                         </Link>
                                         <Link
                                             href="/onboarding"
                                             onClick={() => setMobileOpen(false)}
-                                            className="block text-sm text-slate-300 hover:text-white py-2"
+                                            className="block text-sm text-surface-700 hover:text-primary-600 py-2"
                                         >
                                             👤 Edit Profile
                                         </Link>
                                         <Link
                                             href="/subscription"
                                             onClick={() => setMobileOpen(false)}
-                                            className="block text-sm text-slate-300 hover:text-white py-2"
+                                            className="block text-sm text-surface-700 hover:text-primary-600 py-2"
                                         >
                                             💎 Subscription
                                         </Link>
                                         <Link
                                             href="/dashboard?tab=helpdesk"
                                             onClick={() => setMobileOpen(false)}
-                                            className="flex items-center gap-2 text-sm text-slate-300 hover:text-white py-2"
+                                            className="flex items-center gap-2 text-sm text-surface-700 hover:text-primary-600 py-2"
                                         >
                                             🎫 Help Desk
                                             {helpUnread > 0 && (
-                                                <span className="w-5 h-5 rounded-full bg-red-500 text-white text-[10px] font-bold flex items-center justify-center">
+                                                <span className="w-5 h-5 rounded-full bg-accent-red text-surface-950 text-[10px] font-bold flex items-center justify-center">
                                                     {helpUnread}
                                                 </span>
                                             )}
                                         </Link>
                                         <button
                                             onClick={() => { setMobileOpen(false); signOut({ callbackUrl: "/" }); }}
-                                            className="block text-sm text-red-400 hover:text-red-300 py-2"
+                                            className="block text-sm text-accent-red hover:text-red-700 py-2"
                                         >
                                             🚪 Sign Out
                                         </button>
@@ -336,14 +336,14 @@ export default function Navbar() {
                                         <Link
                                             href="/login"
                                             onClick={() => setMobileOpen(false)}
-                                            className="block text-sm text-slate-300 hover:text-white py-2"
+                                            className="block text-sm text-surface-700 hover:text-primary-600 py-2"
                                         >
                                             Log In
                                         </Link>
                                         <Link
                                             href="/login"
                                             onClick={() => setMobileOpen(false)}
-                                            className="glow-btn block text-center text-sm font-semibold text-white px-6 py-3 rounded-full"
+                                            className="glow-btn block text-center text-sm font-semibold text-surface-950 px-6 py-3 rounded-full"
                                         >
                                             Start Applying Free
                                         </Link>

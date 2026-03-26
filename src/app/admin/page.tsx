@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import { useSession } from "next-auth/react";
 import { redirect } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
+import { DASHBOARD_FEATURES, PLAN_TIERS, getDefaultFeatureAccess, type FeatureAccessMap } from "@/lib/dashboardFeatures";
 
 interface UserRecord {
     _id: string;
@@ -37,7 +38,7 @@ interface StatsData {
     planCounts: Record<string, number>;
 }
 
-type AdminTab = "users" | "coupons" | "stats" | "counseling" | "helpdesk" | "portfolio" | "linkedin" | "profiles" | "targets";
+type AdminTab = "users" | "coupons" | "stats" | "counseling" | "helpdesk" | "portfolio" | "linkedin" | "profiles" | "targets" | "features";
 
 interface CounselingRecord { _id: string; userEmail: string; preferredTime1: string; preferredTime2: string; preferredTime3: string; timezone: string; status: string; createdAt: string; }
 interface HelpConvo { _id: string; userEmail: string; lastMessage: string; lastMessageAt: string; lastSenderType: string; totalMessages: number; unreadCount: number; }
@@ -75,6 +76,8 @@ export default function AdminPage() {
     const [linkedinReqs, setLinkedinReqs] = useState<LinkedInRecord[]>([]);
     const [profileRecords, setProfileRecords] = useState<ProfileRecord[]>([]);
     const [targetApps, setTargetApps] = useState<TargetRecord[]>([]);
+    const [featureAccessMap, setFeatureAccessMap] = useState<FeatureAccessMap>(getDefaultFeatureAccess());
+    const [featureAccessSaving, setFeatureAccessSaving] = useState(false);
 
     const fetchData = useCallback(async () => {
         setLoading(true);
@@ -106,6 +109,12 @@ export default function AdminPage() {
             if (profilesRes.ok) setProfileRecords((await profilesRes.json()).profiles || []);
             const targetsRes = await fetch("/api/target-applications?admin=true");
             if (targetsRes.ok) setTargetApps((await targetsRes.json()).targets || []);
+            // Fetch feature access config
+            const faRes = await fetch("/api/admin/feature-access");
+            if (faRes.ok) {
+                const faData = await faRes.json();
+                if (faData.features) setFeatureAccessMap(faData.features);
+            }
         } catch (err) {
             console.error("Admin fetch error:", err);
         } finally {
@@ -135,7 +144,7 @@ export default function AdminPage() {
 
     if (status === "loading" || !roleChecked) {
         return (
-            <div className="min-h-screen flex items-center justify-center bg-dark-700">
+            <div className="min-h-screen flex items-center justify-center bg-surface-100">
                 <div className="w-8 h-8 border-2 border-primary-500 border-t-transparent rounded-full animate-spin" />
             </div>
         );
@@ -187,6 +196,7 @@ export default function AdminPage() {
         { id: "users", label: "Users", icon: "👥" },
         { id: "coupons", label: "Coupons & Referrals", icon: "🎟️" },
         { id: "stats", label: "Revenue", icon: "💰" },
+        { id: "features", label: "Feature Access", icon: "🔐" },
         { id: "counseling", label: "Counseling", icon: "🎓" },
         { id: "helpdesk", label: "Help Desk", icon: "🎫" },
         { id: "portfolio", label: "Portfolio", icon: "🌐" },
@@ -194,6 +204,38 @@ export default function AdminPage() {
         { id: "profiles", label: "Profiles", icon: "📄" },
         { id: "targets", label: "Targets", icon: "🎯" },
     ];
+
+    const toggleFeatureAccess = (featureId: string, plan: string) => {
+        setFeatureAccessMap(prev => ({
+            ...prev,
+            [featureId]: {
+                ...prev[featureId],
+                [plan]: !prev[featureId]?.[plan as keyof typeof prev[typeof featureId]],
+            },
+        }));
+    };
+
+    const saveFeatureAccess = async () => {
+        setFeatureAccessSaving(true);
+        try {
+            const res = await fetch("/api/admin/feature-access", {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ features: featureAccessMap }),
+            });
+            if (res.ok) {
+                setActionMsg("Feature access saved!");
+            } else {
+                const data = await res.json();
+                setActionMsg(`Error: ${data.error}`);
+            }
+            setTimeout(() => setActionMsg(""), 3000);
+        } catch {
+            setActionMsg("Error saving feature access");
+        } finally {
+            setFeatureAccessSaving(false);
+        }
+    };
 
     const updateCounselingStatus = async (id: string, status: string) => {
         try {
@@ -270,11 +312,11 @@ export default function AdminPage() {
     };
 
     return (
-        <div className="min-h-screen bg-dark-700 pt-24 pb-12">
+        <div className="min-h-screen bg-surface-100 pt-24 pb-12">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-                    <h1 className="text-2xl font-bold text-white mb-1">Admin Portal</h1>
-                    <p className="text-sm text-slate-400 mb-6">Manage users, coupons, and view revenue</p>
+                    <h1 className="text-2xl font-bold text-surface-950 mb-1">Admin Portal</h1>
+                    <p className="text-sm text-surface-600 mb-6">Manage users, coupons, and view revenue</p>
                 </motion.div>
 
                 {/* Action message */}
@@ -285,8 +327,8 @@ export default function AdminPage() {
                             animate={{ opacity: 1, y: 0 }}
                             exit={{ opacity: 0 }}
                             className={`mb-4 p-3 rounded-xl text-sm ${actionMsg.startsWith("Error")
-                                ? "bg-red-500/10 border border-red-500/20 text-red-400"
-                                : "bg-neon-emerald/10 border border-neon-emerald/20 text-neon-emerald"
+                                ? "bg-red-50 border border-red-500/20 text-red-400"
+                                : "bg-green-50 border border-green-200 text-accent-green"
                                 }`}
                         >
                             {actionMsg}
@@ -302,7 +344,7 @@ export default function AdminPage() {
                             onClick={() => setActiveTab(tab.id)}
                             className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${activeTab === tab.id
                                 ? "bg-primary-500/10 text-primary-400 border border-primary-500/30"
-                                : "text-slate-400 hover:text-white hover:bg-dark-400"
+                                : "text-surface-600 hover:text-surface-950 hover:bg-white"
                                 }`}
                         >
                             {tab.icon} {tab.label}
@@ -319,32 +361,32 @@ export default function AdminPage() {
                         {/* Users Tab */}
                         {activeTab === "users" && (
                             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-                                <div className="bg-dark-400 rounded-2xl border border-dark-50/20 overflow-hidden">
+                                <div className="bg-white rounded-2xl border border-surface-300 overflow-hidden">
                                     <div className="overflow-x-auto">
                                         <table className="w-full text-sm">
                                             <thead>
-                                                <tr className="border-b border-dark-50/20">
-                                                    <th className="text-left p-4 text-slate-400 font-medium">User</th>
-                                                    <th className="text-left p-4 text-slate-400 font-medium">Provider</th>
-                                                    <th className="text-left p-4 text-slate-400 font-medium">Plan</th>
-                                                    <th className="text-left p-4 text-slate-400 font-medium">Role</th>
-                                                    <th className="text-left p-4 text-slate-400 font-medium">Joined</th>
-                                                    <th className="text-left p-4 text-slate-400 font-medium">Actions</th>
+                                                <tr className="border-b border-surface-300">
+                                                    <th className="text-left p-4 text-surface-600 font-medium">User</th>
+                                                    <th className="text-left p-4 text-surface-600 font-medium">Provider</th>
+                                                    <th className="text-left p-4 text-surface-600 font-medium">Plan</th>
+                                                    <th className="text-left p-4 text-surface-600 font-medium">Role</th>
+                                                    <th className="text-left p-4 text-surface-600 font-medium">Joined</th>
+                                                    <th className="text-left p-4 text-surface-600 font-medium">Actions</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
                                                 {users.map((u) => (
-                                                    <tr key={u._id} className="border-b border-dark-50/10 hover:bg-dark-300/50">
+                                                    <tr key={u._id} className="border-b border-surface-200 hover:bg-surface-100/50">
                                                         <td className="p-4">
                                                             <div>
-                                                                <p className="text-white font-medium">{u.name}</p>
-                                                                <p className="text-xs text-slate-500">{u.email}</p>
+                                                                <p className="text-surface-950 font-medium">{u.name}</p>
+                                                                <p className="text-xs text-surface-500">{u.email}</p>
                                                             </div>
                                                         </td>
                                                         <td className="p-4">
                                                             <span className={`text-xs px-2 py-1 rounded-full ${u.provider === "google"
                                                                 ? "bg-blue-500/10 text-blue-400"
-                                                                : "bg-slate-500/10 text-slate-400"
+                                                                : "bg-surface-400/10 text-surface-600"
                                                                 }`}>
                                                                 {u.provider}
                                                             </span>
@@ -353,7 +395,7 @@ export default function AdminPage() {
                                                             <select
                                                                 value={u.subscriptionPlan}
                                                                 onChange={(e) => handleChangeSubscription(u._id, e.target.value)}
-                                                                className="px-2 py-1 bg-dark-600 border border-dark-50/30 rounded-lg text-xs text-white focus:outline-none focus:ring-2 focus:ring-primary-500/50"
+                                                                className="px-2 py-1 bg-surface-100 border border-surface-300 rounded-lg text-xs text-grey focus:outline-none focus:ring-2 focus:ring-primary-300"
                                                             >
                                                                 <option value="none">None</option>
                                                                 <option value="basic">Basic</option>
@@ -363,17 +405,17 @@ export default function AdminPage() {
                                                         </td>
                                                         <td className="p-4">
                                                             <span className={`text-xs px-2 py-1 rounded-full ${u.role === "admin"
-                                                                ? "bg-neon-violet/10 text-neon-violet"
-                                                                : "bg-slate-500/10 text-slate-400"
+                                                                ? "bg-violet-50 text-violet-600"
+                                                                : "bg-surface-400/10 text-surface-600"
                                                                 }`}>
                                                                 {u.role}
                                                             </span>
                                                         </td>
-                                                        <td className="p-4 text-xs text-slate-500">
+                                                        <td className="p-4 text-xs text-surface-500">
                                                             {new Date(u.createdAt).toLocaleDateString()}
                                                         </td>
                                                         <td className="p-4">
-                                                            <span className={`text-xs ${u.isEmailVerified ? "text-neon-emerald" : "text-yellow-400"}`}>
+                                                            <span className={`text-xs ${u.isEmailVerified ? "text-accent-green" : "text-yellow-400"}`}>
                                                                 {u.isEmailVerified ? "✓ Verified" : "⏳ Pending"}
                                                             </span>
                                                         </td>
@@ -381,7 +423,7 @@ export default function AdminPage() {
                                                 ))}
                                                 {users.length === 0 && (
                                                     <tr>
-                                                        <td colSpan={6} className="p-8 text-center text-slate-500">
+                                                        <td colSpan={6} className="p-8 text-center text-surface-500">
                                                             No users found
                                                         </td>
                                                     </tr>
@@ -397,24 +439,24 @@ export default function AdminPage() {
                         {activeTab === "coupons" && (
                             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
                                 {/* Create Coupon Form */}
-                                <div className="bg-dark-400 rounded-2xl p-6 border border-dark-50/20">
-                                    <h3 className="text-lg font-bold text-white mb-4">Create Coupon / Referral Code</h3>
+                                <div className="bg-white rounded-2xl p-6 border border-surface-300">
+                                    <h3 className="text-lg font-bold text-surface-950 mb-4">Create Coupon / Referral Code</h3>
                                     <form onSubmit={handleCreateCoupon} className="grid sm:grid-cols-2 gap-4">
                                         <div>
-                                            <label className="block text-xs text-slate-400 mb-1">Code</label>
+                                            <label className="block text-xs text-surface-600 mb-1">Code</label>
                                             <input
                                                 type="text"
                                                 value={newCoupon.code}
                                                 onChange={(e) => setNewCoupon({ ...newCoupon, code: e.target.value.toUpperCase() })}
                                                 required
                                                 placeholder="e.g. JOHN-REF or WELCOME"
-                                                className="w-full px-3 py-2.5 bg-dark-600 border border-dark-50/30 rounded-xl text-white placeholder-slate-500 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/50 uppercase"
+                                                className="w-full px-3 py-2.5 bg-surface-100 border border-surface-300 rounded-xl text-surface-950 placeholder-surface-500 text-sm focus:outline-none focus:ring-2 focus:ring-primary-300 uppercase"
                                             />
                                         </div>
                                         <div>
-                                            <label className="block text-xs text-slate-400 mb-1">Discount (max $5.00)</label>
+                                            <label className="block text-xs text-surface-600 mb-1">Discount (max $5.00)</label>
                                             <div className="flex items-center gap-2">
-                                                <span className="text-white text-sm">$</span>
+                                                <span className="text-surface-950 text-sm">$</span>
                                                 <input
                                                     type="number"
                                                     min={0.01}
@@ -427,31 +469,31 @@ export default function AdminPage() {
                                                             discountAmountCents: Math.min(Math.round(parseFloat(e.target.value) * 100), 500),
                                                         })
                                                     }
-                                                    className="flex-1 px-3 py-2.5 bg-dark-600 border border-dark-50/30 rounded-xl text-white text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/50"
+                                                    className="flex-1 px-3 py-2.5 bg-surface-100 border border-surface-300 rounded-xl text-surface-950 text-sm focus:outline-none focus:ring-2 focus:ring-primary-300"
                                                 />
                                             </div>
                                         </div>
                                         <div>
-                                            <label className="block text-xs text-slate-400 mb-1">Type</label>
+                                            <label className="block text-xs text-surface-600 mb-1">Type</label>
                                             <select
                                                 value={newCoupon.type}
                                                 onChange={(e) =>
                                                     setNewCoupon({ ...newCoupon, type: e.target.value as "single-use" | "referral" })
                                                 }
-                                                className="w-full px-3 py-2.5 bg-dark-600 border border-dark-50/30 rounded-xl text-white text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/50"
+                                                className="w-full px-3 py-2.5 bg-surface-100 border border-surface-300 rounded-xl text-surface-950 text-sm focus:outline-none focus:ring-2 focus:ring-primary-300"
                                             >
                                                 <option value="referral">♻️ Referral (reusable by different users)</option>
                                                 <option value="single-use">🔒 Single-use</option>
                                             </select>
                                         </div>
                                         <div>
-                                            <label className="block text-xs text-slate-400 mb-1">Generated From</label>
+                                            <label className="block text-xs text-surface-600 mb-1">Generated From</label>
                                             <select
                                                 value={newCoupon.generationType}
                                                 onChange={(e) =>
                                                     setNewCoupon({ ...newCoupon, generationType: e.target.value as "email" | "username" | "custom" })
                                                 }
-                                                className="w-full px-3 py-2.5 bg-dark-600 border border-dark-50/30 rounded-xl text-white text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/50"
+                                                className="w-full px-3 py-2.5 bg-surface-100 border border-surface-300 rounded-xl text-surface-950 text-sm focus:outline-none focus:ring-2 focus:ring-primary-300"
                                             >
                                                 <option value="email">📧 From email name</option>
                                                 <option value="username">👤 From username</option>
@@ -459,18 +501,18 @@ export default function AdminPage() {
                                             </select>
                                         </div>
                                         <div>
-                                            <label className="block text-xs text-slate-400 mb-1">Expires (optional)</label>
+                                            <label className="block text-xs text-surface-600 mb-1">Expires (optional)</label>
                                             <input
                                                 type="date"
                                                 value={newCoupon.expiresAt}
                                                 onChange={(e) => setNewCoupon({ ...newCoupon, expiresAt: e.target.value })}
-                                                className="w-full px-3 py-2.5 bg-dark-600 border border-dark-50/30 rounded-xl text-white text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/50"
+                                                className="w-full px-3 py-2.5 bg-surface-100 border border-surface-300 rounded-xl text-surface-950 text-sm focus:outline-none focus:ring-2 focus:ring-primary-300"
                                             />
                                         </div>
                                         <div className="flex items-end">
                                             <button
                                                 type="submit"
-                                                className="w-full py-2.5 text-sm font-bold text-white bg-gradient-to-r from-neon-blue to-primary-500 rounded-xl hover:shadow-lg hover:shadow-primary-500/30 transition-all"
+                                                className="w-full py-2.5 text-sm font-bold text-white bg-gradient-to-r from-primary-500 to-primary-600 rounded-xl hover:shadow-lg hover:shadow-primary-500/30 transition-all"
                                             >
                                                 Create Coupon
                                             </button>
@@ -479,22 +521,22 @@ export default function AdminPage() {
                                 </div>
 
                                 {/* Coupons List */}
-                                <div className="bg-dark-400 rounded-2xl border border-dark-50/20 overflow-hidden">
+                                <div className="bg-white rounded-2xl border border-surface-300 overflow-hidden">
                                     <div className="overflow-x-auto">
                                         <table className="w-full text-sm">
                                             <thead>
-                                                <tr className="border-b border-dark-50/20">
-                                                    <th className="text-left p-4 text-slate-400 font-medium">Code</th>
-                                                    <th className="text-left p-4 text-slate-400 font-medium">Type</th>
-                                                    <th className="text-left p-4 text-slate-400 font-medium">Discount</th>
-                                                    <th className="text-left p-4 text-slate-400 font-medium">Used</th>
-                                                    <th className="text-left p-4 text-slate-400 font-medium">Referrals</th>
-                                                    <th className="text-left p-4 text-slate-400 font-medium">Status</th>
+                                                <tr className="border-b border-surface-300">
+                                                    <th className="text-left p-4 text-surface-600 font-medium">Code</th>
+                                                    <th className="text-left p-4 text-surface-600 font-medium">Type</th>
+                                                    <th className="text-left p-4 text-surface-600 font-medium">Discount</th>
+                                                    <th className="text-left p-4 text-surface-600 font-medium">Used</th>
+                                                    <th className="text-left p-4 text-surface-600 font-medium">Referrals</th>
+                                                    <th className="text-left p-4 text-surface-600 font-medium">Status</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
                                                 {coupons.map((c) => (
-                                                    <tr key={c._id} className="border-b border-dark-50/10 hover:bg-dark-300/50">
+                                                    <tr key={c._id} className="border-b border-surface-200 hover:bg-surface-100/50">
                                                         <td className="p-4">
                                                             <code className="text-primary-400 font-mono text-sm bg-primary-500/10 px-2 py-0.5 rounded">
                                                                 {c.code}
@@ -502,38 +544,38 @@ export default function AdminPage() {
                                                         </td>
                                                         <td className="p-4">
                                                             <span className={`text-xs px-2 py-1 rounded-full ${c.type === "referral"
-                                                                ? "bg-neon-violet/10 text-neon-violet"
-                                                                : "bg-slate-500/10 text-slate-400"
+                                                                ? "bg-violet-50 text-violet-600"
+                                                                : "bg-surface-400/10 text-surface-600"
                                                                 }`}>
                                                                 {c.type === "referral" ? "♻️ Referral" : "🔒 Single-use"}
                                                             </span>
                                                         </td>
-                                                        <td className="p-4 text-white">
+                                                        <td className="p-4 text-surface-950">
                                                             ${(c.discountAmountCents / 100).toFixed(2)}
                                                         </td>
-                                                        <td className="p-4 text-white">
+                                                        <td className="p-4 text-surface-950">
                                                             {c.usedCount}{c.type === "single-use" ? `/${c.maxUses}` : ""}
                                                         </td>
                                                         <td className="p-4">
                                                             {c.referralConversions && c.referralConversions.length > 0 ? (
                                                                 <div className="space-y-1">
                                                                     {c.referralConversions.slice(0, 3).map((r, i) => (
-                                                                        <p key={i} className="text-xs text-slate-400">
-                                                                            {r.userEmail} → <span className="text-neon-emerald">{r.plan}</span>
+                                                                        <p key={i} className="text-xs text-surface-600">
+                                                                            {r.userEmail} → <span className="text-accent-green">{r.plan}</span>
                                                                         </p>
                                                                     ))}
                                                                     {c.referralConversions.length > 3 && (
-                                                                        <p className="text-xs text-slate-500">
+                                                                        <p className="text-xs text-surface-500">
                                                                             +{c.referralConversions.length - 3} more
                                                                         </p>
                                                                     )}
                                                                 </div>
                                                             ) : (
-                                                                <span className="text-xs text-slate-500">—</span>
+                                                                <span className="text-xs text-surface-500">—</span>
                                                             )}
                                                         </td>
                                                         <td className="p-4">
-                                                            <span className={`text-xs ${c.isActive ? "text-neon-emerald" : "text-red-400"}`}>
+                                                            <span className={`text-xs ${c.isActive ? "text-accent-green" : "text-red-400"}`}>
                                                                 {c.isActive ? "Active" : "Inactive"}
                                                             </span>
                                                         </td>
@@ -541,7 +583,7 @@ export default function AdminPage() {
                                                 ))}
                                                 {coupons.length === 0 && (
                                                     <tr>
-                                                        <td colSpan={6} className="p-8 text-center text-slate-500">
+                                                        <td colSpan={6} className="p-8 text-center text-surface-500">
                                                             No coupons created yet
                                                         </td>
                                                     </tr>
@@ -557,27 +599,27 @@ export default function AdminPage() {
                         {activeTab === "stats" && stats && (
                             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
                                 <div className="grid sm:grid-cols-3 gap-4 mb-6">
-                                    <div className="bg-dark-400 rounded-2xl p-6 border border-dark-50/20">
-                                        <p className="text-sm text-slate-400 mb-1">Total Revenue</p>
-                                        <p className="text-3xl font-bold text-white">
-                                            ₹{(stats.totalRevenue / 100).toLocaleString()}
+                                    <div className="bg-white rounded-2xl p-6 border border-surface-300">
+                                        <p className="text-sm text-surface-600 mb-1">Total Revenue</p>
+                                        <p className="text-3xl font-bold text-surface-950">
+                                            ${(stats.totalRevenue / 100).toLocaleString()}
                                         </p>
                                     </div>
-                                    <div className="bg-dark-400 rounded-2xl p-6 border border-dark-50/20">
-                                        <p className="text-sm text-slate-400 mb-1">Total Payments</p>
-                                        <p className="text-3xl font-bold text-white">{stats.totalPayments}</p>
+                                    <div className="bg-white rounded-2xl p-6 border border-surface-300">
+                                        <p className="text-sm text-surface-600 mb-1">Total Payments</p>
+                                        <p className="text-3xl font-bold text-surface-950">{stats.totalPayments}</p>
                                     </div>
-                                    <div className="bg-dark-400 rounded-2xl p-6 border border-dark-50/20">
-                                        <p className="text-sm text-slate-400 mb-1">Plan Breakdown</p>
+                                    <div className="bg-white rounded-2xl p-6 border border-surface-300">
+                                        <p className="text-sm text-surface-600 mb-1">Plan Breakdown</p>
                                         <div className="space-y-1 mt-2">
                                             {Object.entries(stats.planCounts).map(([plan, count]) => (
                                                 <div key={plan} className="flex justify-between text-sm">
-                                                    <span className="text-slate-300 capitalize">{plan}</span>
-                                                    <span className="text-white font-medium">{count}</span>
+                                                    <span className="text-surface-700 capitalize">{plan}</span>
+                                                    <span className="text-surface-950 font-medium">{count}</span>
                                                 </div>
                                             ))}
                                             {Object.keys(stats.planCounts).length === 0 && (
-                                                <p className="text-xs text-slate-500">No payments yet</p>
+                                                <p className="text-xs text-surface-500">No payments yet</p>
                                             )}
                                         </div>
                                     </div>
@@ -588,40 +630,40 @@ export default function AdminPage() {
                         {/* Counseling Tab */}
                         {activeTab === "counseling" && (
                             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-                                <div className="bg-dark-400 rounded-2xl border border-dark-50/20 overflow-hidden">
+                                <div className="bg-white rounded-2xl border border-surface-300 overflow-hidden">
                                     <div className="overflow-x-auto">
                                         <table className="w-full text-sm">
                                             <thead>
-                                                <tr className="border-b border-dark-50/20">
-                                                    <th className="text-left p-4 text-slate-400 font-medium">User</th>
-                                                    <th className="text-left p-4 text-slate-400 font-medium">Time Slot 1</th>
-                                                    <th className="text-left p-4 text-slate-400 font-medium">Time Slot 2</th>
-                                                    <th className="text-left p-4 text-slate-400 font-medium">Time Slot 3</th>
-                                                    <th className="text-left p-4 text-slate-400 font-medium">Timezone</th>
-                                                    <th className="text-left p-4 text-slate-400 font-medium">Status</th>
-                                                    <th className="text-left p-4 text-slate-400 font-medium">Date</th>
+                                                <tr className="border-b border-surface-300">
+                                                    <th className="text-left p-4 text-surface-600 font-medium">User</th>
+                                                    <th className="text-left p-4 text-surface-600 font-medium">Time Slot 1</th>
+                                                    <th className="text-left p-4 text-surface-600 font-medium">Time Slot 2</th>
+                                                    <th className="text-left p-4 text-surface-600 font-medium">Time Slot 3</th>
+                                                    <th className="text-left p-4 text-surface-600 font-medium">Timezone</th>
+                                                    <th className="text-left p-4 text-surface-600 font-medium">Status</th>
+                                                    <th className="text-left p-4 text-surface-600 font-medium">Date</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
                                                 {counselingReqs.map(r => (
-                                                    <tr key={r._id} className="border-b border-dark-50/10 hover:bg-dark-300/50">
-                                                        <td className="p-4 text-white">{r.userEmail}</td>
-                                                        <td className="p-4 text-slate-300 text-xs">{r.preferredTime1}</td>
-                                                        <td className="p-4 text-slate-300 text-xs">{r.preferredTime2}</td>
-                                                        <td className="p-4 text-slate-300 text-xs">{r.preferredTime3}</td>
-                                                        <td className="p-4 text-slate-400 text-xs">{r.timezone}</td>
+                                                    <tr key={r._id} className="border-b border-surface-200 hover:bg-surface-100/50">
+                                                        <td className="p-4 text-surface-950">{r.userEmail}</td>
+                                                        <td className="p-4 text-surface-700 text-xs">{r.preferredTime1}</td>
+                                                        <td className="p-4 text-surface-700 text-xs">{r.preferredTime2}</td>
+                                                        <td className="p-4 text-surface-700 text-xs">{r.preferredTime3}</td>
+                                                        <td className="p-4 text-surface-600 text-xs">{r.timezone}</td>
                                                         <td className="p-4">
-                                                            <select value={r.status} onChange={e => updateCounselingStatus(r._id, e.target.value)} className="px-2 py-1 bg-dark-600 border border-dark-50/30 rounded-lg text-xs text-white focus:outline-none focus:ring-2 focus:ring-primary-500/50">
+                                                            <select value={r.status} onChange={e => updateCounselingStatus(r._id, e.target.value)} className="px-2 py-1 bg-surface-100 border border-surface-300 rounded-lg text-xs text-surface-950 focus:outline-none focus:ring-2 focus:ring-primary-300">
                                                                 <option value="pending">Pending</option>
                                                                 <option value="scheduled">Scheduled</option>
                                                                 <option value="completed">Completed</option>
                                                             </select>
                                                         </td>
-                                                        <td className="p-4 text-xs text-slate-500">{new Date(r.createdAt).toLocaleDateString()}</td>
+                                                        <td className="p-4 text-xs text-surface-500">{new Date(r.createdAt).toLocaleDateString()}</td>
                                                     </tr>
                                                 ))}
                                                 {counselingReqs.length === 0 && (
-                                                    <tr><td colSpan={7} className="p-8 text-center text-slate-500">No counseling requests yet</td></tr>
+                                                    <tr><td colSpan={7} className="p-8 text-center text-surface-500">No counseling requests yet</td></tr>
                                                 )}
                                             </tbody>
                                         </table>
@@ -635,55 +677,55 @@ export default function AdminPage() {
                             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-4">
                                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
                                     {/* Conversations List */}
-                                    <div className="bg-dark-400 rounded-2xl border border-dark-50/20 overflow-hidden">
-                                        <div className="p-4 border-b border-dark-50/20">
-                                            <h3 className="text-sm font-bold text-white">Conversations</h3>
+                                    <div className="bg-white rounded-2xl border border-surface-300 overflow-hidden">
+                                        <div className="p-4 border-b border-surface-300">
+                                            <h3 className="text-sm font-bold text-surface-950">Conversations</h3>
                                         </div>
                                         <div className="max-h-[600px] overflow-y-auto">
                                             {helpConvos.map(c => (
-                                                <button key={c._id} onClick={() => openConvo(c._id)} className={`w-full text-left p-4 border-b border-dark-50/10 transition-all ${activeConvo === c._id ? "bg-primary-500/10" : "hover:bg-dark-300/50"}`}>
+                                                <button key={c._id} onClick={() => openConvo(c._id)} className={`w-full text-left p-4 border-b border-surface-200 transition-all ${activeConvo === c._id ? "bg-primary-500/10" : "hover:bg-surface-100/50"}`}>
                                                     <div className="flex items-center justify-between mb-1">
-                                                        <span className="text-sm text-white font-medium truncate">{c.userEmail}</span>
+                                                        <span className="text-sm text-surface-950 font-medium truncate">{c.userEmail}</span>
                                                         {c.unreadCount > 0 && (
                                                             <span className="w-5 h-5 rounded-full bg-red-500 text-white text-[10px] font-bold flex items-center justify-center flex-shrink-0 ml-2">{c.unreadCount}</span>
                                                         )}
                                                     </div>
-                                                    <p className="text-xs text-slate-500 truncate">{c.lastMessage}</p>
-                                                    <p className="text-[10px] text-slate-600 mt-1">{new Date(c.lastMessageAt).toLocaleString()}</p>
+                                                    <p className="text-xs text-surface-500 truncate">{c.lastMessage}</p>
+                                                    <p className="text-[10px] text-surface-600 mt-1">{new Date(c.lastMessageAt).toLocaleString()}</p>
                                                 </button>
                                             ))}
-                                            {helpConvos.length === 0 && <p className="p-4 text-sm text-slate-500">No conversations</p>}
+                                            {helpConvos.length === 0 && <p className="p-4 text-sm text-surface-500">No conversations</p>}
                                         </div>
                                     </div>
 
                                     {/* Conversation Messages */}
-                                    <div className="lg:col-span-2 bg-dark-400 rounded-2xl border border-dark-50/20 flex flex-col" style={{ height: "600px" }}>
+                                    <div className="lg:col-span-2 bg-white rounded-2xl border border-surface-300 flex flex-col" style={{ height: "600px" }}>
                                         {activeConvo ? (
                                             <>
-                                                <div className="p-4 border-b border-dark-50/20">
-                                                    <h3 className="text-sm font-bold text-white">Chat with {helpConvos.find(c => c._id === activeConvo)?.userEmail}</h3>
+                                                <div className="p-4 border-b border-surface-300">
+                                                    <h3 className="text-sm font-bold text-surface-950">Chat with {helpConvos.find(c => c._id === activeConvo)?.userEmail}</h3>
                                                 </div>
                                                 <div className="flex-1 overflow-y-auto p-4 space-y-3">
                                                     {convoMsgs.map(msg => (
                                                         <div key={msg._id} className={`flex ${msg.senderType === "admin" ? "justify-end" : "justify-start"}`}>
-                                                            <div className={`max-w-[70%] px-4 py-3 rounded-2xl text-sm ${msg.senderType === "admin" ? "bg-primary-500/20 text-primary-100 rounded-br-md" : "bg-dark-300 text-slate-200 rounded-bl-md"}`}>
+                                                            <div className={`max-w-[70%] px-4 py-3 rounded-2xl text-sm ${msg.senderType === "admin" ? "bg-primary-500/20 text-primary-600 rounded-br-md" : "bg-surface-100 text-surface-700 rounded-bl-md"}`}>
                                                                 <p className="whitespace-pre-wrap">{msg.messageText}</p>
-                                                                {msg.attachmentUrl && <a href={msg.attachmentUrl} target="_blank" rel="noreferrer" className="text-xs text-neon-blue underline mt-1 block">📎 Attachment</a>}
-                                                                <p className="text-[10px] text-slate-500 mt-1.5">{new Date(msg.createdAt).toLocaleString()}</p>
+                                                                {msg.attachmentUrl && <a href={msg.attachmentUrl} target="_blank" rel="noreferrer" className="text-xs text-primary-500 underline mt-1 block">📎 Attachment</a>}
+                                                                <p className="text-[10px] text-surface-500 mt-1.5">{new Date(msg.createdAt).toLocaleString()}</p>
                                                             </div>
                                                         </div>
                                                     ))}
                                                 </div>
-                                                <div className="p-3 border-t border-dark-50/20">
+                                                <div className="p-3 border-t border-surface-300">
                                                     <div className="flex gap-2">
-                                                        <input value={adminReply} onChange={e => setAdminReply(e.target.value)} onKeyDown={e => e.key === "Enter" && !e.shiftKey && (e.preventDefault(), sendAdminReply())} placeholder="Type reply..." className="flex-1 px-4 py-3 bg-dark-600 border border-dark-50/30 rounded-xl text-white text-sm placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-primary-500/50" />
-                                                        <button onClick={sendAdminReply} disabled={!adminReply.trim()} className="px-5 py-3 bg-gradient-to-r from-neon-blue to-primary-500 rounded-xl text-white text-sm font-medium disabled:opacity-50 hover:shadow-lg transition-all">Reply</button>
+                                                        <input value={adminReply} onChange={e => setAdminReply(e.target.value)} onKeyDown={e => e.key === "Enter" && !e.shiftKey && (e.preventDefault(), sendAdminReply())} placeholder="Type reply..." className="flex-1 px-4 py-3 bg-surface-100 border border-surface-300 rounded-xl text-surface-950 text-sm placeholder-surface-500 focus:outline-none focus:ring-2 focus:ring-primary-300" />
+                                                        <button onClick={sendAdminReply} disabled={!adminReply.trim()} className="px-5 py-3 bg-gradient-to-r from-primary-500 to-primary-600 rounded-xl text-white text-sm font-medium disabled:opacity-50 hover:shadow-lg transition-all">Reply</button>
                                                     </div>
                                                 </div>
                                             </>
                                         ) : (
                                             <div className="flex-1 flex items-center justify-center">
-                                                <p className="text-slate-500">Select a conversation</p>
+                                                <p className="text-surface-500">Select a conversation</p>
                                             </div>
                                         )}
                                     </div>
@@ -694,23 +736,23 @@ export default function AdminPage() {
                         {/* Portfolio Tab */}
                         {activeTab === "portfolio" && (
                             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-                                <div className="bg-dark-400 rounded-2xl border border-dark-50/20 overflow-hidden">
+                                <div className="bg-white rounded-2xl border border-surface-300 overflow-hidden">
                                     <div className="overflow-x-auto">
                                         <table className="w-full text-sm">
                                             <thead>
-                                                <tr className="border-b border-dark-50/20">
-                                                    <th className="text-left p-4 text-slate-400 font-medium">User</th>
-                                                    <th className="text-left p-4 text-slate-400 font-medium">Status</th>
-                                                    <th className="text-left p-4 text-slate-400 font-medium">Portfolio Link</th>
-                                                    <th className="text-left p-4 text-slate-400 font-medium">Requested</th>
+                                                <tr className="border-b border-surface-300">
+                                                    <th className="text-left p-4 text-surface-600 font-medium">User</th>
+                                                    <th className="text-left p-4 text-surface-600 font-medium">Status</th>
+                                                    <th className="text-left p-4 text-surface-600 font-medium">Portfolio Link</th>
+                                                    <th className="text-left p-4 text-surface-600 font-medium">Requested</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
                                                 {portfolioReqs.map(r => (
-                                                    <tr key={r._id} className="border-b border-dark-50/10 hover:bg-dark-300/50">
-                                                        <td className="p-4 text-white">{r.userEmail}</td>
+                                                    <tr key={r._id} className="border-b border-surface-200 hover:bg-surface-100/50">
+                                                        <td className="p-4 text-surface-950">{r.userEmail}</td>
                                                         <td className="p-4">
-                                                            <select value={r.status} onChange={e => updatePortfolioStatus(r._id, e.target.value)} className="px-2 py-1 bg-dark-600 border border-dark-50/30 rounded-lg text-xs text-white focus:outline-none focus:ring-2 focus:ring-primary-500/50">
+                                                            <select value={r.status} onChange={e => updatePortfolioStatus(r._id, e.target.value)} className="px-2 py-1 bg-surface-100 border border-surface-300 rounded-lg text-xs text-surface-950 focus:outline-none focus:ring-2 focus:ring-primary-300">
                                                                 <option value="pending">Pending</option>
                                                                 <option value="in_progress">In Progress</option>
                                                                 <option value="completed">Completed</option>
@@ -718,14 +760,14 @@ export default function AdminPage() {
                                                         </td>
                                                         <td className="p-4">
                                                             <div className="flex items-center gap-2">
-                                                                <input type="url" defaultValue={r.portfolioLink || ""} placeholder="https://..." onBlur={e => { if (e.target.value !== (r.portfolioLink || "")) updatePortfolioStatus(r._id, r.status, e.target.value); }} className="flex-1 px-2 py-1 bg-dark-600 border border-dark-50/30 rounded-lg text-xs text-white focus:outline-none focus:ring-2 focus:ring-primary-500/50" />
+                                                                <input type="url" defaultValue={r.portfolioLink || ""} placeholder="https://..." onBlur={e => { if (e.target.value !== (r.portfolioLink || "")) updatePortfolioStatus(r._id, r.status, e.target.value); }} className="flex-1 px-2 py-1 bg-surface-100 border border-surface-300 rounded-lg text-xs text-surface-950 focus:outline-none focus:ring-2 focus:ring-primary-300" />
                                                             </div>
                                                         </td>
-                                                        <td className="p-4 text-xs text-slate-500">{new Date(r.createdAt).toLocaleDateString()}</td>
+                                                        <td className="p-4 text-xs text-surface-500">{new Date(r.createdAt).toLocaleDateString()}</td>
                                                     </tr>
                                                 ))}
                                                 {portfolioReqs.length === 0 && (
-                                                    <tr><td colSpan={4} className="p-8 text-center text-slate-500">No portfolio requests yet</td></tr>
+                                                    <tr><td colSpan={4} className="p-8 text-center text-surface-500">No portfolio requests yet</td></tr>
                                                 )}
                                             </tbody>
                                         </table>
@@ -737,40 +779,40 @@ export default function AdminPage() {
                         {/* LinkedIn Tab */}
                         {activeTab === "linkedin" && (
                             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-                                <div className="bg-dark-400 rounded-2xl border border-dark-50/20 overflow-hidden">
+                                <div className="bg-white rounded-2xl border border-surface-300 overflow-hidden">
                                     <div className="overflow-x-auto">
                                         <table className="w-full text-sm">
                                             <thead>
-                                                <tr className="border-b border-dark-50/20">
-                                                    <th className="text-left p-4 text-slate-400 font-medium">User</th>
-                                                    <th className="text-left p-4 text-slate-400 font-medium">LinkedIn URL</th>
-                                                    <th className="text-left p-4 text-slate-400 font-medium">Notes</th>
-                                                    <th className="text-left p-4 text-slate-400 font-medium">Status</th>
-                                                    <th className="text-left p-4 text-slate-400 font-medium">Deliverable</th>
-                                                    <th className="text-left p-4 text-slate-400 font-medium">Date</th>
+                                                <tr className="border-b border-surface-300">
+                                                    <th className="text-left p-4 text-surface-600 font-medium">User</th>
+                                                    <th className="text-left p-4 text-surface-600 font-medium">LinkedIn URL</th>
+                                                    <th className="text-left p-4 text-surface-600 font-medium">Notes</th>
+                                                    <th className="text-left p-4 text-surface-600 font-medium">Status</th>
+                                                    <th className="text-left p-4 text-surface-600 font-medium">Deliverable</th>
+                                                    <th className="text-left p-4 text-surface-600 font-medium">Date</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
                                                 {linkedinReqs.map(r => (
-                                                    <tr key={r._id} className="border-b border-dark-50/10 hover:bg-dark-300/50">
-                                                        <td className="p-4 text-white text-xs">{r.userEmail}</td>
-                                                        <td className="p-4"><a href={r.linkedinUrl} target="_blank" rel="noreferrer" className="text-xs text-neon-blue underline truncate block max-w-[200px]">{r.linkedinUrl}</a></td>
-                                                        <td className="p-4 text-slate-400 text-xs max-w-[200px] truncate">{r.notes || "—"}</td>
+                                                    <tr key={r._id} className="border-b border-surface-200 hover:bg-surface-100/50">
+                                                        <td className="p-4 text-surface-950 text-xs">{r.userEmail}</td>
+                                                        <td className="p-4"><a href={r.linkedinUrl} target="_blank" rel="noreferrer" className="text-xs text-primary-500 underline truncate block max-w-[200px]">{r.linkedinUrl}</a></td>
+                                                        <td className="p-4 text-surface-600 text-xs max-w-[200px] truncate">{r.notes || "—"}</td>
                                                         <td className="p-4">
-                                                            <select value={r.status} onChange={e => updateLinkedInStatus(r._id, e.target.value)} className="px-2 py-1 bg-dark-600 border border-dark-50/30 rounded-lg text-xs text-white focus:outline-none focus:ring-2 focus:ring-primary-500/50">
+                                                            <select value={r.status} onChange={e => updateLinkedInStatus(r._id, e.target.value)} className="px-2 py-1 bg-surface-100 border border-surface-300 rounded-lg text-xs text-surface-950 focus:outline-none focus:ring-2 focus:ring-primary-300">
                                                                 <option value="pending">Pending</option>
                                                                 <option value="in_progress">In Progress</option>
                                                                 <option value="completed">Completed</option>
                                                             </select>
                                                         </td>
                                                         <td className="p-4">
-                                                            <input type="url" defaultValue={r.deliverableUrl || ""} placeholder="https://..." onBlur={e => { if (e.target.value !== (r.deliverableUrl || "")) updateLinkedInStatus(r._id, r.status, e.target.value); }} className="w-full px-2 py-1 bg-dark-600 border border-dark-50/30 rounded-lg text-xs text-white focus:outline-none focus:ring-2 focus:ring-primary-500/50" />
+                                                            <input type="url" defaultValue={r.deliverableUrl || ""} placeholder="https://..." onBlur={e => { if (e.target.value !== (r.deliverableUrl || "")) updateLinkedInStatus(r._id, r.status, e.target.value); }} className="w-full px-2 py-1 bg-surface-100 border border-surface-300 rounded-lg text-xs text-surface-950 focus:outline-none focus:ring-2 focus:ring-primary-300" />
                                                         </td>
-                                                        <td className="p-4 text-xs text-slate-500">{new Date(r.createdAt).toLocaleDateString()}</td>
+                                                        <td className="p-4 text-xs text-surface-500">{new Date(r.createdAt).toLocaleDateString()}</td>
                                                     </tr>
                                                 ))}
                                                 {linkedinReqs.length === 0 && (
-                                                    <tr><td colSpan={6} className="p-8 text-center text-slate-500">No LinkedIn makeover requests yet</td></tr>
+                                                    <tr><td colSpan={6} className="p-8 text-center text-surface-500">No LinkedIn makeover requests yet</td></tr>
                                                 )}
                                             </tbody>
                                         </table>
@@ -782,30 +824,30 @@ export default function AdminPage() {
                         {/* Profiles Tab */}
                         {activeTab === "profiles" && (
                             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-                                <div className="bg-dark-400 rounded-2xl border border-dark-50/20 overflow-hidden">
+                                <div className="bg-white rounded-2xl border border-surface-300 overflow-hidden">
                                     <div className="overflow-x-auto">
                                         <table className="w-full text-sm">
                                             <thead>
-                                                <tr className="border-b border-dark-50/20">
-                                                    <th className="text-left p-4 text-slate-400 font-medium">User</th>
-                                                    <th className="text-left p-4 text-slate-400 font-medium">Email</th>
-                                                    <th className="text-left p-4 text-slate-400 font-medium">Resume</th>
-                                                    <th className="text-left p-4 text-slate-400 font-medium">Status</th>
-                                                    <th className="text-left p-4 text-slate-400 font-medium">Last Updated</th>
+                                                <tr className="border-b border-surface-300">
+                                                    <th className="text-left p-4 text-surface-600 font-medium">User</th>
+                                                    <th className="text-left p-4 text-surface-600 font-medium">Email</th>
+                                                    <th className="text-left p-4 text-surface-600 font-medium">Resume</th>
+                                                    <th className="text-left p-4 text-surface-600 font-medium">Status</th>
+                                                    <th className="text-left p-4 text-surface-600 font-medium">Last Updated</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
                                                 {profileRecords.map(p => (
-                                                    <tr key={p._id} className="border-b border-dark-50/10 hover:bg-dark-300/50">
-                                                        <td className="p-4 text-white text-sm">{p.userName}</td>
-                                                        <td className="p-4 text-slate-300 text-xs">{p.userEmail}</td>
-                                                        <td className="p-4 text-slate-400 text-xs">{p.resumeFileName || "—"}</td>
+                                                    <tr key={p._id} className="border-b border-surface-200 hover:bg-surface-100/50">
+                                                        <td className="p-4 text-surface-950 text-sm">{p.userName}</td>
+                                                        <td className="p-4 text-surface-700 text-xs">{p.userEmail}</td>
+                                                        <td className="p-4 text-surface-600 text-xs">{p.resumeFileName || "—"}</td>
                                                         <td className="p-4">
-                                                            <select value={p.processingStatus} onChange={e => updateProfileStatus(p._id, e.target.value)} className={`px-2 py-1 border rounded-lg text-xs font-medium focus:outline-none focus:ring-2 focus:ring-primary-500/50 ${p.processingStatus === "approved" ? "bg-neon-emerald/10 border-neon-emerald/30 text-neon-emerald" :
-                                                                    p.processingStatus === "complete" ? "bg-yellow-500/10 border-yellow-500/30 text-yellow-400" :
-                                                                        p.processingStatus === "failed" ? "bg-red-500/10 border-red-500/30 text-red-400" :
-                                                                            p.processingStatus === "needs_input" ? "bg-yellow-500/10 border-yellow-500/30 text-yellow-400" :
-                                                                                "bg-dark-600 border-dark-50/30 text-white"
+                                                            <select value={p.processingStatus} onChange={e => updateProfileStatus(p._id, e.target.value)} className={`px-2 py-1 border rounded-lg text-xs font-medium focus:outline-none focus:ring-2 focus:ring-primary-300 ${p.processingStatus === "approved" ? "bg-green-50 border-accent-green/30 text-accent-green" :
+                                                                p.processingStatus === "complete" ? "bg-yellow-500/10 border-yellow-500/30 text-yellow-400" :
+                                                                    p.processingStatus === "failed" ? "bg-red-50 border-red-500/30 text-red-400" :
+                                                                        p.processingStatus === "needs_input" ? "bg-yellow-500/10 border-yellow-500/30 text-yellow-400" :
+                                                                            "bg-surface-100 border-surface-300 text-surface-950"
                                                                 }`}>
                                                                 <option value="uploaded">Uploaded</option>
                                                                 <option value="processing">Processing</option>
@@ -815,11 +857,11 @@ export default function AdminPage() {
                                                                 <option value="failed">Failed ✗</option>
                                                             </select>
                                                         </td>
-                                                        <td className="p-4 text-xs text-slate-500">{new Date(p.updatedAt).toLocaleString()}</td>
+                                                        <td className="p-4 text-xs text-surface-500">{new Date(p.updatedAt).toLocaleString()}</td>
                                                     </tr>
                                                 ))}
                                                 {profileRecords.length === 0 && (
-                                                    <tr><td colSpan={5} className="p-8 text-center text-slate-500">No profiles yet</td></tr>
+                                                    <tr><td colSpan={5} className="p-8 text-center text-surface-500">No profiles yet</td></tr>
                                                 )}
                                             </tbody>
                                         </table>
@@ -831,33 +873,33 @@ export default function AdminPage() {
                         {/* Target Applications Tab */}
                         {activeTab === "targets" && (
                             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-                                <div className="bg-dark-400 rounded-2xl border border-dark-50/20 overflow-hidden">
+                                <div className="bg-white rounded-2xl border border-surface-300 overflow-hidden">
                                     <div className="overflow-x-auto">
                                         <table className="w-full text-sm">
                                             <thead>
-                                                <tr className="border-b border-dark-50/20">
-                                                    <th className="text-left p-4 text-slate-400 font-medium">User</th>
-                                                    <th className="text-left p-4 text-slate-400 font-medium">Type</th>
-                                                    <th className="text-left p-4 text-slate-400 font-medium">Name</th>
-                                                    <th className="text-left p-4 text-slate-400 font-medium">Status</th>
-                                                    <th className="text-left p-4 text-slate-400 font-medium">Date</th>
+                                                <tr className="border-b border-surface-300">
+                                                    <th className="text-left p-4 text-surface-600 font-medium">User</th>
+                                                    <th className="text-left p-4 text-surface-600 font-medium">Type</th>
+                                                    <th className="text-left p-4 text-surface-600 font-medium">Name</th>
+                                                    <th className="text-left p-4 text-surface-600 font-medium">Status</th>
+                                                    <th className="text-left p-4 text-surface-600 font-medium">Date</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
                                                 {targetApps.map(t => (
-                                                    <tr key={t._id} className="border-b border-dark-50/10 hover:bg-dark-300/50">
-                                                        <td className="p-4 text-white text-xs">{t.userEmail}</td>
+                                                    <tr key={t._id} className="border-b border-surface-200 hover:bg-surface-100/50">
+                                                        <td className="p-4 text-surface-950 text-xs">{t.userEmail}</td>
                                                         <td className="p-4">
-                                                            <span className={`px-2 py-0.5 text-[10px] font-medium rounded-full ${t.type === "company" ? "bg-neon-blue/10 text-neon-blue border border-neon-blue/20" : "bg-primary-500/10 text-primary-300 border border-primary-500/20"}`}>
+                                                            <span className={`px-2 py-0.5 text-[10px] font-medium rounded-full ${t.type === "company" ? "bg-primary-50 text-primary-500 border border-primary-200" : "bg-primary-500/10 text-primary-300 border border-primary-500/20"}`}>
                                                                 {t.type === "company" ? "🏢 Company" : "💼 Role"}
                                                             </span>
                                                         </td>
-                                                        <td className="p-4 text-white font-medium">{t.name}</td>
+                                                        <td className="p-4 text-surface-950 font-medium">{t.name}</td>
                                                         <td className="p-4">
-                                                            <select value={t.status} onChange={e => updateTargetStatus(t._id, e.target.value)} className={`px-2 py-1 border rounded-lg text-xs font-medium focus:outline-none focus:ring-2 focus:ring-primary-500/50 ${t.status === "applied" ? "bg-neon-blue/10 border-neon-blue/30 text-neon-blue" :
-                                                                t.status === "approved" ? "bg-neon-emerald/10 border-neon-emerald/30 text-neon-emerald" :
-                                                                    t.status === "not_available" ? "bg-red-500/10 border-red-500/30 text-red-400" :
-                                                                        "bg-dark-600 border-dark-50/30 text-white"
+                                                            <select value={t.status} onChange={e => updateTargetStatus(t._id, e.target.value)} className={`px-2 py-1 border rounded-lg text-xs font-medium focus:outline-none focus:ring-2 focus:ring-primary-300 ${t.status === "applied" ? "bg-primary-50 border-primary-500/30 text-primary-500" :
+                                                                t.status === "approved" ? "bg-green-50 border-accent-green/30 text-accent-green" :
+                                                                    t.status === "not_available" ? "bg-red-50 border-red-500/30 text-red-400" :
+                                                                        "bg-surface-100 border-surface-300 text-surface-950"
                                                                 }`}>
                                                                 <option value="pending">Pending</option>
                                                                 <option value="approved">Approved</option>
@@ -865,14 +907,91 @@ export default function AdminPage() {
                                                                 <option value="not_available">Not Available</option>
                                                             </select>
                                                         </td>
-                                                        <td className="p-4 text-xs text-slate-500">{new Date(t.createdAt).toLocaleDateString()}</td>
+                                                        <td className="p-4 text-xs text-surface-500">{new Date(t.createdAt).toLocaleDateString()}</td>
                                                     </tr>
                                                 ))}
                                                 {targetApps.length === 0 && (
-                                                    <tr><td colSpan={5} className="p-8 text-center text-slate-500">No target applications yet</td></tr>
+                                                    <tr><td colSpan={5} className="p-8 text-center text-surface-500">No target applications yet</td></tr>
                                                 )}
                                             </tbody>
                                         </table>
+                                    </div>
+                                </div>
+                            </motion.div>
+                        )}
+
+                        {/* Feature Access Tab */}
+                        {activeTab === "features" && (
+                            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+                                <div className="bg-white rounded-2xl border border-surface-300 p-6">
+                                    <div className="flex items-center justify-between mb-6">
+                                        <div>
+                                            <h3 className="text-lg font-bold text-surface-950">Feature Access Management</h3>
+                                            <p className="text-sm text-surface-600 mt-1">Control which features are visible per subscription plan. Changes apply instantly to all users.</p>
+                                        </div>
+                                        <button
+                                            onClick={saveFeatureAccess}
+                                            disabled={featureAccessSaving}
+                                            className="px-6 py-2.5 text-sm font-bold text-white bg-gradient-to-r from-primary-500 to-primary-600 rounded-xl hover:shadow-lg hover:shadow-primary-500/30 transition-all disabled:opacity-50"
+                                        >
+                                            {featureAccessSaving ? "Saving..." : "💾 Save Changes"}
+                                        </button>
+                                    </div>
+
+                                    <div className="overflow-x-auto">
+                                        <table className="w-full text-sm">
+                                            <thead>
+                                                <tr className="border-b border-surface-300">
+                                                    <th className="text-left p-4 text-surface-600 font-semibold w-1/3">Feature</th>
+                                                    {PLAN_TIERS.map(plan => (
+                                                        <th key={plan} className="text-center p-4 text-surface-600 font-semibold capitalize">{plan === "none" ? "Free" : plan}</th>
+                                                    ))}
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {DASHBOARD_FEATURES.map(feature => (
+                                                    <tr key={feature.id} className="border-b border-surface-200 hover:bg-surface-100/50">
+                                                        <td className="p-4">
+                                                            <div className="flex items-center gap-3">
+                                                                <span className="text-xl">{feature.icon}</span>
+                                                                <div>
+                                                                    <p className="font-medium text-surface-900">{feature.label}</p>
+                                                                    {feature.alwaysVisible && (
+                                                                        <span className="text-[10px] text-primary-500 bg-primary-50 px-2 py-0.5 rounded-full">Always visible</span>
+                                                                    )}
+                                                                </div>
+                                                            </div>
+                                                        </td>
+                                                        {PLAN_TIERS.map(plan => {
+                                                            const enabled = featureAccessMap[feature.id]?.[plan] ?? true;
+                                                            const isAlwaysOn = feature.alwaysVisible;
+                                                            return (
+                                                                <td key={plan} className="p-4 text-center">
+                                                                    <button
+                                                                        onClick={() => !isAlwaysOn && toggleFeatureAccess(feature.id, plan)}
+                                                                        disabled={isAlwaysOn}
+                                                                        className={`w-12 h-7 rounded-full relative transition-all ${isAlwaysOn
+                                                                            ? "bg-green-200 cursor-not-allowed"
+                                                                            : enabled
+                                                                                ? "bg-accent-green hover:bg-green-600"
+                                                                                : "bg-surface-300 hover:bg-surface-400"
+                                                                            }`}
+                                                                    >
+                                                                        <span className={`absolute top-1 w-5 h-5 bg-white rounded-full shadow-sm transition-transform ${enabled || isAlwaysOn ? "left-6" : "left-1"}`} />
+                                                                    </button>
+                                                                </td>
+                                                            );
+                                                        })}
+                                                    </tr>
+                                                ))}
+                                            </tbody>
+                                        </table>
+                                    </div>
+
+                                    <div className="mt-4 p-3 bg-primary-50 rounded-xl border border-primary-100">
+                                        <p className="text-xs text-primary-700">
+                                            💡 <strong>Auto-discovery:</strong> When you add a new feature to the sidebar, it will automatically appear here with default access settings.
+                                        </p>
                                     </div>
                                 </div>
                             </motion.div>

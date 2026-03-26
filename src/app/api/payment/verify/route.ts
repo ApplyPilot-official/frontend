@@ -126,7 +126,7 @@ export async function POST(req: NextRequest) {
             user.email,
             user.name,
             plan?.name || payment.plan,
-            `₹${(payment.amountCents / 100).toFixed(2)}`
+            `$${(payment.amountCents / 100).toFixed(2)}`
         ).catch((err) => console.error('Confirmation email failed:', err));
 
         return NextResponse.json({

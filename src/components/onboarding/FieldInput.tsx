@@ -31,13 +31,13 @@ export default function FieldInput({ field, sectionId, value, onChange, allValue
 
     const currentValue = value ?? "";
     const inputClass =
-        "w-full px-4 py-3 bg-dark-600 border border-dark-50/30 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-primary-500/50 text-sm transition-all";
+        "w-full px-4 py-3 bg-surface-100 border border-surface-300 rounded-xl text-surface-950 placeholder-surface-500 focus:outline-none focus:ring-2 focus:ring-primary-300 text-sm transition-all";
     const fieldKey = `${sectionId}_${field.key}`;
 
     if (field.type === "select" && Array.isArray(field.options)) {
         return (
             <div key={fieldKey}>
-                <label className="block text-xs text-slate-400 mb-1.5">
+                <label className="block text-xs text-surface-600 mb-1.5">
                     {field.label} {field.mandatory && <span className="text-red-400">*</span>}
                 </label>
                 <select
@@ -51,7 +51,7 @@ export default function FieldInput({ field, sectionId, value, onChange, allValue
                     ))}
                 </select>
                 {field.recommendationMessage && (
-                    <p className="text-xs text-slate-500 mt-1">{field.recommendationMessage}</p>
+                    <p className="text-xs text-surface-500 mt-1">{field.recommendationMessage}</p>
                 )}
             </div>
         );
@@ -61,7 +61,7 @@ export default function FieldInput({ field, sectionId, value, onChange, allValue
         const selected = (currentValue as string[]) || [];
         return (
             <div key={fieldKey}>
-                <label className="block text-xs text-slate-400 mb-1.5">
+                <label className="block text-xs text-surface-600 mb-1.5">
                     {field.label} {field.mandatory && <span className="text-red-400">*</span>}
                 </label>
                 <div className="flex flex-wrap gap-2">
@@ -77,7 +77,7 @@ export default function FieldInput({ field, sectionId, value, onChange, allValue
                             }}
                             className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all ${selected.includes(opt)
                                 ? "bg-primary-500/20 text-primary-400 border border-primary-500/40"
-                                : "bg-dark-600 text-slate-400 border border-dark-50/30 hover:border-primary-500/30"
+                                : "bg-surface-100 text-surface-600 border border-surface-300 hover:border-primary-500/30"
                                 }`}
                         >
                             {opt}
@@ -91,7 +91,7 @@ export default function FieldInput({ field, sectionId, value, onChange, allValue
     if (field.type === "boolean") {
         return (
             <div key={fieldKey}>
-                <label className="block text-xs text-slate-400 mb-1.5">
+                <label className="block text-xs text-surface-600 mb-1.5">
                     {field.label} {field.mandatory && <span className="text-red-400">*</span>}
                 </label>
                 <div className="flex gap-3">
@@ -102,7 +102,7 @@ export default function FieldInput({ field, sectionId, value, onChange, allValue
                             onClick={() => onChange(field.key, v)}
                             className={`px-5 py-2.5 rounded-xl text-sm font-medium transition-all ${currentValue === v
                                 ? "bg-primary-500/20 text-primary-400 border border-primary-500/40"
-                                : "bg-dark-600 text-slate-400 border border-dark-50/30 hover:border-primary-500/30"
+                                : "bg-surface-100 text-surface-600 border border-surface-300 hover:border-primary-500/30"
                                 }`}
                         >
                             {label}
@@ -117,7 +117,7 @@ export default function FieldInput({ field, sectionId, value, onChange, allValue
         const tags = (Array.isArray(currentValue) ? currentValue : []) as string[];
         return (
             <div key={fieldKey} className="sm:col-span-2">
-                <label className="block text-xs text-slate-400 mb-1.5">
+                <label className="block text-xs text-surface-600 mb-1.5">
                     {field.label} {field.mandatory && <span className="text-red-400">*</span>}
                 </label>
                 <input
@@ -159,7 +159,7 @@ export default function FieldInput({ field, sectionId, value, onChange, allValue
     if (field.type === "textarea") {
         return (
             <div key={fieldKey} className="sm:col-span-2">
-                <label className="block text-xs text-slate-400 mb-1.5">
+                <label className="block text-xs text-surface-600 mb-1.5">
                     {field.label} {field.mandatory && <span className="text-red-400">*</span>}
                 </label>
                 <textarea
@@ -176,7 +176,7 @@ export default function FieldInput({ field, sectionId, value, onChange, allValue
     if (field.type === "date" || field.type === "month") {
         return (
             <div key={fieldKey}>
-                <label className="block text-xs text-slate-400 mb-1.5">
+                <label className="block text-xs text-surface-600 mb-1.5">
                     {field.label} {field.mandatory && <span className="text-red-400">*</span>}
                 </label>
                 <div className="relative">
@@ -184,12 +184,12 @@ export default function FieldInput({ field, sectionId, value, onChange, allValue
                         type="date"
                         value={currentValue as string}
                         onChange={(e) => onChange(field.key, e.target.value)}
-                        className={`${inputClass} cursor-pointer [color-scheme:dark]`}
+                        className={`${inputClass} cursor-pointer `}
                     />
-                    <span className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 pointer-events-none">📅</span>
+                    <span className="absolute right-3 top-1/2 -translate-y-1/2 text-surface-500 pointer-events-none">📅</span>
                 </div>
                 {field.recommendationMessage && (
-                    <p className="text-xs text-slate-500 mt-1">{field.recommendationMessage}</p>
+                    <p className="text-xs text-surface-500 mt-1">{field.recommendationMessage}</p>
                 )}
             </div>
         );
@@ -200,7 +200,7 @@ export default function FieldInput({ field, sectionId, value, onChange, allValue
 
     return (
         <div key={fieldKey}>
-            <label className="block text-xs text-slate-400 mb-1.5">
+            <label className="block text-xs text-surface-600 mb-1.5">
                 {field.label} {field.mandatory && <span className="text-red-400">*</span>}
             </label>
             <input
@@ -211,7 +211,7 @@ export default function FieldInput({ field, sectionId, value, onChange, allValue
                 placeholder={`Enter ${field.label.toLowerCase()}`}
             />
             {field.recommendationMessage && (
-                <p className="text-xs text-slate-500 mt-1">{field.recommendationMessage}</p>
+                <p className="text-xs text-surface-500 mt-1">{field.recommendationMessage}</p>
             )}
         </div>
     );

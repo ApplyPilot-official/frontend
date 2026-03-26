@@ -22,7 +22,7 @@ export default function StatsSection() {
                             <div className="text-3xl sm:text-4xl font-bold gradient-text mb-2">
                                 <AnimatedCounter target={stat.value} suffix={stat.suffix} />
                             </div>
-                            <p className="text-sm text-slate-400">{stat.label}</p>
+                            <p className="text-sm text-surface-600">{stat.label}</p>
                         </AnimatedSection>
                     ))}
                 </div>
