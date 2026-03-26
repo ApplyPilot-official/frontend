@@ -122,6 +122,18 @@ export default function PricingPage() {
     const [isProcessing, setIsProcessing] = useState(false);
     const [paymentError, setPaymentError] = useState("");
 
+    // Business interest form state
+    const [bizForm, setBizForm] = useState({
+        contactName: "",
+        companyName: "",
+        email: "",
+        phone: "",
+        companySize: "",
+        message: "",
+    });
+    const [bizSubmitting, setBizSubmitting] = useState(false);
+    const [bizResult, setBizResult] = useState<{ success?: boolean; message?: string }>({});
+
     // Fetch user's current plan
     const fetchUserPlan = useCallback(async () => {
         if (!session?.user?.email) {
@@ -508,7 +520,288 @@ export default function PricingPage() {
                         </div>
                     </motion.div>
                 )}
+
+                {/* Business / Enterprise Section */}
+                <motion.div
+                    initial={{ opacity: 0, y: 30 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.5 }}
+                    className="max-w-2xl mx-auto mt-16"
+                >
+                    <div className="text-center mb-8">
+                        <span className="inline-block px-4 py-1.5 rounded-full bg-violet-500/10 text-violet-500 text-sm font-medium mb-4 border border-violet-500/20">
+                            For Businesses
+                        </span>
+                        <h2 className="text-3xl font-bold text-surface-950 mb-3">
+                            Need a <span className="gradient-text">Custom Solution</span>?
+                        </h2>
+                        <p className="text-surface-600">
+                            Looking to automate hiring or bulk-apply for your team? Share your details and we&apos;ll craft a tailored plan for your organization.
+                        </p>
+                    </div>
+
+                    <div className="bg-white rounded-2xl p-6 border border-surface-300 shadow-sm">
+                        {bizResult.success ? (
+                            <motion.div
+                                initial={{ opacity: 0, scale: 0.95 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                className="text-center py-8"
+                            >
+                                <div className="text-5xl mb-4">🎉</div>
+                                <h3 className="text-xl font-bold text-surface-950 mb-2">Thank You!</h3>
+                                <p className="text-surface-600 text-sm">{bizResult.message}</p>
+                            </motion.div>
+                        ) : (
+                            <form
+                                onSubmit={async (e) => {
+                                    e.preventDefault();
+                                    setBizSubmitting(true);
+                                    setBizResult({});
+                                    try {
+                                        const res = await fetch("/api/business-interest", {
+                                            method: "POST",
+                                            headers: { "Content-Type": "application/json" },
+                                            body: JSON.stringify(bizForm),
+                                        });
+                                        const data = await res.json();
+                                        if (res.ok) {
+                                            setBizResult({ success: true, message: data.message });
+                                        } else {
+                                            setBizResult({ success: false, message: data.error });
+                                        }
+                                    } catch {
+                                        setBizResult({ success: false, message: "Something went wrong. Please try again." });
+                                    } finally {
+                                        setBizSubmitting(false);
+                                    }
+                                }}
+                                className="space-y-4"
+                            >
+                                <div className="grid sm:grid-cols-2 gap-4">
+                                    <div>
+                                        <label className="block text-xs text-surface-600 mb-1">Your Name *</label>
+                                        <input
+                                            type="text"
+                                            required
+                                            value={bizForm.contactName}
+                                            onChange={(e) => setBizForm({ ...bizForm, contactName: e.target.value })}
+                                            placeholder="John Smith"
+                                            className="w-full px-4 py-2.5 bg-surface-100 border border-surface-300 rounded-xl text-surface-950 placeholder-surface-500 text-sm focus:outline-none focus:ring-2 focus:ring-primary-300"
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="block text-xs text-surface-600 mb-1">Company Name *</label>
+                                        <input
+                                            type="text"
+                                            required
+                                            value={bizForm.companyName}
+                                            onChange={(e) => setBizForm({ ...bizForm, companyName: e.target.value })}
+                                            placeholder="Acme Corp"
+                                            className="w-full px-4 py-2.5 bg-surface-100 border border-surface-300 rounded-xl text-surface-950 placeholder-surface-500 text-sm focus:outline-none focus:ring-2 focus:ring-primary-300"
+                                        />
+                                    </div>
+                                </div>
+                                <div className="grid sm:grid-cols-2 gap-4">
+                                    <div>
+                                        <label className="block text-xs text-surface-600 mb-1">Business Email *</label>
+                                        <input
+                                            type="email"
+                                            required
+                                            value={bizForm.email}
+                                            onChange={(e) => setBizForm({ ...bizForm, email: e.target.value })}
+                                            placeholder="john@acme.com"
+                                            className="w-full px-4 py-2.5 bg-surface-100 border border-surface-300 rounded-xl text-surface-950 placeholder-surface-500 text-sm focus:outline-none focus:ring-2 focus:ring-primary-300"
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="block text-xs text-surface-600 mb-1">Phone</label>
+                                        <input
+                                            type="tel"
+                                            value={bizForm.phone}
+                                            onChange={(e) => setBizForm({ ...bizForm, phone: e.target.value })}
+                                            placeholder="+1 (555) 000-0000"
+                                            className="w-full px-4 py-2.5 bg-surface-100 border border-surface-300 rounded-xl text-surface-950 placeholder-surface-500 text-sm focus:outline-none focus:ring-2 focus:ring-primary-300"
+                                        />
+                                    </div>
+                                </div>
+                                <div>
+                                    <label className="block text-xs text-surface-600 mb-1">Company Size *</label>
+                                    <select
+                                        required
+                                        value={bizForm.companySize}
+                                        onChange={(e) => setBizForm({ ...bizForm, companySize: e.target.value })}
+                                        className="w-full px-4 py-2.5 bg-surface-100 border border-surface-300 rounded-xl text-surface-950 text-sm focus:outline-none focus:ring-2 focus:ring-primary-300"
+                                    >
+                                        <option value="">Select company size</option>
+                                        <option value="1-10">1–10 employees</option>
+                                        <option value="11-50">11–50 employees</option>
+                                        <option value="51-200">51–200 employees</option>
+                                        <option value="201-500">201–500 employees</option>
+                                        <option value="500+">500+ employees</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label className="block text-xs text-surface-600 mb-1">Tell us about your needs</label>
+                                    <textarea
+                                        value={bizForm.message}
+                                        onChange={(e) => setBizForm({ ...bizForm, message: e.target.value })}
+                                        placeholder="How can we help your organization?"
+                                        rows={3}
+                                        className="w-full px-4 py-2.5 bg-surface-100 border border-surface-300 rounded-xl text-surface-950 placeholder-surface-500 text-sm focus:outline-none focus:ring-2 focus:ring-primary-300 resize-none"
+                                    />
+                                </div>
+                                {bizResult.message && !bizResult.success && (
+                                    <p className="text-sm text-red-400">{bizResult.message}</p>
+                                )}
+                                <button
+                                    type="submit"
+                                    disabled={bizSubmitting}
+                                    className="w-full py-3.5 px-6 text-sm font-bold text-white bg-gradient-to-r from-violet-500 to-violet-600 rounded-xl hover:shadow-lg hover:shadow-violet-500/30 hover:-translate-y-0.5 transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:translate-y-0"
+                                >
+                                    {bizSubmitting ? (
+                                        <span className="flex items-center justify-center gap-2">
+                                            <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                                            Submitting...
+                                        </span>
+                                    ) : (
+                                        "🏢 Get a Custom Business Plan"
+                                    )}
+                                </button>
+                            </form>
+                        )}
+                    </div>
+                </motion.div>
             </div>
+
+            {/* ── Manual Payment Fallback ────────────────────────── */}
+            <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: 0.1 }}
+                className="max-w-3xl mx-auto mt-16"
+            >
+                <div className="bg-gradient-to-br from-amber-50/80 to-orange-50/60 rounded-2xl border border-amber-200/60 p-8 sm:p-10 relative overflow-hidden">
+                    {/* Decorative corner */}
+                    <div className="absolute top-0 right-0 w-32 h-32 bg-amber-100/40 rounded-bl-[80px]" />
+
+                    <div className="relative">
+                        <div className="text-center mb-8">
+                            <div className="inline-flex items-center gap-2 px-3 py-1 bg-amber-100 border border-amber-200 rounded-full text-xs font-medium text-amber-700 mb-4">
+                                💳 Alternative Payment Methods
+                            </div>
+                            <h3 className="text-xl sm:text-2xl font-bold text-surface-950 mb-2">
+                                Facing issues with payment?
+                            </h3>
+                            <p className="text-sm text-surface-600 max-w-lg mx-auto">
+                                If your card or Razorpay payment fails, you can still upgrade using the manual options below.
+                            </p>
+                        </div>
+
+                        {/* Payment Options Grid */}
+                        <div className="grid sm:grid-cols-3 gap-4 mb-8">
+                            {/* UPI */}
+                            <div className="bg-white rounded-xl border border-surface-300 p-5 text-center hover:border-primary-300 transition-colors">
+                                <div className="text-2xl mb-2">🇮🇳</div>
+                                <h4 className="text-sm font-bold text-surface-950 mb-1">UPI Payment</h4>
+                                <p className="text-xs text-surface-500 mb-3">For India users</p>
+                                <div className="bg-surface-100 rounded-lg px-3 py-2 mb-3">
+                                    <code className="text-xs text-surface-800 font-medium select-all">ryan2837@paytm</code>
+                                </div>
+                                <button
+                                    onClick={() => { navigator.clipboard.writeText("ryan2837@paytm"); }}
+                                    className="text-xs text-primary-500 hover:text-primary-600 font-medium transition-colors flex items-center gap-1 mx-auto"
+                                >
+                                    📋 Copy UPI ID
+                                </button>
+                            </div>
+
+                            {/* PayPal */}
+                            <div className="bg-white rounded-xl border border-surface-300 p-5 text-center hover:border-primary-300 transition-colors">
+                                <div className="text-2xl mb-2">🅿️</div>
+                                <h4 className="text-sm font-bold text-surface-950 mb-1">PayPal</h4>
+                                <p className="text-xs text-surface-500 mb-3">International</p>
+                                <div className="bg-surface-100 rounded-lg px-3 py-2 mb-3">
+                                    <code className="text-xs text-surface-800 font-medium select-all">peenu000@gmail.com</code>
+                                </div>
+                                <button
+                                    onClick={() => { navigator.clipboard.writeText("peenu000@gmail.com"); }}
+                                    className="text-xs text-primary-500 hover:text-primary-600 font-medium transition-colors flex items-center gap-1 mx-auto"
+                                >
+                                    📋 Copy Email
+                                </button>
+                            </div>
+
+                            {/* Remitly */}
+                            <div className="bg-white rounded-xl border border-surface-300 p-5 text-center hover:border-primary-300 transition-colors">
+                                <div className="text-2xl mb-2">🌍</div>
+                                <h4 className="text-sm font-bold text-surface-950 mb-1">Remitly</h4>
+                                <p className="text-xs text-surface-500 mb-3">International Transfer</p>
+                                <div className="bg-surface-100 rounded-lg px-3 py-2 mb-3">
+                                    <p className="text-xs text-surface-600">Contact support for transfer details</p>
+                                </div>
+                                <a
+                                    href="mailto:contact@applypilot.us?subject=Remitly Payment Details"
+                                    className="text-xs text-primary-500 hover:text-primary-600 font-medium transition-colors flex items-center gap-1 mx-auto"
+                                >
+                                    ✉️ Request Details
+                                </a>
+                            </div>
+                        </div>
+
+                        {/* Instructions */}
+                        <div className="bg-white rounded-xl border border-surface-300 p-5 mb-6">
+                            <h4 className="text-sm font-bold text-surface-950 mb-3 flex items-center gap-2">
+                                📝 After making payment:
+                            </h4>
+                            <div className="grid sm:grid-cols-3 gap-3">
+                                <div className="flex items-start gap-2.5">
+                                    <span className="w-6 h-6 rounded-full bg-primary-50 border border-primary-200 flex items-center justify-center text-xs font-bold text-primary-600 flex-shrink-0">1</span>
+                                    <p className="text-xs text-surface-600">Take a screenshot or save your transaction proof</p>
+                                </div>
+                                <div className="flex items-start gap-2.5">
+                                    <span className="w-6 h-6 rounded-full bg-primary-50 border border-primary-200 flex items-center justify-center text-xs font-bold text-primary-600 flex-shrink-0">2</span>
+                                    <p className="text-xs text-surface-600">Go to Helpdesk and submit your payment proof</p>
+                                </div>
+                                <div className="flex items-start gap-2.5">
+                                    <span className="w-6 h-6 rounded-full bg-primary-50 border border-primary-200 flex items-center justify-center text-xs font-bold text-primary-600 flex-shrink-0">3</span>
+                                    <p className="text-xs text-surface-600">Our team will verify and activate your plan within 4 hours</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Support CTAs */}
+                        <div className="flex flex-wrap items-center justify-center gap-3 mb-5">
+                            <a
+                                href="/dashboard?tab=helpdesk"
+                                className="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-semibold text-white bg-gradient-to-r from-primary-500 to-primary-600 rounded-xl hover:shadow-lg hover:shadow-primary-500/20 hover:-translate-y-0.5 transition-all"
+                            >
+                                🎫 Submit Payment Proof
+                            </a>
+                            <a
+                                href="https://wa.me/91857205555865"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-semibold text-white bg-gradient-to-r from-green-500 to-green-600 rounded-xl hover:shadow-lg hover:shadow-green-500/20 hover:-translate-y-0.5 transition-all"
+                            >
+                                💬 Chat on WhatsApp
+                            </a>
+                            <a
+                                href="mailto:contact@applypilot.us"
+                                className="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-semibold text-surface-700 bg-white border border-surface-300 rounded-xl hover:bg-surface-100 transition-all"
+                            >
+                                ✉️ contact@applypilot.us
+                            </a>
+                        </div>
+
+                        {/* Trust badge */}
+                        <p className="text-center text-xs text-surface-500 flex items-center justify-center gap-1.5">
+                            <span className="w-1.5 h-1.5 rounded-full bg-accent-green" />
+                            100% secure. Manual payments are verified before activation.
+                        </p>
+                    </div>
+                </div>
+            </motion.div>
         </div>
     );
 }

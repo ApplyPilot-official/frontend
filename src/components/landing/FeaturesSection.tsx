@@ -264,7 +264,7 @@ export default function FeaturesSection() {
                         className="inline-flex items-center gap-2 mt-4 px-4 py-2 rounded-full bg-white border border-surface-300 text-xs text-surface-600 shadow-sm"
                     >
                         <span className="w-2 h-2 rounded-full bg-accent-green animate-pulse" />
-                        {features.length} powerful tools — all included in every plan
+                        {features.length} powerful tools
                     </motion.div>
                 </AnimatedSection>
 

@@ -11,6 +11,8 @@ import HelpDeskPanel from "@/components/dashboard/HelpDeskPanel";
 import PortfolioPanel from "@/components/dashboard/PortfolioPanel";
 import LinkedInPanel from "@/components/dashboard/LinkedInPanel";
 import TargetCompaniesPanel from "@/components/dashboard/TargetCompaniesPanel";
+import JobListingsPanel from "@/components/dashboard/JobListingsPanel";
+import MockInterviewPanel from "@/components/dashboard/MockInterviewPanel";
 import { DASHBOARD_FEATURES, getDefaultFeatureAccess, type FeatureAccessMap } from "@/lib/dashboardFeatures";
 
 const ATSScreenerSection = dynamic(() => import("@/components/ats-screener/ATSScreenerSection"), {
@@ -22,7 +24,7 @@ const ATSScreenerSection = dynamic(() => import("@/components/ats-screener/ATSSc
     ),
 });
 
-type DashSection = "overview" | "jobs" | "applications" | "companies" | "linkedin" | "analytics" | "ats-screener" | "counseling" | "helpdesk" | "portfolio";
+type DashSection = "overview" | "jobs" | "applications" | "companies" | "linkedin" | "analytics" | "ats-screener" | "counseling" | "helpdesk" | "portfolio" | "mock-interview" | "ai-cover-letters" | "resume-builder";
 
 interface UserStatus {
     subscriptionPlan: string;
@@ -437,31 +439,7 @@ function DashboardContent() {
                         {/* Content Areas */}
                         {activeSection === "overview" && renderOverview()}
 
-                        {activeSection === "jobs" && (
-                            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-                                <div className="flex items-center justify-between mb-6">
-                                    <h2 className="text-xl font-bold text-surface-950">Job Listings</h2>
-                                    <div className="flex gap-2">
-                                        <select className="px-3 py-2 bg-white border border-surface-300 rounded-xl text-sm text-surface-700 focus:outline-none focus:ring-2 focus:ring-primary-300">
-                                            <option>All Visa Types</option>
-                                            <option>H1B</option>
-                                            <option>STEM OPT</option>
-                                            <option>Green Card</option>
-                                        </select>
-                                        <select className="px-3 py-2 bg-white border border-surface-300 rounded-xl text-sm text-surface-700 focus:outline-none focus:ring-2 focus:ring-primary-300">
-                                            <option>All Job Types</option>
-                                            <option>Full-time</option>
-                                            <option>Contract</option>
-                                            <option>Part-time</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div className="bg-white rounded-2xl p-10 text-center border border-surface-300 shadow-sm">
-                                    <div className="text-4xl mb-3">🔍</div>
-                                    <p className="text-surface-600">Job listings will appear here once the automation service is configured.</p>
-                                </div>
-                            </motion.div>
-                        )}
+                        {activeSection === "jobs" && <JobListingsPanel />}
 
                         {activeSection === "applications" && (
                             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
@@ -486,6 +464,27 @@ function DashboardContent() {
                         {activeSection === "helpdesk" && <HelpDeskPanel onUnreadChange={(count) => setHelpUnread(count)} />}
                         {activeSection === "portfolio" && <PortfolioPanel hasSubscription={!!hasSubscription} />}
                         {activeSection === "linkedin" && <LinkedInPanel hasSubscription={!!hasSubscription} subscriptionPlan={userStatus?.subscriptionPlan || "none"} />}
+                        {activeSection === "mock-interview" && <MockInterviewPanel />}
+
+                        {activeSection === "ai-cover-letters" && (
+                            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
+                                className="bg-white rounded-2xl p-10 text-center border border-surface-300 shadow-sm">
+                                <div className="text-5xl mb-4">✉️</div>
+                                <h2 className="text-xl font-bold text-surface-950 mb-3">AI Cover Letters</h2>
+                                <span className="inline-block px-4 py-1.5 rounded-full bg-violet-500/10 text-violet-500 text-sm font-medium border border-violet-500/20 mb-4">🚀 Coming Soon</span>
+                                <p className="text-surface-600 max-w-md mx-auto">Generate personalized, job-specific cover letters in seconds using AI. Tailored to each job description and your resume.</p>
+                            </motion.div>
+                        )}
+
+                        {activeSection === "resume-builder" && (
+                            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
+                                className="bg-white rounded-2xl p-10 text-center border border-surface-300 shadow-sm">
+                                <div className="text-5xl mb-4">📝</div>
+                                <h2 className="text-xl font-bold text-surface-950 mb-3">Resume Builder</h2>
+                                <span className="inline-block px-4 py-1.5 rounded-full bg-violet-500/10 text-violet-500 text-sm font-medium border border-violet-500/20 mb-4">🚀 Coming Soon</span>
+                                <p className="text-surface-600 max-w-md mx-auto">Build ATS-optimized resumes with our AI-powered resume builder. Choose from professional templates and get real-time suggestions.</p>
+                            </motion.div>
+                        )}
                     </div>
                 </div>
             </div>

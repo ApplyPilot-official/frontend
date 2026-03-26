@@ -80,12 +80,13 @@ const studentPlans = [
         badgeColor: "from-accent-green to-emerald-500",
         urgencyTag: "Limited spots at this price",
         features: [
-            "Up to 20 auto-applies/day",
+            "150–400 auto job applications/month",
             "1 resume profile",
             "Basic AI job matching",
             "AI Resume Builder",
             "AI Cover Letter Generator",
             "Basic Application Tracker",
+            "ATS Score Checker",
             "ATS Score Generator",
             "Saved jobs / review before apply",
             "Chat support",
@@ -104,18 +105,22 @@ const studentPlans = [
         badgeColor: "from-primary-500 to-primary-700",
         urgencyTag: "Price increasing soon 🔥",
         features: [
-            "Up to 75 auto-applies/day",
+            "300–700 auto job applications/month",
+            "Everything in Starter",
             "3 resume profiles",
             "Smart AI matching with filters",
             "ATS Resume Optimizer",
+            "Unlimited AI Mock Interviews",
             "AI bullet-point & summary rewrite",
-            "AI Cover Letters",
-             "Career Counseling",
+            "Advanced AI Cover Letters",
+            "Career Counseling",
+            "One-time career guidance session",
             "Full application tracker + pipeline",
-           
             "LinkedIn Profile Optimizer",
-            "ATS Score Generator",
-            "Priority Call & chat support",
+            "Premium ATS Score Generator (6 ATS)",
+            "Follow-Up Automator",
+            "Apply via Email",
+            "Priority chat + WhatsApp support",
         ],
         popular: true,
         accentColor: "text-primary-500",
@@ -131,18 +136,19 @@ const studentPlans = [
         badgeColor: "from-accent-yellow to-amber-500",
         urgencyTag: "Only 50 seats/month",
         features: [
-            "Up to 150 auto-applies/day",
-            "5 resume profiles",
-            "Advanced AI job targeting",
-            "AI Resume Builder + ATS Optimizer",
-            "AI Cover Letters",
-            "AI Mock Interview",
-            "Career Counseling",
-            "Hiring Manager/Contact Finder",
-            "Advanced analytics dashboard",
-            "Priority support + fast turnaround",
-            "Optional human resume review add-on",
-            "ATS Score Generator",
+            "500+ auto job applications/month (aggressive + human apply)",
+            "Everything in Pro",
+            "Unlimited resume profiles",
+            "Advanced aggressive AI job targeting",
+            "Unlimited AI Mock Interviews",
+            "1-on-1 Career Coaching",
+            "Advanced Analytics Dashboard",
+            "Priority support + fastest turnaround",
+            "Optional human resume review",
+            "Dedicated human support",
+            "Salary Insights & Negotiator",
+            "Follow-Up Automator",
+            "LinkedIn Auto-Apply",
         ],
         popular: false,
         accentColor: "text-accent-yellow",
@@ -157,11 +163,43 @@ export default function PricingSection() {
     const [hoveredPlan, setHoveredPlan] = useState<number | null>(null);
     const [selectedPlan, setSelectedPlan] = useState<number>(1);
 
+    // Demo request form state
+    const [demoForm, setDemoForm] = useState({ contactName: "", email: "", phone: "", companyName: "", companySize: "" });
+    const [demoSubmitting, setDemoSubmitting] = useState(false);
+    const [demoResult, setDemoResult] = useState<{ success?: boolean; message?: string }>({});
+
     useEffect(() => {
         if (window.location.hash === "#business") {
             setTab("business");
         }
     }, []);
+
+    const handleDemoSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setDemoSubmitting(true);
+        setDemoResult({});
+        try {
+            const res = await fetch("/api/business-interest", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    ...demoForm,
+                    message: "Demo request from landing page",
+                }),
+            });
+            const data = await res.json();
+            if (res.ok) {
+                setDemoResult({ success: true, message: data.message });
+                setDemoForm({ contactName: "", email: "", phone: "", companyName: "", companySize: "" });
+            } else {
+                setDemoResult({ success: false, message: data.error });
+            }
+        } catch {
+            setDemoResult({ success: false, message: "Something went wrong. Please try again." });
+        } finally {
+            setDemoSubmitting(false);
+        }
+    };
 
     return (
         <section id="pricing" className="py-24 sm:py-32 relative overflow-hidden bg-surface-100">
@@ -428,7 +466,7 @@ export default function PricingSection() {
                             </div>
 
                             <button
-                                onClick={() => setShowModal(true)}
+                                onClick={() => { setShowModal(true); setDemoResult({}); }}
                                 className="glow-btn px-10 py-4 text-base font-bold text-surface-950 rounded-full"
                             >
                                 Contact Us
@@ -438,7 +476,7 @@ export default function PricingSection() {
                 )}
             </div>
 
-            {/* Contact Modal */}
+            {/* Contact / Demo Request Modal */}
             {showModal && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
                     <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setShowModal(false)} />
@@ -453,36 +491,90 @@ export default function PricingSection() {
                         >
                             ✕
                         </button>
-                        <h3 className="text-xl font-bold text-surface-950 mb-2">Request a Demo</h3>
-                        <p className="text-sm text-surface-600 mb-6">
-                            Fill in your details and we&apos;ll reach out within 24 hours.
-                        </p>
-                        <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); alert("Demo request submitted!"); setShowModal(false); }}>
-                            <input
-                                type="text"
-                                placeholder="Full Name"
-                                required
-                                className="w-full px-4 py-3 rounded-xl bg-surface-100 border border-surface-300 text-surface-900 text-sm placeholder:text-surface-500 outline-none focus:ring-2 focus:ring-primary-300"
-                            />
-                            <input
-                                type="email"
-                                placeholder="Work Email"
-                                required
-                                className="w-full px-4 py-3 rounded-xl bg-surface-100 border border-surface-300 text-surface-900 text-sm placeholder:text-surface-500 outline-none focus:ring-2 focus:ring-primary-300"
-                            />
-                            <input
-                                type="tel"
-                                placeholder="Phone Number"
-                                required
-                                className="w-full px-4 py-3 rounded-xl bg-surface-100 border border-surface-300 text-surface-900 text-sm placeholder:text-surface-500 outline-none focus:ring-2 focus:ring-primary-300"
-                            />
-                            <button
-                                type="submit"
-                                className="glow-btn w-full py-3 text-sm font-bold text-surface-950 rounded-xl"
-                            >
-                                Request a Demo
-                            </button>
-                        </form>
+
+                        {demoResult.success ? (
+                            <div className="text-center py-6">
+                                <div className="text-5xl mb-4">🎉</div>
+                                <h3 className="text-xl font-bold text-surface-950 mb-2">Thank You!</h3>
+                                <p className="text-sm text-surface-600">{demoResult.message}</p>
+                                <button
+                                    onClick={() => setShowModal(false)}
+                                    className="mt-6 px-6 py-2.5 text-sm font-medium text-surface-700 bg-surface-100 rounded-xl hover:bg-surface-200 transition-all"
+                                >
+                                    Close
+                                </button>
+                            </div>
+                        ) : (
+                            <>
+                                <h3 className="text-xl font-bold text-surface-950 mb-2">Request a Demo</h3>
+                                <p className="text-sm text-surface-600 mb-6">
+                                    Fill in your details and we&apos;ll reach out within 24 hours.
+                                </p>
+                                <form className="space-y-4" onSubmit={handleDemoSubmit}>
+                                    <input
+                                        type="text"
+                                        placeholder="Full Name"
+                                        required
+                                        value={demoForm.contactName}
+                                        onChange={(e) => setDemoForm({ ...demoForm, contactName: e.target.value })}
+                                        className="w-full px-4 py-3 rounded-xl bg-surface-100 border border-surface-300 text-surface-900 text-sm placeholder:text-surface-500 outline-none focus:ring-2 focus:ring-primary-300"
+                                    />
+                                    <input
+                                        type="text"
+                                        placeholder="Company Name"
+                                        required
+                                        value={demoForm.companyName}
+                                        onChange={(e) => setDemoForm({ ...demoForm, companyName: e.target.value })}
+                                        className="w-full px-4 py-3 rounded-xl bg-surface-100 border border-surface-300 text-surface-900 text-sm placeholder:text-surface-500 outline-none focus:ring-2 focus:ring-primary-300"
+                                    />
+                                    <input
+                                        type="email"
+                                        placeholder="Work Email"
+                                        required
+                                        value={demoForm.email}
+                                        onChange={(e) => setDemoForm({ ...demoForm, email: e.target.value })}
+                                        className="w-full px-4 py-3 rounded-xl bg-surface-100 border border-surface-300 text-surface-900 text-sm placeholder:text-surface-500 outline-none focus:ring-2 focus:ring-primary-300"
+                                    />
+                                    <input
+                                        type="tel"
+                                        placeholder="Phone Number"
+                                        value={demoForm.phone}
+                                        onChange={(e) => setDemoForm({ ...demoForm, phone: e.target.value })}
+                                        className="w-full px-4 py-3 rounded-xl bg-surface-100 border border-surface-300 text-surface-900 text-sm placeholder:text-surface-500 outline-none focus:ring-2 focus:ring-primary-300"
+                                    />
+                                    <select
+                                        required
+                                        value={demoForm.companySize}
+                                        onChange={(e) => setDemoForm({ ...demoForm, companySize: e.target.value })}
+                                        className="w-full px-4 py-3 rounded-xl bg-surface-100 border border-surface-300 text-surface-900 text-sm outline-none focus:ring-2 focus:ring-primary-300"
+                                    >
+                                        <option value="">Company Size</option>
+                                        <option value="1-10">1–10 employees</option>
+                                        <option value="11-50">11–50 employees</option>
+                                        <option value="51-200">51–200 employees</option>
+                                        <option value="201-500">201–500 employees</option>
+                                        <option value="500+">500+ employees</option>
+                                    </select>
+                                    {demoResult.message && !demoResult.success && (
+                                        <p className="text-sm text-red-400">{demoResult.message}</p>
+                                    )}
+                                    <button
+                                        type="submit"
+                                        disabled={demoSubmitting}
+                                        className="glow-btn w-full py-3 text-sm font-bold text-surface-950 rounded-xl disabled:opacity-60"
+                                    >
+                                        {demoSubmitting ? (
+                                            <span className="flex items-center justify-center gap-2">
+                                                <div className="w-4 h-4 border-2 border-surface-950 border-t-transparent rounded-full animate-spin" />
+                                                Submitting...
+                                            </span>
+                                        ) : (
+                                            "Request a Demo"
+                                        )}
+                                    </button>
+                                </form>
+                            </>
+                        )}
                     </motion.div>
                 </div>
             )}

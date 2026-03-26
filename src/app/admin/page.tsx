@@ -38,7 +38,11 @@ interface StatsData {
     planCounts: Record<string, number>;
 }
 
-type AdminTab = "users" | "coupons" | "stats" | "counseling" | "helpdesk" | "portfolio" | "linkedin" | "profiles" | "targets" | "features";
+type AdminTab = "users" | "coupons" | "stats" | "counseling" | "helpdesk" | "portfolio" | "linkedin" | "profiles" | "targets" | "features" | "business" | "mock-interviews";
+
+interface BusinessInterestRecord { _id: string; contactName: string; companyName: string; email: string; phone?: string; companySize: string; message?: string; status: string; adminNotes?: string; createdAt: string; }
+
+interface MockInterviewRecord { _id: string; userEmail: string; preferredSlot1: string; preferredSlot2: string; preferredSlot3: string; timezone: string; interviewType: string; notes?: string; status: string; confirmedSlot?: string; createdAt: string; }
 
 interface CounselingRecord { _id: string; userEmail: string; preferredTime1: string; preferredTime2: string; preferredTime3: string; timezone: string; status: string; createdAt: string; }
 interface HelpConvo { _id: string; userEmail: string; lastMessage: string; lastMessageAt: string; lastSenderType: string; totalMessages: number; unreadCount: number; }
@@ -78,6 +82,8 @@ export default function AdminPage() {
     const [targetApps, setTargetApps] = useState<TargetRecord[]>([]);
     const [featureAccessMap, setFeatureAccessMap] = useState<FeatureAccessMap>(getDefaultFeatureAccess());
     const [featureAccessSaving, setFeatureAccessSaving] = useState(false);
+    const [businessInterests, setBusinessInterests] = useState<BusinessInterestRecord[]>([]);
+    const [mockInterviewReqs, setMockInterviewReqs] = useState<MockInterviewRecord[]>([]);
 
     const fetchData = useCallback(async () => {
         setLoading(true);
@@ -115,6 +121,12 @@ export default function AdminPage() {
                 const faData = await faRes.json();
                 if (faData.features) setFeatureAccessMap(faData.features);
             }
+            // Fetch business interests
+            const bizRes = await fetch("/api/business-interest");
+            if (bizRes.ok) setBusinessInterests((await bizRes.json()).interests || []);
+            // Fetch mock interview requests
+            const mockRes = await fetch("/api/mock-interview?admin=true");
+            if (mockRes.ok) setMockInterviewReqs((await mockRes.json()).requests || []);
         } catch (err) {
             console.error("Admin fetch error:", err);
         } finally {
@@ -203,6 +215,8 @@ export default function AdminPage() {
         { id: "linkedin", label: "LinkedIn", icon: "💎" },
         { id: "profiles", label: "Profiles", icon: "📄" },
         { id: "targets", label: "Targets", icon: "🎯" },
+        { id: "business", label: "Business", icon: "🏢" },
+        { id: "mock-interviews", label: "Mock Interviews", icon: "🎙️" },
     ];
 
     const toggleFeatureAccess = (featureId: string, plan: string) => {
@@ -309,6 +323,30 @@ export default function AdminPage() {
             setActionMsg("Target status updated");
             setTimeout(() => setActionMsg(""), 3000);
         } catch { setActionMsg("Error updating target"); }
+    };
+
+    const updateBusinessInterest = async (id: string, status?: string, adminNotes?: string) => {
+        try {
+            const body: Record<string, string> = { id };
+            if (status) body.status = status;
+            if (adminNotes !== undefined) body.adminNotes = adminNotes;
+            await fetch("/api/business-interest", { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
+            setBusinessInterests(prev => prev.map(b => b._id === id ? { ...b, ...(status ? { status } : {}), ...(adminNotes !== undefined ? { adminNotes } : {}) } : b));
+            setActionMsg("Business interest updated");
+            setTimeout(() => setActionMsg(""), 3000);
+        } catch { setActionMsg("Error updating business interest"); }
+    };
+
+    const updateMockInterview = async (id: string, status?: string, confirmedSlot?: string) => {
+        try {
+            const body: Record<string, string> = { id };
+            if (status) body.status = status;
+            if (confirmedSlot !== undefined) body.confirmedSlot = confirmedSlot;
+            await fetch("/api/mock-interview", { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
+            setMockInterviewReqs(prev => prev.map(r => r._id === id ? { ...r, ...(status ? { status } : {}), ...(confirmedSlot !== undefined ? { confirmedSlot } : {}) } : r));
+            setActionMsg("Mock interview updated");
+            setTimeout(() => setActionMsg(""), 3000);
+        } catch { setActionMsg("Error updating mock interview"); }
     };
 
     return (
@@ -992,6 +1030,121 @@ export default function AdminPage() {
                                         <p className="text-xs text-primary-700">
                                             💡 <strong>Auto-discovery:</strong> When you add a new feature to the sidebar, it will automatically appear here with default access settings.
                                         </p>
+                                    </div>
+                                </div>
+                            </motion.div>
+                        )}
+
+                        {/* Business Interests Tab */}
+                        {activeTab === "business" && (
+                            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+                                <div className="bg-white rounded-2xl border border-surface-300 overflow-hidden">
+                                    <div className="overflow-x-auto">
+                                        <table className="w-full text-sm">
+                                            <thead>
+                                                <tr className="border-b border-surface-300">
+                                                    <th className="text-left p-4 text-surface-600 font-medium">Contact</th>
+                                                    <th className="text-left p-4 text-surface-600 font-medium">Company</th>
+                                                    <th className="text-left p-4 text-surface-600 font-medium">Email</th>
+                                                    <th className="text-left p-4 text-surface-600 font-medium">Size</th>
+                                                    <th className="text-left p-4 text-surface-600 font-medium">Message</th>
+                                                    <th className="text-left p-4 text-surface-600 font-medium">Status</th>
+                                                    <th className="text-left p-4 text-surface-600 font-medium">Notes</th>
+                                                    <th className="text-left p-4 text-surface-600 font-medium">Date</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {businessInterests.map(b => (
+                                                    <tr key={b._id} className="border-b border-surface-200 hover:bg-surface-100/50">
+                                                        <td className="p-4">
+                                                            <p className="text-surface-950 font-medium">{b.contactName}</p>
+                                                            {b.phone && <p className="text-xs text-surface-500">{b.phone}</p>}
+                                                        </td>
+                                                        <td className="p-4 text-surface-950 font-medium">{b.companyName}</td>
+                                                        <td className="p-4"><a href={`mailto:${b.email}`} className="text-primary-500 hover:underline text-xs">{b.email}</a></td>
+                                                        <td className="p-4 text-surface-600 text-xs">{b.companySize}</td>
+                                                        <td className="p-4 text-surface-600 text-xs max-w-[200px] truncate">{b.message || "—"}</td>
+                                                        <td className="p-4">
+                                                            <select value={b.status} onChange={e => updateBusinessInterest(b._id, e.target.value)} className="px-2 py-1 bg-surface-100 border border-surface-300 rounded-lg text-xs text-surface-950 focus:outline-none focus:ring-2 focus:ring-primary-300">
+                                                                <option value="new">🔵 New</option>
+                                                                <option value="contacted">📞 Contacted</option>
+                                                                <option value="in_discussion">💬 In Discussion</option>
+                                                                <option value="closed_won">✅ Closed Won</option>
+                                                                <option value="closed_lost">❌ Closed Lost</option>
+                                                            </select>
+                                                        </td>
+                                                        <td className="p-4">
+                                                            <input type="text" defaultValue={b.adminNotes || ""} placeholder="Add notes..." onBlur={e => { if (e.target.value !== (b.adminNotes || "")) updateBusinessInterest(b._id, undefined, e.target.value); }} className="w-full px-2 py-1 bg-surface-100 border border-surface-300 rounded-lg text-xs text-surface-950 focus:outline-none focus:ring-2 focus:ring-primary-300" />
+                                                        </td>
+                                                        <td className="p-4 text-xs text-surface-500">{new Date(b.createdAt).toLocaleDateString()}</td>
+                                                    </tr>
+                                                ))}
+                                                {businessInterests.length === 0 && (
+                                                    <tr><td colSpan={8} className="p-8 text-center text-surface-500">No business inquiries yet</td></tr>
+                                                )}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </motion.div>
+                        )}
+
+                        {/* Mock Interviews Tab */}
+                        {activeTab === "mock-interviews" && (
+                            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+                                <div className="bg-white rounded-2xl border border-surface-300 overflow-hidden">
+                                    <div className="overflow-x-auto">
+                                        <table className="w-full text-sm">
+                                            <thead>
+                                                <tr className="border-b border-surface-300">
+                                                    <th className="text-left p-4 text-surface-600 font-medium">User</th>
+                                                    <th className="text-left p-4 text-surface-600 font-medium">Type</th>
+                                                    <th className="text-left p-4 text-surface-600 font-medium">Slot 1</th>
+                                                    <th className="text-left p-4 text-surface-600 font-medium">Slot 2</th>
+                                                    <th className="text-left p-4 text-surface-600 font-medium">Slot 3</th>
+                                                    <th className="text-left p-4 text-surface-600 font-medium">Timezone</th>
+                                                    <th className="text-left p-4 text-surface-600 font-medium">Confirm Slot</th>
+                                                    <th className="text-left p-4 text-surface-600 font-medium">Status</th>
+                                                    <th className="text-left p-4 text-surface-600 font-medium">Date</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {mockInterviewReqs.map(r => (
+                                                    <tr key={r._id} className="border-b border-surface-200 hover:bg-surface-100/50">
+                                                        <td className="p-4"><a href={`mailto:${r.userEmail}`} className="text-primary-500 hover:underline text-xs">{r.userEmail}</a></td>
+                                                        <td className="p-4 text-surface-700 text-xs capitalize">{r.interviewType.replace("-", " ")}</td>
+                                                        <td className="p-4 text-surface-700 text-xs">{r.preferredSlot1 ? new Date(r.preferredSlot1).toLocaleString() : "—"}</td>
+                                                        <td className="p-4 text-surface-700 text-xs">{r.preferredSlot2 ? new Date(r.preferredSlot2).toLocaleString() : "—"}</td>
+                                                        <td className="p-4 text-surface-700 text-xs">{r.preferredSlot3 ? new Date(r.preferredSlot3).toLocaleString() : "—"}</td>
+                                                        <td className="p-4 text-surface-600 text-xs">{r.timezone}</td>
+                                                        <td className="p-4">
+                                                            <select
+                                                                value={r.confirmedSlot || ""}
+                                                                onChange={e => updateMockInterview(r._id, e.target.value ? "confirmed" : undefined, e.target.value)}
+                                                                className="px-2 py-1 bg-surface-100 border border-surface-300 rounded-lg text-xs text-surface-950 focus:outline-none focus:ring-2 focus:ring-primary-300"
+                                                            >
+                                                                <option value="">Select slot</option>
+                                                                <option value={r.preferredSlot1}>Slot 1</option>
+                                                                <option value={r.preferredSlot2}>Slot 2</option>
+                                                                <option value={r.preferredSlot3}>Slot 3</option>
+                                                            </select>
+                                                        </td>
+                                                        <td className="p-4">
+                                                            <select value={r.status} onChange={e => updateMockInterview(r._id, e.target.value)} className="px-2 py-1 bg-surface-100 border border-surface-300 rounded-lg text-xs text-surface-950 focus:outline-none focus:ring-2 focus:ring-primary-300">
+                                                                <option value="pending">⏳ Pending</option>
+                                                                <option value="confirmed">✅ Confirmed</option>
+                                                                <option value="completed">🎉 Completed</option>
+                                                                <option value="cancelled">❌ Cancelled</option>
+                                                            </select>
+                                                        </td>
+                                                        <td className="p-4 text-xs text-surface-500">{new Date(r.createdAt).toLocaleDateString()}</td>
+                                                    </tr>
+                                                ))}
+                                                {mockInterviewReqs.length === 0 && (
+                                                    <tr><td colSpan={9} className="p-8 text-center text-surface-500">No mock interview requests yet</td></tr>
+                                                )}
+                                            </tbody>
+                                        </table>
                                     </div>
                                 </div>
                             </motion.div>

@@ -178,12 +178,19 @@ export default function Navbar() {
                                                     onClick={() => setProfileOpen(false)}
                                                     className="flex items-center gap-3 px-4 py-2.5 text-sm text-surface-700 hover:text-surface-950 hover:bg-surface-100 transition-colors"
                                                 >
-                                                    <span>🎫</span> Help Desk
+                                                    <span>🎟️</span> Help Desk
                                                     {helpUnread > 0 && (
                                                         <span className="w-5 h-5 rounded-full bg-accent-red text-surface-950 text-[10px] font-bold flex items-center justify-center ml-auto">
                                                             {helpUnread}
                                                         </span>
                                                     )}
+                                                </Link>
+                                                <Link
+                                                    href="/dashboard?tab=jobs&view=saved"
+                                                    onClick={() => setProfileOpen(false)}
+                                                    className="flex items-center gap-3 px-4 py-2.5 text-sm text-surface-700 hover:text-surface-950 hover:bg-surface-100 transition-colors"
+                                                >
+                                                    <span>🔖</span> Saved Jobs
                                                 </Link>
                                             </div>
 
@@ -317,12 +324,19 @@ export default function Navbar() {
                                             onClick={() => setMobileOpen(false)}
                                             className="flex items-center gap-2 text-sm text-surface-700 hover:text-primary-600 py-2"
                                         >
-                                            🎫 Help Desk
+                                            🎟️ Help Desk
                                             {helpUnread > 0 && (
                                                 <span className="w-5 h-5 rounded-full bg-accent-red text-surface-950 text-[10px] font-bold flex items-center justify-center">
                                                     {helpUnread}
                                                 </span>
                                             )}
+                                        </Link>
+                                        <Link
+                                            href="/dashboard?tab=jobs&view=saved"
+                                            onClick={() => setMobileOpen(false)}
+                                            className="block text-sm text-surface-700 hover:text-primary-600 py-2"
+                                        >
+                                            🔖 Saved Jobs
                                         </Link>
                                         <button
                                             onClick={() => { setMobileOpen(false); signOut({ callbackUrl: "/" }); }}

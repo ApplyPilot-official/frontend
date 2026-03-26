@@ -16,8 +16,9 @@ const legalLinks = [
 ];
 
 const socialLinks = [
-    { name: "LinkedIn", icon: "in", href: "https://www.linkedin.com/company/applypilot" },
+    { name: "LinkedIn", icon: "in", href: "https://www.linkedin.com/company/applypilot-official/about/?viewAsMember=true" },
     { name: "Instagram", icon: "\uD83D\uDCF7", href: "https://www.instagram.com/applypilot.us/" },
+    { name: "WhatsApp", icon: "💬", href: "https://wa.me/91857205555865" },
 ];
 
 export default function Footer() {
@@ -126,6 +127,10 @@ export default function Footer() {
                     <p className="text-sm text-surface-500">
                         &copy; {new Date().getFullYear()} ApplyPilot. All rights reserved.
                     </p>
+                    <div className="flex flex-wrap items-center gap-4">
+                        <a href="mailto:contact@applypilot.us" className="text-xs text-surface-500 hover:text-primary-500 transition-colors">✉️ contact@applypilot.us</a>
+                        <a href="https://www.linkedin.com/company/applypilot-official/about/?viewAsMember=true" target="_blank" rel="noopener noreferrer" className="text-xs text-surface-500 hover:text-primary-500 transition-colors">🔗 LinkedIn</a>
+                    </div>
                     <p className="text-sm text-surface-600 flex items-center gap-1.5">
                         Powered by
                         <span className="gradient-text font-semibold">AI</span>
