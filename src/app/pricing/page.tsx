@@ -501,6 +501,12 @@ export default function PricingPage() {
                             <p className="text-center text-xs text-surface-500 mt-4">
                                 🔒 Secured by Razorpay · Cancel anytime
                             </p>
+                            <button
+                                onClick={() => setManualPayOpen(true)}
+                                className="mt-3 w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-semibold text-amber-700 bg-amber-50 border border-amber-200 rounded-xl hover:bg-amber-100 hover:shadow-md transition-all"
+                            >
+                                💳 Facing issues with payment? Try alternative methods
+                            </button>
                         </div>
                     </motion.div>
                 )}
@@ -675,19 +681,7 @@ export default function PricingPage() {
                 </motion.div>
             </div>
 
-            {/* ── Manual Payment Trigger Button ──────────────── */}
-            <div className="max-w-3xl mx-auto mt-16 text-center">
-                <button
-                    onClick={() => setManualPayOpen(true)}
-                    className="inline-flex items-center gap-2.5 px-6 py-3.5 text-sm font-semibold text-amber-700 bg-amber-50 border border-amber-200 rounded-xl hover:bg-amber-100 hover:shadow-lg hover:shadow-amber-500/10 hover:-translate-y-0.5 transition-all"
-                >
-                    💳 Facing issues with payment? View alternative methods
-                </button>
-                <p className="text-xs text-surface-500 mt-2 flex items-center justify-center gap-1.5">
-                    <span className="w-1.5 h-1.5 rounded-full bg-accent-green" />
-                    100% secure. Manual payments are verified before activation.
-                </p>
-            </div>
+
 
             {/* ── Manual Payment Modal ──────────────────────── */}
             <AnimatePresence>
