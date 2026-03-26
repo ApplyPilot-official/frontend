@@ -220,7 +220,7 @@ function DashboardContent() {
                     >
                         View Plans & Subscribe
                     </Link>
-                    <p className="mt-4 text-xs text-surface-500">Starting at $35/month · 30-day money-back guarantee</p>
+                    <p className="mt-4 text-xs text-surface-500">Starting at $35/month · Cancel anytime</p>
                 </motion.div>
             );
         }
@@ -392,7 +392,7 @@ function DashboardContent() {
                                 >
                                     View Plans & Upgrade
                                 </Link>
-                                <p className="mt-4 text-xs text-surface-500">Starting at $35/month · 30-day money-back guarantee</p>
+                                <p className="mt-4 text-xs text-surface-500">Starting at $35/month · Cancel anytime</p>
                             </motion.div>
                         </div>
                     )}
