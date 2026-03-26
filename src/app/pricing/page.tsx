@@ -133,6 +133,8 @@ export default function PricingPage() {
     });
     const [bizSubmitting, setBizSubmitting] = useState(false);
     const [bizResult, setBizResult] = useState<{ success?: boolean; message?: string }>({});
+    const [manualPayOpen, setManualPayOpen] = useState(false);
+    const [copied, setCopied] = useState("");
 
     // Fetch user's current plan
     const fetchUserPlan = useCallback(async () => {
@@ -673,135 +675,188 @@ export default function PricingPage() {
                 </motion.div>
             </div>
 
-            {/* ── Manual Payment Fallback ────────────────────────── */}
-            <motion.div
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: 0.1 }}
-                className="max-w-3xl mx-auto mt-16"
-            >
-                <div className="bg-gradient-to-br from-amber-50/80 to-orange-50/60 rounded-2xl border border-amber-200/60 p-8 sm:p-10 relative overflow-hidden">
-                    {/* Decorative corner */}
-                    <div className="absolute top-0 right-0 w-32 h-32 bg-amber-100/40 rounded-bl-[80px]" />
+            {/* ── Manual Payment Trigger Button ──────────────── */}
+            <div className="max-w-3xl mx-auto mt-16 text-center">
+                <button
+                    onClick={() => setManualPayOpen(true)}
+                    className="inline-flex items-center gap-2.5 px-6 py-3.5 text-sm font-semibold text-amber-700 bg-amber-50 border border-amber-200 rounded-xl hover:bg-amber-100 hover:shadow-lg hover:shadow-amber-500/10 hover:-translate-y-0.5 transition-all"
+                >
+                    💳 Facing issues with payment? View alternative methods
+                </button>
+                <p className="text-xs text-surface-500 mt-2 flex items-center justify-center gap-1.5">
+                    <span className="w-1.5 h-1.5 rounded-full bg-accent-green" />
+                    100% secure. Manual payments are verified before activation.
+                </p>
+            </div>
 
-                    <div className="relative">
-                        <div className="text-center mb-8">
-                            <div className="inline-flex items-center gap-2 px-3 py-1 bg-amber-100 border border-amber-200 rounded-full text-xs font-medium text-amber-700 mb-4">
-                                💳 Alternative Payment Methods
-                            </div>
-                            <h3 className="text-xl sm:text-2xl font-bold text-surface-950 mb-2">
-                                Facing issues with payment?
-                            </h3>
-                            <p className="text-sm text-surface-600 max-w-lg mx-auto">
-                                If your card or Razorpay payment fails, you can still upgrade using the manual options below.
-                            </p>
-                        </div>
-
-                        {/* Payment Options Grid */}
-                        <div className="grid sm:grid-cols-3 gap-4 mb-8">
-                            {/* UPI */}
-                            <div className="bg-white rounded-xl border border-surface-300 p-5 text-center hover:border-primary-300 transition-colors">
-                                <div className="text-2xl mb-2">🇮🇳</div>
-                                <h4 className="text-sm font-bold text-surface-950 mb-1">UPI Payment</h4>
-                                <p className="text-xs text-surface-500 mb-3">For India users</p>
-                                <div className="bg-surface-100 rounded-lg px-3 py-2 mb-3">
-                                    <code className="text-xs text-surface-800 font-medium select-all">ryan2837@paytm</code>
+            {/* ── Manual Payment Modal ──────────────────────── */}
+            <AnimatePresence>
+                {manualPayOpen && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
+                        onClick={(e) => { if (e.target === e.currentTarget) setManualPayOpen(false); }}
+                    >
+                        <motion.div
+                            initial={{ opacity: 0, scale: 0.95, y: 20 }}
+                            animate={{ opacity: 1, scale: 1, y: 0 }}
+                            exit={{ opacity: 0, scale: 0.95, y: 20 }}
+                            transition={{ duration: 0.2 }}
+                            className="bg-white rounded-2xl border border-surface-300 shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto"
+                        >
+                            {/* Modal Header */}
+                            <div className="sticky top-0 bg-white border-b border-surface-200 px-6 py-4 rounded-t-2xl flex items-center justify-between z-10">
+                                <div>
+                                    <h3 className="text-lg font-bold text-surface-950">💳 Alternative Payment Methods</h3>
+                                    <p className="text-xs text-surface-500">If Razorpay fails, use one of these options</p>
                                 </div>
                                 <button
-                                    onClick={() => { navigator.clipboard.writeText("ryan2837@paytm"); }}
-                                    className="text-xs text-primary-500 hover:text-primary-600 font-medium transition-colors flex items-center gap-1 mx-auto"
+                                    onClick={() => setManualPayOpen(false)}
+                                    className="w-8 h-8 rounded-lg bg-surface-100 hover:bg-surface-200 flex items-center justify-center text-surface-500 transition-colors"
                                 >
-                                    📋 Copy UPI ID
+                                    ✕
                                 </button>
                             </div>
 
-                            {/* PayPal */}
-                            <div className="bg-white rounded-xl border border-surface-300 p-5 text-center hover:border-primary-300 transition-colors">
-                                <div className="text-2xl mb-2">🅿️</div>
-                                <h4 className="text-sm font-bold text-surface-950 mb-1">PayPal</h4>
-                                <p className="text-xs text-surface-500 mb-3">International</p>
-                                <div className="bg-surface-100 rounded-lg px-3 py-2 mb-3">
-                                    <code className="text-xs text-surface-800 font-medium select-all">peenu000@gmail.com</code>
+                            <div className="p-6 space-y-5">
+                                {/* Payment Options */}
+                                <div className="grid sm:grid-cols-2 gap-4">
+                                    {/* UPI */}
+                                    <div className="bg-surface-50 rounded-xl border border-surface-200 p-5">
+                                        <div className="flex items-center gap-2 mb-3">
+                                            <span className="text-lg">🇮🇳</span>
+                                            <h4 className="text-sm font-bold text-surface-950">UPI Payment</h4>
+                                            <span className="text-[10px] bg-green-50 text-green-600 px-2 py-0.5 rounded-full border border-green-200">India</span>
+                                        </div>
+                                        <div className="bg-white rounded-lg px-3 py-2 border border-surface-200 flex items-center justify-between">
+                                            <code className="text-xs text-surface-800 font-medium">ryan2837@paytm</code>
+                                            <button
+                                                onClick={() => { navigator.clipboard.writeText("ryan2837@paytm"); setCopied("upi"); setTimeout(() => setCopied(""), 2000); }}
+                                                className="text-xs text-primary-500 hover:text-primary-600 font-medium"
+                                            >
+                                                {copied === "upi" ? "✅ Copied" : "📋 Copy"}
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    {/* PayPal */}
+                                    <div className="bg-surface-50 rounded-xl border border-surface-200 p-5">
+                                        <div className="flex items-center gap-2 mb-3">
+                                            <span className="text-lg">🅿️</span>
+                                            <h4 className="text-sm font-bold text-surface-950">PayPal</h4>
+                                            <span className="text-[10px] bg-blue-50 text-blue-600 px-2 py-0.5 rounded-full border border-blue-200">International</span>
+                                        </div>
+                                        <div className="bg-white rounded-lg px-3 py-2 border border-surface-200 flex items-center justify-between">
+                                            <code className="text-xs text-surface-800 font-medium">peenu000@gmail.com</code>
+                                            <button
+                                                onClick={() => { navigator.clipboard.writeText("peenu000@gmail.com"); setCopied("paypal"); setTimeout(() => setCopied(""), 2000); }}
+                                                className="text-xs text-primary-500 hover:text-primary-600 font-medium"
+                                            >
+                                                {copied === "paypal" ? "✅ Copied" : "📋 Copy"}
+                                            </button>
+                                        </div>
+                                    </div>
                                 </div>
-                                <button
-                                    onClick={() => { navigator.clipboard.writeText("peenu000@gmail.com"); }}
-                                    className="text-xs text-primary-500 hover:text-primary-600 font-medium transition-colors flex items-center gap-1 mx-auto"
-                                >
-                                    📋 Copy Email
-                                </button>
+
+                                {/* Bank Transfer for USD→INR */}
+                                <div className="bg-gradient-to-br from-violet-50/50 to-purple-50/30 rounded-xl border border-violet-200/60 p-5">
+                                    <div className="flex items-center gap-2 mb-4">
+                                        <span className="text-lg">🌍</span>
+                                        <h4 className="text-sm font-bold text-surface-950">USD → INR Bank Transfer</h4>
+                                        <span className="text-[10px] bg-violet-50 text-violet-600 px-2 py-0.5 rounded-full border border-violet-200">Remitly · Ria · Wise</span>
+                                    </div>
+                                    <div className="grid sm:grid-cols-2 gap-3 text-xs">
+                                        <div className="space-y-2">
+                                            <div className="bg-white rounded-lg px-3 py-2 border border-surface-200">
+                                                <span className="text-surface-500">A/C Name</span>
+                                                <p className="text-surface-900 font-medium">FIX MY STACK</p>
+                                            </div>
+                                            <div className="bg-white rounded-lg px-3 py-2 border border-surface-200 flex items-center justify-between">
+                                                <div>
+                                                    <span className="text-surface-500">A/C Number</span>
+                                                    <p className="text-surface-900 font-medium">50200095522392</p>
+                                                </div>
+                                                <button
+                                                    onClick={() => { navigator.clipboard.writeText("50200095522392"); setCopied("ac"); setTimeout(() => setCopied(""), 2000); }}
+                                                    className="text-primary-500 hover:text-primary-600 font-medium"
+                                                >
+                                                    {copied === "ac" ? "✅" : "📋"}
+                                                </button>
+                                            </div>
+                                            <div className="bg-white rounded-lg px-3 py-2 border border-surface-200 flex items-center justify-between">
+                                                <div>
+                                                    <span className="text-surface-500">IFSC Code</span>
+                                                    <p className="text-surface-900 font-medium">HDFC0001808</p>
+                                                </div>
+                                                <button
+                                                    onClick={() => { navigator.clipboard.writeText("HDFC0001808"); setCopied("ifsc"); setTimeout(() => setCopied(""), 2000); }}
+                                                    className="text-primary-500 hover:text-primary-600 font-medium"
+                                                >
+                                                    {copied === "ifsc" ? "✅" : "📋"}
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div className="space-y-2">
+                                            <div className="bg-white rounded-lg px-3 py-2 border border-surface-200">
+                                                <span className="text-surface-500">City</span>
+                                                <p className="text-surface-900 font-medium">Bengaluru</p>
+                                            </div>
+                                            <div className="bg-white rounded-lg px-3 py-2 border border-surface-200">
+                                                <span className="text-surface-500">First / Last Name</span>
+                                                <p className="text-surface-900 font-medium">Fix / My Stack</p>
+                                            </div>
+                                            <div className="bg-white rounded-lg px-3 py-2 border border-surface-200">
+                                                <span className="text-surface-500">Reason (Remitly Express)</span>
+                                                <p className="text-surface-900 font-medium">Education</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="mt-3 bg-amber-50 rounded-lg px-3 py-2 border border-amber-200 flex items-center justify-between">
+                                        <div>
+                                            <span className="text-amber-600 text-[10px]">Remitly Express UPI (don&apos;t send INR on this)</span>
+                                            <p className="text-surface-900 font-medium text-xs">fms2023@ybl</p>
+                                        </div>
+                                        <button
+                                            onClick={() => { navigator.clipboard.writeText("fms2023@ybl"); setCopied("rupi"); setTimeout(() => setCopied(""), 2000); }}
+                                            className="text-xs text-primary-500 hover:text-primary-600 font-medium"
+                                        >
+                                            {copied === "rupi" ? "✅ Copied" : "📋 Copy"}
+                                        </button>
+                                    </div>
+                                </div>
+
+                                {/* Instructions */}
+                                <div className="bg-surface-50 rounded-xl border border-surface-200 p-4">
+                                    <h4 className="text-xs font-bold text-surface-950 mb-2">📝 After making payment:</h4>
+                                    <div className="flex flex-col sm:flex-row gap-2">
+                                        {["Take a screenshot or save transaction proof", "Submit proof via Helpdesk", "Plan activated within 4 hours"].map((step, i) => (
+                                            <div key={i} className="flex items-center gap-2 flex-1">
+                                                <span className="w-5 h-5 rounded-full bg-primary-50 border border-primary-200 flex items-center justify-center text-[10px] font-bold text-primary-600 flex-shrink-0">{i + 1}</span>
+                                                <p className="text-[11px] text-surface-600">{step}</p>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+
+                                {/* Support CTAs */}
+                                <div className="flex flex-wrap items-center justify-center gap-3">
+                                    <a href="/dashboard?tab=helpdesk" className="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-semibold text-white bg-gradient-to-r from-primary-500 to-primary-600 rounded-xl hover:shadow-lg hover:-translate-y-0.5 transition-all">
+                                        🎫 Submit Payment Proof
+                                    </a>
+                                    <a href="https://wa.me/91857205555865" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-semibold text-white bg-gradient-to-r from-green-500 to-green-600 rounded-xl hover:shadow-lg hover:-translate-y-0.5 transition-all">
+                                        💬 Chat on WhatsApp
+                                    </a>
+                                    <a href="mailto:contact@applypilot.us" className="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-semibold text-surface-700 bg-white border border-surface-300 rounded-xl hover:bg-surface-100 transition-all">
+                                        ✉️ Email Support
+                                    </a>
+                                </div>
                             </div>
-
-                            {/* Remitly */}
-                            <div className="bg-white rounded-xl border border-surface-300 p-5 text-center hover:border-primary-300 transition-colors">
-                                <div className="text-2xl mb-2">🌍</div>
-                                <h4 className="text-sm font-bold text-surface-950 mb-1">Remitly</h4>
-                                <p className="text-xs text-surface-500 mb-3">International Transfer</p>
-                                <div className="bg-surface-100 rounded-lg px-3 py-2 mb-3">
-                                    <p className="text-xs text-surface-600">Contact support for transfer details</p>
-                                </div>
-                                <a
-                                    href="mailto:contact@applypilot.us?subject=Remitly Payment Details"
-                                    className="text-xs text-primary-500 hover:text-primary-600 font-medium transition-colors flex items-center gap-1 mx-auto"
-                                >
-                                    ✉️ Request Details
-                                </a>
-                            </div>
-                        </div>
-
-                        {/* Instructions */}
-                        <div className="bg-white rounded-xl border border-surface-300 p-5 mb-6">
-                            <h4 className="text-sm font-bold text-surface-950 mb-3 flex items-center gap-2">
-                                📝 After making payment:
-                            </h4>
-                            <div className="grid sm:grid-cols-3 gap-3">
-                                <div className="flex items-start gap-2.5">
-                                    <span className="w-6 h-6 rounded-full bg-primary-50 border border-primary-200 flex items-center justify-center text-xs font-bold text-primary-600 flex-shrink-0">1</span>
-                                    <p className="text-xs text-surface-600">Take a screenshot or save your transaction proof</p>
-                                </div>
-                                <div className="flex items-start gap-2.5">
-                                    <span className="w-6 h-6 rounded-full bg-primary-50 border border-primary-200 flex items-center justify-center text-xs font-bold text-primary-600 flex-shrink-0">2</span>
-                                    <p className="text-xs text-surface-600">Go to Helpdesk and submit your payment proof</p>
-                                </div>
-                                <div className="flex items-start gap-2.5">
-                                    <span className="w-6 h-6 rounded-full bg-primary-50 border border-primary-200 flex items-center justify-center text-xs font-bold text-primary-600 flex-shrink-0">3</span>
-                                    <p className="text-xs text-surface-600">Our team will verify and activate your plan within 4 hours</p>
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* Support CTAs */}
-                        <div className="flex flex-wrap items-center justify-center gap-3 mb-5">
-                            <a
-                                href="/dashboard?tab=helpdesk"
-                                className="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-semibold text-white bg-gradient-to-r from-primary-500 to-primary-600 rounded-xl hover:shadow-lg hover:shadow-primary-500/20 hover:-translate-y-0.5 transition-all"
-                            >
-                                🎫 Submit Payment Proof
-                            </a>
-                            <a
-                                href="https://wa.me/91857205555865"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-semibold text-white bg-gradient-to-r from-green-500 to-green-600 rounded-xl hover:shadow-lg hover:shadow-green-500/20 hover:-translate-y-0.5 transition-all"
-                            >
-                                💬 Chat on WhatsApp
-                            </a>
-                            <a
-                                href="mailto:contact@applypilot.us"
-                                className="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-semibold text-surface-700 bg-white border border-surface-300 rounded-xl hover:bg-surface-100 transition-all"
-                            >
-                                ✉️ contact@applypilot.us
-                            </a>
-                        </div>
-
-                        {/* Trust badge */}
-                        <p className="text-center text-xs text-surface-500 flex items-center justify-center gap-1.5">
-                            <span className="w-1.5 h-1.5 rounded-full bg-accent-green" />
-                            100% secure. Manual payments are verified before activation.
-                        </p>
-                    </div>
-                </div>
-            </motion.div>
+                        </motion.div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
         </div>
     );
 }
