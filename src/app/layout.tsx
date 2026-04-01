@@ -3,6 +3,8 @@ import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import SessionProvider from "@/components/SessionProvider";
+import GoogleAnalytics from "@/components/GoogleAnalytics";
+import CookieConsent from "@/components/CookieConsent";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://applypilot.us"),
@@ -118,10 +120,12 @@ export default function RootLayout({
         />
       </head>
       <body className="antialiased bg-white text-surface-950">
+        <GoogleAnalytics />
         <SessionProvider>
           <Navbar />
           <main>{children}</main>
           <Footer />
+          <CookieConsent />
         </SessionProvider>
       </body>
     </html>

@@ -1,6 +1,7 @@
 // ATS Screener API route — Gemini-powered 6-platform scoring for authenticated users
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
+import { authOptions } from '@/lib/authOptions';
 import { buildFullScoringPrompt } from "@/lib/ats-screener/prompts";
 
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY || "";
@@ -41,7 +42,7 @@ function extractJSON(raw: string): unknown {
 
 export async function POST(request: NextRequest) {
     // Auth check
-    const session = await getServerSession();
+    const session = await getServerSession(authOptions);
     if (!session?.user?.email) {
         return NextResponse.json({ error: "Authentication required" }, { status: 401 });
     }

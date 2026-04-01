@@ -1,6 +1,7 @@
 import jwt from 'jsonwebtoken';
 import { NextRequest } from 'next/server';
 import { getServerSession } from 'next-auth';
+import { authOptions } from '@/lib/authOptions';
 import dbConnect from './db';
 import User, { IUser } from '@/models/User';
 
@@ -33,7 +34,7 @@ export async function getAuthUser(req: NextRequest): Promise<IUser | null> {
 
     // Fallback to NextAuth session (for Google OAuth users)
     try {
-        const session = await getServerSession();
+        const session = await getServerSession(authOptions);
         if (session?.user?.email) {
             await dbConnect();
             const user = await User.findOne({ email: session.user.email });

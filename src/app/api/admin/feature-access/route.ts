@@ -31,8 +31,8 @@ export async function GET() {
     }
 }
 
-// PUT: Update feature access config (admin only)
-export async function PUT(req: NextRequest) {
+// POST: Update feature access config (admin only)
+export async function POST(req: NextRequest) {
     try {
         await dbConnect();
         await requireAdmin(req);

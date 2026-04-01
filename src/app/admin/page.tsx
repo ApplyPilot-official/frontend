@@ -38,7 +38,9 @@ interface StatsData {
     planCounts: Record<string, number>;
 }
 
-type AdminTab = "users" | "coupons" | "stats" | "counseling" | "helpdesk" | "portfolio" | "linkedin" | "profiles" | "targets" | "features" | "business" | "mock-interviews";
+type AdminTab = "users" | "coupons" | "stats" | "counseling" | "helpdesk" | "portfolio" | "linkedin" | "profiles" | "targets" | "features" | "business" | "mock-interviews" | "abandoned";
+
+interface AbandonedPaymentRecord { _id: string; userEmail: string; plan: string; amountCents: number; currency: string; couponCode?: string; couponDiscountCents?: number; createdAt: string; }
 
 interface BusinessInterestRecord { _id: string; contactName: string; companyName: string; email: string; phone?: string; companySize: string; message?: string; status: string; adminNotes?: string; createdAt: string; }
 
@@ -84,6 +86,7 @@ export default function AdminPage() {
     const [featureAccessSaving, setFeatureAccessSaving] = useState(false);
     const [businessInterests, setBusinessInterests] = useState<BusinessInterestRecord[]>([]);
     const [mockInterviewReqs, setMockInterviewReqs] = useState<MockInterviewRecord[]>([]);
+    const [abandonedPayments, setAbandonedPayments] = useState<AbandonedPaymentRecord[]>([]);
 
     const fetchData = useCallback(async () => {
         setLoading(true);
@@ -127,6 +130,9 @@ export default function AdminPage() {
             // Fetch mock interview requests
             const mockRes = await fetch("/api/mock-interview?admin=true");
             if (mockRes.ok) setMockInterviewReqs((await mockRes.json()).requests || []);
+            // Fetch abandoned payments
+            const abandonedRes = await fetch("/api/admin/abandoned-payments");
+            if (abandonedRes.ok) setAbandonedPayments((await abandonedRes.json()).payments || []);
         } catch (err) {
             console.error("Admin fetch error:", err);
         } finally {
@@ -217,6 +223,7 @@ export default function AdminPage() {
         { id: "targets", label: "Targets", icon: "🎯" },
         { id: "business", label: "Business", icon: "🏢" },
         { id: "mock-interviews", label: "Mock Interviews", icon: "🎙️" },
+        { id: "abandoned", label: "Abandoned Payments", icon: "💸" },
     ];
 
     const toggleFeatureAccess = (featureId: string, plan: string) => {
@@ -233,7 +240,7 @@ export default function AdminPage() {
         setFeatureAccessSaving(true);
         try {
             const res = await fetch("/api/admin/feature-access", {
-                method: "PUT",
+                method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ features: featureAccessMap }),
             });
@@ -1142,6 +1149,90 @@ export default function AdminPage() {
                                                 ))}
                                                 {mockInterviewReqs.length === 0 && (
                                                     <tr><td colSpan={9} className="p-8 text-center text-surface-500">No mock interview requests yet</td></tr>
+                                                )}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </motion.div>
+                        )}
+
+                        {/* Abandoned Payments Tab */}
+                        {activeTab === "abandoned" && (
+                            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+                                <div className="bg-white rounded-2xl border border-surface-300 overflow-hidden">
+                                    <div className="p-4 border-b border-surface-300 flex items-center justify-between">
+                                        <div>
+                                            <h3 className="text-sm font-bold text-surface-950">Abandoned Payments</h3>
+                                            <p className="text-xs text-surface-500 mt-0.5">Users who started checkout but didn&apos;t complete — potential conversions</p>
+                                        </div>
+                                        <span className="text-xs font-semibold px-3 py-1 rounded-full bg-amber-50 text-amber-600">
+                                            {abandonedPayments.length} abandoned
+                                        </span>
+                                    </div>
+                                    <div className="overflow-x-auto">
+                                        <table className="w-full text-sm">
+                                            <thead>
+                                                <tr className="border-b border-surface-300">
+                                                    <th className="text-left p-4 text-surface-600 font-medium">Email</th>
+                                                    <th className="text-left p-4 text-surface-600 font-medium">Plan</th>
+                                                    <th className="text-left p-4 text-surface-600 font-medium">Amount</th>
+                                                    <th className="text-left p-4 text-surface-600 font-medium">Coupon</th>
+                                                    <th className="text-left p-4 text-surface-600 font-medium">Attempted</th>
+                                                    <th className="text-left p-4 text-surface-600 font-medium">Time Since</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {abandonedPayments.map(p => {
+                                                    const timeSince = Date.now() - new Date(p.createdAt).getTime();
+                                                    const hours = Math.floor(timeSince / (1000 * 60 * 60));
+                                                    const minutes = Math.floor((timeSince % (1000 * 60 * 60)) / (1000 * 60));
+                                                    const timeLabel = hours > 24 ? `${Math.floor(hours / 24)}d ago` : hours > 0 ? `${hours}h ${minutes}m ago` : `${minutes}m ago`;
+                                                    return (
+                                                        <tr key={p._id} className="border-b border-surface-200 hover:bg-surface-100/50">
+                                                            <td className="p-4">
+                                                                <span className="text-surface-950 font-medium">{p.userEmail}</span>
+                                                            </td>
+                                                            <td className="p-4">
+                                                                <span className={`text-xs px-2 py-1 rounded-full font-medium ${p.plan === 'elite' ? 'bg-violet-50 text-violet-600' :
+                                                                        p.plan === 'pro' ? 'bg-blue-50 text-blue-600' :
+                                                                            'bg-surface-100 text-surface-700'
+                                                                    }`}>
+                                                                    {p.plan.charAt(0).toUpperCase() + p.plan.slice(1)}
+                                                                </span>
+                                                            </td>
+                                                            <td className="p-4 text-surface-950">
+                                                                ${(p.amountCents / 100).toFixed(2)} {p.currency}
+                                                            </td>
+                                                            <td className="p-4">
+                                                                {p.couponCode ? (
+                                                                    <code className="text-primary-400 font-mono text-xs bg-primary-500/10 px-2 py-0.5 rounded">
+                                                                        {p.couponCode} (-${((p.couponDiscountCents || 0) / 100).toFixed(2)})
+                                                                    </code>
+                                                                ) : (
+                                                                    <span className="text-xs text-surface-500">—</span>
+                                                                )}
+                                                            </td>
+                                                            <td className="p-4 text-xs text-surface-500">
+                                                                {new Date(p.createdAt).toLocaleString()}
+                                                            </td>
+                                                            <td className="p-4">
+                                                                <span className={`text-xs font-medium ${hours < 1 ? 'text-red-500' :
+                                                                        hours < 24 ? 'text-amber-600' :
+                                                                            'text-surface-500'
+                                                                    }`}>
+                                                                    {timeLabel}
+                                                                </span>
+                                                            </td>
+                                                        </tr>
+                                                    );
+                                                })}
+                                                {abandonedPayments.length === 0 && (
+                                                    <tr>
+                                                        <td colSpan={6} className="p-8 text-center text-surface-500">
+                                                            No abandoned payments found — great news! 🎉
+                                                        </td>
+                                                    </tr>
                                                 )}
                                             </tbody>
                                         </table>
