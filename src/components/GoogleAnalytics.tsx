@@ -1,34 +1,38 @@
 "use client";
 
 import Script from "next/script";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
+
+declare global {
+    interface Window {
+        gtag: (...args: unknown[]) => void;
+    }
+}
 
 const GA_ID = "G-GN3ETH24T9";
 
 export default function GoogleAnalytics() {
-    const [consentGiven, setConsentGiven] = useState(false);
-
     useEffect(() => {
-        const consent = localStorage.getItem("cookie-consent");
-        if (consent === "accepted") {
-            setConsentGiven(true);
-        }
-
-        // Listen for consent changes from the CookieConsent component
-        const handleStorage = () => {
-            const updated = localStorage.getItem("cookie-consent");
-            if (updated === "accepted") setConsentGiven(true);
+        const updateConsent = () => {
+            const consent = localStorage.getItem("cookie-consent");
+            if (consent === "accepted" && typeof window.gtag === "function") {
+                window.gtag("consent", "update", {
+                    analytics_storage: "granted",
+                });
+            }
         };
-        window.addEventListener("storage", handleStorage);
-        // Also listen for a custom event for same-tab updates
-        window.addEventListener("cookie-consent-updated", handleStorage);
+
+        // Check on mount
+        updateConsent();
+
+        // Listen for consent changes
+        window.addEventListener("storage", updateConsent);
+        window.addEventListener("cookie-consent-updated", updateConsent);
         return () => {
-            window.removeEventListener("storage", handleStorage);
-            window.removeEventListener("cookie-consent-updated", handleStorage);
+            window.removeEventListener("storage", updateConsent);
+            window.removeEventListener("cookie-consent-updated", updateConsent);
         };
     }, []);
-
-    if (!consentGiven) return null;
 
     return (
         <>
@@ -40,6 +44,11 @@ export default function GoogleAnalytics() {
                 {`
                     window.dataLayer = window.dataLayer || [];
                     function gtag(){dataLayer.push(arguments);}
+
+                    gtag('consent', 'default', {
+                        analytics_storage: 'denied',
+                    });
+
                     gtag('js', new Date());
                     gtag('config', '${GA_ID}');
                 `}
