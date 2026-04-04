@@ -160,7 +160,7 @@ export default function Navbar() {
                                                     <span>📊</span> Dashboard
                                                 </Link>
                                                 <Link
-                                                    href="/onboarding"
+                                                    href="/profile"
                                                     onClick={() => setProfileOpen(false)}
                                                     className="flex items-center gap-3 px-4 py-2.5 text-sm text-surface-700 hover:text-surface-950 hover:bg-surface-100 transition-colors"
                                                 >

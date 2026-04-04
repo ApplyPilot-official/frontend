@@ -1,42 +1,101 @@
 import mongoose, { Schema, Document, Model } from 'mongoose';
 
 export interface IJob extends Document {
+    job_id: string;
     title: string;
     company: string;
     location: string;
-    remote: boolean;
-    visaSponsorship: 'H1B' | 'STEM OPT' | 'Green Card' | 'None';
-    jobType: 'Full-time' | 'Contract' | 'Part-time';
-    applyUrl: string;
-    postedAt: Date;
-    tags: string[];
-    isActive: boolean;
-    createdAt: Date;
-    updatedAt: Date;
+    role?: string;
+    domain?: string;
+    job_url?: string;
+    apply_link?: string;
+    // Salary
+    salary_desc?: string;
+    min_salary?: number;
+    max_salary?: number;
+    // Job details
+    seniority?: string;
+    employment_type?: string;
+    work_model?: string;
+    is_remote?: boolean;
+    summary?: string;
+    // Skills & qualifications
+    core_skills?: string[];
+    skill_summaries?: string[];
+    must_have_qualifications?: string[];
+    preferred_qualifications?: string[];
+    education_summaries?: string[];
+    benefits?: string[];
+    // Company info
+    company_size?: string;
+    company_industry?: string;
+    company_location?: string;
+    company_url?: string;
+    // H1B / auth
+    is_h1b_sponsor?: boolean;
+    is_citizen_only?: boolean;
+    is_clearance_required?: boolean;
+    // Scores & meta
+    display_score?: number;
+    rank_desc?: string;
+    min_years_experience?: number;
+    applicants_count?: number;
+    publish_time?: string;
+    // Taxonomy
+    taxonomy?: string[];
+    recommendation_tags?: string[];
+    // Source
+    source: string;
+    fetched_at?: string;
+    _migrated_at?: Date;
 }
 
 const JobSchema = new Schema<IJob>(
     {
-        title: { type: String, required: true },
-        company: { type: String, required: true },
-        location: { type: String, required: true },
-        remote: { type: Boolean, default: false },
-        visaSponsorship: {
-            type: String,
-            enum: ['H1B', 'STEM OPT', 'Green Card', 'None'],
-            default: 'None',
-        },
-        jobType: {
-            type: String,
-            enum: ['Full-time', 'Contract', 'Part-time'],
-            default: 'Full-time',
-        },
-        applyUrl: { type: String, required: true },
-        postedAt: { type: Date, default: Date.now },
-        tags: [{ type: String }],
-        isActive: { type: Boolean, default: true },
+        job_id: { type: String, required: true, unique: true },
+        title: { type: String },
+        company: { type: String },
+        location: { type: String },
+        role: { type: String },
+        domain: { type: String },
+        job_url: { type: String },
+        apply_link: { type: String },
+        salary_desc: { type: String },
+        min_salary: { type: Number },
+        max_salary: { type: Number },
+        seniority: { type: String },
+        employment_type: { type: String },
+        work_model: { type: String },
+        is_remote: { type: Boolean },
+        summary: { type: String },
+        core_skills: [{ type: String }],
+        skill_summaries: [{ type: String }],
+        must_have_qualifications: [{ type: String }],
+        preferred_qualifications: [{ type: String }],
+        education_summaries: [{ type: String }],
+        benefits: [{ type: String }],
+        company_size: { type: String },
+        company_industry: { type: String },
+        company_location: { type: String },
+        company_url: { type: String },
+        is_h1b_sponsor: { type: Boolean },
+        is_citizen_only: { type: Boolean },
+        is_clearance_required: { type: Boolean },
+        display_score: { type: Number },
+        rank_desc: { type: String },
+        min_years_experience: { type: Number },
+        applicants_count: { type: Number },
+        publish_time: { type: String },
+        taxonomy: [{ type: String }],
+        recommendation_tags: [{ type: String }],
+        source: { type: String, required: true },
+        fetched_at: { type: String },
+        _migrated_at: { type: Date },
     },
-    { timestamps: true }
+    {
+        collection: 'jobs',
+        strict: false,
+    }
 );
 
 const Job: Model<IJob> =

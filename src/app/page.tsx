@@ -12,6 +12,7 @@ import FAQSection from "@/components/landing/FAQSection";
 import CTASection from "@/components/landing/CTASection";
 import FloatingPunchlines from "@/components/landing/FloatingPunchlines";
 import SocialProofTagline from "@/components/landing/SocialProofTagline";
+import PromoVideoSection from "@/components/landing/PromoVideoSection";
 
 export default function HomePage() {
   return (
@@ -19,6 +20,7 @@ export default function HomePage() {
       <FloatingPunchlines />
       <HeroSection />
       <SocialProofTagline />
+      <PromoVideoSection />
       <TrustTicker />
       <PunchlinesSection />
       <ResumeATSSection />

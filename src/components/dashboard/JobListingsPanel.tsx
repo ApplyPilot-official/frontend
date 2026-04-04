@@ -16,6 +16,15 @@ interface Job {
     workplaceType?: string;
     skill_level?: string;
     is_recruiter?: boolean;
+    // New fields from MongoDB / jobright
+    is_h1b_sponsor?: boolean;
+    publish_time?: string;
+    employment_type?: string;
+    work_model?: string;
+    min_salary?: number;
+    max_salary?: number;
+    salary_desc?: string;
+    source?: string; // "external" | "jobright"
 }
 
 interface FilterState {
@@ -27,6 +36,11 @@ interface FilterState {
     exclude: string;
     remoteOnly: boolean;
     hideRecruiters: boolean;
+    // New filters
+    h1bOnly: boolean;
+    dateRange: string;        // "" | "24h" | "7d" | "30d" | "90d"
+    employmentType: string;   // "" | "Full-time" | "Contract" | "Part-time"
+    workModel: string;        // "" | "Remote" | "Hybrid" | "Onsite"
 }
 
 interface Manifest {
@@ -47,6 +61,7 @@ const ATS_OPTIONS = [
     { value: "bamboohr", label: "BambooHR" },
     { value: "workable", label: "Workable" },
     { value: "icms", label: "iCIMS" },
+    { value: "global", label: "Global" },
 ];
 
 const SKILL_LEVELS = [
@@ -59,6 +74,28 @@ const SKILL_LEVELS = [
     { value: "manager", label: "Manager" },
 ];
 
+const DATE_RANGES = [
+    { value: "", label: "All Time" },
+    { value: "24h", label: "Last 24 Hours" },
+    { value: "7d", label: "Last 7 Days" },
+    { value: "30d", label: "Last 30 Days" },
+    { value: "90d", label: "Last 90 Days" },
+];
+
+const EMPLOYMENT_TYPES = [
+    { value: "", label: "All Types" },
+    { value: "Full-time", label: "Full-time" },
+    { value: "Contract", label: "Contract" },
+    { value: "Part-time", label: "Part-time" },
+];
+
+const WORK_MODELS = [
+    { value: "", label: "All Work Models" },
+    { value: "Remote", label: "Remote" },
+    { value: "Hybrid", label: "Hybrid" },
+    { value: "Onsite", label: "Onsite" },
+];
+
 const ATS_COLORS: Record<string, string> = {
     greenhouse: "bg-green-50 text-green-700 border-green-200",
     lever: "bg-blue-50 text-blue-700 border-blue-200",
@@ -67,6 +104,7 @@ const ATS_COLORS: Record<string, string> = {
     icms: "bg-slate-50 text-slate-700 border-slate-200",
     bamboohr: "bg-red-50 text-red-700 border-red-200",
     workable: "bg-violet-50 text-violet-700 border-violet-200",
+    global: "bg-orange-50 text-orange-700 border-orange-200",
 };
 
 // ── Helpers ────────────────────────────────────────────────────
@@ -91,6 +129,30 @@ async function fetchAndDecompress(url: string): Promise<Job[]> {
     return JSON.parse(text);
 }
 
+function getDateThreshold(range: string): Date | null {
+    if (!range) return null;
+    const now = new Date();
+    switch (range) {
+        case "24h": return new Date(now.getTime() - 24 * 60 * 60 * 1000);
+        case "7d": return new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+        case "30d": return new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+        case "90d": return new Date(now.getTime() - 90 * 24 * 60 * 60 * 1000);
+        default: return null;
+    }
+}
+
+function formatSalary(min?: number, max?: number): string | null {
+    if (!min && !max) return null;
+    const fmt = (n: number) => {
+        if (n >= 1000) return `$${Math.round(n / 1000)}k`;
+        return `$${n}`;
+    };
+    if (min && max) return `${fmt(min)} – ${fmt(max)}`;
+    if (min) return `${fmt(min)}+`;
+    if (max) return `Up to ${fmt(max)}`;
+    return null;
+}
+
 // ── Component ──────────────────────────────────────────────────
 export default function JobListingsPanel() {
     const searchParams = useSearchParams();
@@ -100,6 +162,7 @@ export default function JobListingsPanel() {
     const [totalChunks, setTotalChunks] = useState(0);
     const [error, setError] = useState("");
     const [lastUpdated, setLastUpdated] = useState("");
+    const [internalJobsCount, setInternalJobsCount] = useState(0);
 
     // Saved jobs (localStorage)
     const [savedJobUrls, setSavedJobUrls] = useState<Set<string>>(new Set());
@@ -134,18 +197,28 @@ export default function JobListingsPanel() {
         exclude: "",
         remoteOnly: false,
         hideRecruiters: true,
+        // New defaults
+        h1bOnly: false,
+        dateRange: "",
+        employmentType: "",
+        workModel: "",
     });
 
     const [currentPage, setCurrentPage] = useState(1);
     const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-    // ── Load jobs progressively ──────────────────────────────
+    // ── Load jobs progressively (external + internal) ────────
     useEffect(() => {
         let cancelled = false;
 
         async function loadJobs() {
             try {
-                const manifestRes = await fetch(`${DATA_BASE_URL}/jobs_manifest.json`);
+                // Start both data sources in parallel
+                const manifestPromise = fetch(`${DATA_BASE_URL}/jobs_manifest.json`);
+                const internalPromise = fetch("/api/internal/jobs?limit=10000").catch(() => null);
+
+                // ── External API (chunked gzip) ──
+                const manifestRes = await manifestPromise;
                 if (!manifestRes.ok) throw new Error("Failed to load jobs manifest");
                 const manifest: Manifest = await manifestRes.json();
 
@@ -157,11 +230,35 @@ export default function JobListingsPanel() {
                     `${DATA_BASE_URL}/${manifest.chunks[0]}`
                 );
                 if (cancelled) return;
-                setAllJobs(firstChunk);
+
+                // Tag external jobs
+                const taggedFirst = firstChunk.map(j => ({ ...j, source: "external" as const }));
+                setAllJobs(taggedFirst);
                 setLoadingProgress(1);
                 setIsLoading(false);
 
-                // Load remaining chunks in parallel batches
+                // ── Internal API (MongoDB) ── resolve in parallel
+                const internalRes = await internalPromise;
+                if (!cancelled && internalRes && internalRes.ok) {
+                    try {
+                        const internalData = await internalRes.json();
+                        const internalJobs: Job[] = (internalData.jobs || []).map(
+                            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                            (j: any): Job => ({
+                                ...j,
+                                source: "internal",
+                            })
+                        );
+                        if (internalJobs.length > 0) {
+                            setInternalJobsCount(internalJobs.length);
+                            setAllJobs((prev) => [...prev, ...internalJobs]);
+                        }
+                    } catch (e) {
+                        console.warn("Failed to parse internal jobs:", e);
+                    }
+                }
+
+                // Load remaining external chunks in parallel batches
                 const remaining = manifest.chunks.slice(1);
                 const batchSize = 4;
                 for (let i = 0; i < remaining.length; i += batchSize) {
@@ -174,7 +271,9 @@ export default function JobListingsPanel() {
                     if (cancelled) return;
                     setAllJobs((prev) => {
                         const combined = [...prev];
-                        results.forEach((r) => combined.push(...r));
+                        results.forEach((r) =>
+                            combined.push(...r.map((j): Job => ({ ...j, source: "external" as const })))
+                        );
                         return combined;
                     });
                     setLoadingProgress((prev) => prev + batch.length);
@@ -207,6 +306,7 @@ export default function JobListingsPanel() {
         const locationRegex = f.location
             ? new RegExp(`\\b${escapeRegex(f.location)}\\b`, "i")
             : null;
+        const dateThreshold = getDateThreshold(f.dateRange);
 
         return allJobs.filter((job) => {
             // Hide recruiters
@@ -225,7 +325,9 @@ export default function JobListingsPanel() {
                 const isRemote =
                     location.includes("remote") ||
                     (job.workplaceType &&
-                        job.workplaceType.toLowerCase() === "remote");
+                        job.workplaceType.toLowerCase() === "remote") ||
+                    (job.work_model &&
+                        job.work_model.toLowerCase() === "remote");
                 if (!isRemote) return false;
             }
 
@@ -248,6 +350,37 @@ export default function JobListingsPanel() {
                     .map((t) => t.trim().toLowerCase())
                     .filter(Boolean);
                 if (terms.some((term) => title.includes(term))) return false;
+            }
+
+            // ── New filters ──
+
+            // H1B Sponsor
+            if (f.h1bOnly && !job.is_h1b_sponsor) return false;
+
+            // Date Range
+            if (dateThreshold && job.publish_time) {
+                try {
+                    const pubDate = new Date(job.publish_time);
+                    if (pubDate < dateThreshold) return false;
+                } catch {
+                    // If date parsing fails, exclude from date-filtered results
+                    return false;
+                }
+            } else if (dateThreshold && !job.publish_time) {
+                // External jobs without publish_time: keep them when date filter is active
+                // (they don't have date info, so we include them by default)
+            }
+
+            // Employment Type
+            if (f.employmentType) {
+                const jobType = (job.employment_type || "").toLowerCase();
+                if (jobType !== f.employmentType.toLowerCase()) return false;
+            }
+
+            // Work Model
+            if (f.workModel) {
+                const jobModel = (job.work_model || job.workplaceType || "").toLowerCase();
+                if (jobModel !== f.workModel.toLowerCase()) return false;
             }
 
             return (
@@ -312,6 +445,10 @@ export default function JobListingsPanel() {
             exclude: "",
             remoteOnly: false,
             hideRecruiters: true,
+            h1bOnly: false,
+            dateRange: "",
+            employmentType: "",
+            workModel: "",
         });
         // Reset all input elements
         const inputs = document.querySelectorAll<HTMLInputElement>(".jlp-filter-input");
@@ -402,14 +539,22 @@ export default function JobListingsPanel() {
                         </span>{" "}
                         companies
                     </span>
+                    {internalJobsCount > 0 && (
+                        <>
+                            <span className="text-surface-300">|</span>
+                            <span className="text-xs text-orange-600 bg-orange-50 px-2 py-0.5 rounded-full border border-orange-200">
+                                🌐 {internalJobsCount.toLocaleString()} Global Jobs
+                            </span>
+                        </>
+                    )}
                 </div>
                 <div className="flex items-center gap-2">
                     {/* Saved Jobs Toggle */}
                     <button
                         onClick={() => setShowSavedOnly(prev => !prev)}
                         className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all ${showSavedOnly
-                                ? "bg-amber-50 text-amber-600 border border-amber-200"
-                                : "bg-surface-100 text-surface-600 border border-surface-300 hover:bg-surface-200"
+                            ? "bg-amber-50 text-amber-600 border border-amber-200"
+                            : "bg-surface-100 text-surface-600 border border-surface-300 hover:bg-surface-200"
                             }`}
                     >
                         <svg className="w-3.5 h-3.5" fill={showSavedOnly ? "currentColor" : "none"} viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
@@ -433,6 +578,7 @@ export default function JobListingsPanel() {
 
             {/* Filter Bar */}
             <div className="bg-white rounded-2xl border border-surface-300 shadow-sm p-4">
+                {/* Row 1: Text inputs + main selects */}
                 <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 mb-3">
                     <input
                         type="text"
@@ -483,6 +629,48 @@ export default function JobListingsPanel() {
                         onChange={(e) => updateFilter("exclude", e.target.value)}
                     />
                 </div>
+
+                {/* Row 2: New filter selects */}
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 mb-3">
+                    <select
+                        className="jlp-filter-select px-3 py-2 bg-surface-100 border border-surface-300 rounded-xl text-sm text-surface-950 focus:outline-none focus:ring-2 focus:ring-primary-300"
+                        onChange={(e) =>
+                            updateFilterImmediate("dateRange", e.target.value)
+                        }
+                    >
+                        {DATE_RANGES.map((opt) => (
+                            <option key={opt.value} value={opt.value}>
+                                📅 {opt.label}
+                            </option>
+                        ))}
+                    </select>
+                    <select
+                        className="jlp-filter-select px-3 py-2 bg-surface-100 border border-surface-300 rounded-xl text-sm text-surface-950 focus:outline-none focus:ring-2 focus:ring-primary-300"
+                        onChange={(e) =>
+                            updateFilterImmediate("employmentType", e.target.value)
+                        }
+                    >
+                        {EMPLOYMENT_TYPES.map((opt) => (
+                            <option key={opt.value} value={opt.value}>
+                                {opt.label}
+                            </option>
+                        ))}
+                    </select>
+                    <select
+                        className="jlp-filter-select px-3 py-2 bg-surface-100 border border-surface-300 rounded-xl text-sm text-surface-950 focus:outline-none focus:ring-2 focus:ring-primary-300"
+                        onChange={(e) =>
+                            updateFilterImmediate("workModel", e.target.value)
+                        }
+                    >
+                        {WORK_MODELS.map((opt) => (
+                            <option key={opt.value} value={opt.value}>
+                                {opt.label}
+                            </option>
+                        ))}
+                    </select>
+                </div>
+
+                {/* Row 3: Checkboxes + actions */}
                 <div className="flex flex-wrap items-center gap-4">
                     <label className="flex items-center gap-2 text-sm text-surface-700 cursor-pointer select-none">
                         <input
@@ -509,6 +697,17 @@ export default function JobListingsPanel() {
                             }
                         />
                         🚫 Hide Recruiters
+                    </label>
+                    <label className="flex items-center gap-2 text-sm text-surface-700 cursor-pointer select-none">
+                        <input
+                            type="checkbox"
+                            name="h1bOnly"
+                            className="jlp-filter-input w-4 h-4 rounded border-surface-400 text-primary-500 focus:ring-primary-300"
+                            onChange={(e) =>
+                                updateFilterImmediate("h1bOnly", e.target.checked)
+                            }
+                        />
+                        🛂 H1B Sponsor Only
                     </label>
                     <button
                         onClick={clearFilters}
@@ -540,6 +739,9 @@ export default function JobListingsPanel() {
                                 <th className="text-left px-4 py-3 text-xs font-semibold text-surface-600 uppercase tracking-wider hidden md:table-cell">
                                     Platform
                                 </th>
+                                <th className="text-left px-4 py-3 text-xs font-semibold text-surface-600 uppercase tracking-wider hidden lg:table-cell">
+                                    Info
+                                </th>
                                 <th className="text-center px-4 py-3 text-xs font-semibold text-surface-600 uppercase tracking-wider w-24">
                                     Apply
                                 </th>
@@ -554,7 +756,7 @@ export default function JobListingsPanel() {
                             {pageJobs.length === 0 ? (
                                 <tr>
                                     <td
-                                        colSpan={6}
+                                        colSpan={7}
                                         className="px-4 py-12 text-center text-surface-500"
                                     >
                                         <div className="text-3xl mb-2">{showSavedOnly ? "🔖" : "🔍"}</div>
@@ -571,6 +773,7 @@ export default function JobListingsPanel() {
                                         "bg-surface-100 text-surface-700 border-surface-300";
                                     const applyUrl =
                                         job.absolute_url || job.url;
+                                    const salary = formatSalary(job.min_salary, job.max_salary);
 
                                     return (
                                         <tr
@@ -599,6 +802,30 @@ export default function JobListingsPanel() {
                                                 >
                                                     {job.ats || "Unknown"}
                                                 </span>
+                                            </td>
+                                            <td className="px-4 py-3 hidden lg:table-cell">
+                                                <div className="flex flex-wrap gap-1">
+                                                    {job.is_h1b_sponsor && (
+                                                        <span className="inline-block text-[10px] font-semibold px-1.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
+                                                            H1B
+                                                        </span>
+                                                    )}
+                                                    {salary && (
+                                                        <span className="inline-block text-[10px] font-medium px-1.5 py-0.5 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-200">
+                                                            {salary}
+                                                        </span>
+                                                    )}
+                                                    {job.employment_type && (
+                                                        <span className="inline-block text-[10px] font-medium px-1.5 py-0.5 rounded-full bg-surface-100 text-surface-600 border border-surface-200">
+                                                            {job.employment_type}
+                                                        </span>
+                                                    )}
+                                                    {job.work_model && (
+                                                        <span className="inline-block text-[10px] font-medium px-1.5 py-0.5 rounded-full bg-purple-50 text-purple-600 border border-purple-200">
+                                                            {job.work_model}
+                                                        </span>
+                                                    )}
+                                                </div>
                                             </td>
                                             <td className="px-4 py-3 text-center">
                                                 {applyUrl ? (
